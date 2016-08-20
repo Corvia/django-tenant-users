@@ -22,7 +22,7 @@ Table of Contents
 - `Creating a User <createuser_>`_ 
 
 This application expands the django users and permissions frameworks to work alongside
-django-tenant-schemas to allow global users with permissions on a per-tenant basis.
+django-tenant-schemas or django-tenants to allow global users with permissions on a per-tenant basis.
 This allows a single user to belong to multiple tenants and have different roles 
 and permissions in each tenant, including allowing permissions in the public tenant.
 This app also adds support for querying all tenants a user belongs to, and what roles
@@ -33,10 +33,10 @@ the user has in a tenant.
 Overview
 ========
 
-To simplify the use of Django's models and ORM layer, we need to isolate each company so we don't have to filter objects (queries) by company. Since we are using PostgreSQL we handle this by using a separate schema for each company. We use django-tenant-schemas to handle all of this. Using separate schemas per company provides a small layer of security, permissions isolation, and some performance benefits. On the flip side, we've now segregated the database completely on a per-company basis, and have no default support for global authentication. For instance, if one user belongs to multiple companies they should not need to have multiple accounts and should not have to sign in multiple times (i.e. be forced to sign for each company). They also should be able to see all the companies they belong to. By default, this is not possible with django-tenant-schemas so we have created a solution to this problem (described below).
+To simplify the use of Django's models and ORM layer, we need to isolate each company so we don't have to filter objects (queries) by company. Since we are using PostgreSQL we handle this by using a separate schema for each company. We use django-tenant-schemas or django-tenants to handle all of this. Using separate schemas per company provides a small layer of security, permissions isolation, and some performance benefits. On the flip side, we've now segregated the database completely on a per-company basis, and have no default support for global authentication. For instance, if one user belongs to multiple companies they should not need to have multiple accounts and should not have to sign in multiple times (i.e. be forced to sign for each company). They also should be able to see all the companies they belong to. By default, this is not possible with django-tenant-schemas or django-tenants so we have created a solution to this problem (described below).
 
 
-The django middleware (django-tenant-schemas) handles the schema setting automatically on a per-request basis. It does this by looking at the subdomain that the request comes in on and maps that to a 'tenant'. No subdomain, or the 'www' subdomain map to a default 'public' tenant. In order for this mapping to work to a tenant, we have to create the tenant and the tenant's schema in the database.
+The django middleware (django-tenant-schemas or django-tenants) handles the schema setting automatically on a per-request basis. It does this by looking at the subdomain that the request comes in on and maps that to a 'tenant'. No subdomain, or the 'www' subdomain map to a default 'public' tenant. In order for this mapping to work to a tenant, we have to create the tenant and the tenant's schema in the database.
 
 We leverage the tenant schemas middleware to handle most of this transparently. However, to get global authentication (global user accounts) and per-tenant authorization (permissions) working we rely on some of the nuances of schemas.
 
@@ -76,7 +76,7 @@ We populate all the default roles during company provisioning. However, as noted
 
 Installation
 ============
-Assuming you already have django-tenant-schemas installed and configured, the first step is to install ``django-tenant-users``. 
+Assuming you already have django-tenant-schemas or django-tenants installed and configured, the first step is to install ``django-tenant-users``. 
 
 .. code-block:: bash
 
