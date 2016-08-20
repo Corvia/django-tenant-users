@@ -230,10 +230,10 @@ Advanced Usage: Setting up default roles
 
 By default all default roles are blank (no permissions). In settings.py populate the following to add default roles to the public tenant or company tenants when they are created:
 
-PUBLIC_TENANT_DEFAULT_ROLES
-PUBLIC_TENANT_DEFAULT_ROLES[PUBLIC_ROLE_DEFAULT]
-COMPANY_TENANT_DEFAULT_ROLES 
-COMPANY_TENANT_DEFAULT_ROLES[COMPANY_ROLE_ADMIN]
+| ``PUBLIC_TENANT_DEFAULT_ROLES``
+| ``PUBLIC_TENANT_DEFAULT_ROLES[PUBLIC_ROLE_DEFAULT]``
+| ``COMPANY_TENANT_DEFAULT_ROLES``
+| ``COMPANY_TENANT_DEFAULT_ROLES[COMPANY_ROLE_ADMIN]``
 
 .. code-block:: python
 
