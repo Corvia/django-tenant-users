@@ -1,8 +1,8 @@
 ===================
 django-tenant-users
 ===================
-.. image:: https://img.shields.io/pypi/v/django-tenant-users.svg?maxAge=2592000  
-.. image:: https://img.shields.io/pypi/dm/django-tenant-users.svg?maxAge=2592000  
+.. image:: https://img.shields.io/pypi/v/django-tenant-users.svg?maxAge=180
+.. image:: https://img.shields.io/pypi/dm/django-tenant-users.svg?maxAge=180
 
 Table of Contents
 =================
