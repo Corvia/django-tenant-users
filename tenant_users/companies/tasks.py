@@ -1,7 +1,7 @@
 import time
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from tenant_schemas.utils import get_tenant_model
+from ..compat import get_tenant_model
 
 from .models import InactiveError, ExistsError
 from ..permissions.roles import COMPANY_TENANT_DEFAULT_ROLES, COMPANY_ROLE_ADMIN

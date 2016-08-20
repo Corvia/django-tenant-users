@@ -8,8 +8,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from tenant_schemas.models import TenantMixin
-from tenant_schemas.utils import get_public_schema_name, get_tenant_model
+from ..compat import TenantMixin
+from ..compat import get_public_schema_name, get_tenant_model
 
 from ..permissions.models import UserTenantPermissions, \
     PermissionsMixinFacade
