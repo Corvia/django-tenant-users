@@ -217,11 +217,11 @@ Note: the user with the specified email must exist before provisioning a company
 
 .. code-block:: python
 
-    from comapnies.tasks import provision_company
+    from companies.tasks import provision_company
 
     fqdn = provision_company("EvilCorp", "evilcorp", "admin@evilcorp.com").
 
-Since provisioning a company (a tenant) also has to create the entire schema -- depending on the models installed, it can take a while. It is recommended that this does not occur in the request/response cycle. A good asycnhronous option is to use a task runner like Celery (along with tenant-schemas-celery) to handle this.
+Since provisioning a company (a tenant) also has to create the entire schema -- depending on the models installed, it can take a while. It is recommended that this does not occur in the request/response cycle. A good asynchronous option is to use a task runner like Celery (along with tenant-schemas-celery) to handle this.
 
 .. _advanced:
 
