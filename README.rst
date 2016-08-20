@@ -246,6 +246,8 @@ By default all default roles are blank (no permissions). In settings.py populate
         ]
     }
 
+During the provision_company call the default roles will be created on the newly provisioned Company tenant using the Company.create_roles() function. It can also be used at any time to create additional role types on a Company. 
+
 Note: the 'view' permission is not a default permission in Django, but is often added and used in the context of Django Rest Framework. 
 
 .. _migrating:
