@@ -15,9 +15,11 @@ Table of Contents
 - `Creating the User Model <usermodel_>`_ 
 - `Configuring the Authentication Backend <authbackend_>`_ 
 - `Configuring Cross Domain Cookies <cookies_>`_ 
+- `Creating a User <createuser_>`_ 
 - `Provisioning a Company <provisioning_>`_ 
 - `Advanced Usage: Setting up Roles <advanced_>`_ 
 - `Migrating and Creating the Public Tenant <migrating_>`_ 
+- `Creating a User <createuser_>`_ 
 
 This application expands the django users and permissions frameworks to work alongside
 django-tenant-schemas to allow global users with permissions on a per-tenant basis.
@@ -206,6 +208,19 @@ Setting up cross domain cookies will allow a single sign on to access any of the
 
 Warning: read the django documentation to understand the impacts of using ``SESSION_COOKIE_DOMAIN``
 
+.. _createuser:
+
+Creating a User
+===============
+
+All users apart from the first public tenant user (see `Migrating and Creating the Public Tenant <migrating_>`_ for creating the first public tenant user) should be created through the object manager to handle all of the default roles and tenant permissions being created for the user.
+
+.. code-block:: python
+    
+    user = TenantUser.objects.create_user(email="user@evilcorp.com", password='password', is_active=True)
+
+Currently all users rely on an email for the username. 
+
 .. _provisioning:
 
 Provisioning a Company
@@ -273,3 +288,4 @@ Django tenant schemas requires migrate_schemas to be called and a public tenant 
     # Assign default role (empty permission set by default) to public tenant owner
     # and creates the tenant permissions for the user
     public_tenant.assign_user_role(user, PUBLIC_ROLE_DEFAULT, True)
+
