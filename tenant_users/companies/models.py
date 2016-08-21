@@ -345,8 +345,6 @@ class UserProfileManager(BaseUserManager):
             profile = UserModel()
 
         profile.email = email
-        profile.timezone = settings.TIME_ZONE
-        profile.language = settings.LANGUAGE_CODE
         profile.is_active = True
         profile.set_password(password)
         profile.save()
