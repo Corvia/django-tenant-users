@@ -37,3 +37,23 @@ def create_public_tenant(domain_url, owner_email):
     # Assign default role to public tenant user (empty permission set) and 
     # creates the tenant permissions for the user.
     public_tenant.assign_user_role(profile, PUBLIC_ROLE_DEFAULT, True)
+
+def fix_tenant_urls(domain_url):
+    '''
+    Helper function to update the domain urls on all tenants
+    Useful for domain changes in development 
+    '''
+    TenantModel = get_tenant_model()
+    public_schema_name = get_public_schema_name()
+
+    tenants = TenantModel.objects.all()
+    for tenant in tenants:
+        if tenant.schema_name == public_schema_name:
+            tenant.domain_url = domain_url
+        else:
+            # Assume the URL is wrong, parse out the subdomain
+            # and glue it back to the domain URL configured
+            slug = tenant.domain_url.split('.')[0]
+            new_url = "{}.{}".format(slug, domain_url)
+            tenant.domain_url = new_url
+        tenant.save()
