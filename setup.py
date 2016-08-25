@@ -12,7 +12,7 @@ setup(
     version='0.2.12',
     packages=[
         'tenant_users',
-        'tenant_users.companies',
+        'tenant_users.tenants',
         'tenant_users.permissions',
     ],
     include_package_data=True,

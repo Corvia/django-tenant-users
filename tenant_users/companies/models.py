@@ -31,13 +31,13 @@ class DeleteError(Exception):
 class SchemaError(Exception):
     pass
 
-class Company(TenantMixin):
+class TenantBase(TenantMixin):
     """
-    Contains global data and settings for the Company tenant instance.
+    Contains global data and settings for the tenant model.
     """
-    slug = models.SlugField(_('Company URL Name'), blank=True)
+    slug = models.SlugField(_('Tenant URL Name'), blank=True)
 
-    # The owner of the company. Only they can delete it. This can be changed, but it
+    # The owner of the tenant. Only they can delete it. This can be changed, but it
     # can't be blank. There should always be an owner.
     owner = models.ForeignKey(settings.AUTH_USER_MODEL)
     created = models.DateTimeField()
@@ -45,7 +45,7 @@ class Company(TenantMixin):
 
     # Schema will be automatically created and synced when it is saved
     auto_create_schema = True
-    # Schema will be automatically deleted when related company is deleted
+    # Schema will be automatically deleted when related tenant is deleted
     auto_drop_schema = True
 
     def save(self, *args, **kwargs):
@@ -53,13 +53,13 @@ class Company(TenantMixin):
             self.created = timezone.now()
         self.modified = timezone.now()
 
-        super(Company, self).save(*args, **kwargs)
+        super(TenantBase, self).save(*args, **kwargs)
 
     def delete(self, force_drop=False):
         if force_drop:
-            super(Company, self).delete(force_drop=True)
+            super(TenantBase, self).delete(force_drop=True)
         else:
-            raise DeleteError("Not supported -- delete_company() should be used.")
+            raise DeleteError("Not supported -- delete_tenant() should be used.")
 
     def _validate_app(self, app_name):
         '''
@@ -131,14 +131,14 @@ class Company(TenantMixin):
         '''
         This function iterates over role definitions, creates them if they don't
         already exist and assigns all default permissions specified in those roles
-        on a given company. see roles.py for role_definitions structure 
+        on a given tenant. see roles.py for role_definitions structure 
         '''
-        company_schema = self.schema_name
+        tenant_schema = self.schema_name
     
         # Save current schema and restore it when we're done
         saved_schema = connection.get_schema()
-        # Set schema to this companys schema to start building permissions in that tenant
-        connection.set_schema(company_schema)
+        # Set schema to this tenants schema to start building permissions in that tenant
+        connection.set_schema(tenant_schema)
     
         try:
             for group_name,app_list in role_definitions.items():
@@ -151,42 +151,42 @@ class Company(TenantMixin):
     
     def assign_user_role(self, user_obj, role_name, allow_owner=False):
         '''
-        Company and user must exist. Role must be a valid role.
-        If user is not linked to the company yet we need to set up all the tenant 
+        Tenant and user must exist. Role must be a valid role.
+        If user is not linked to the tenant yet we need to set up all the tenant 
         scaffolding for user permissions. We also need to link the permissions
-        to the user and the user to the company. If the user is already linked to
-        a company, we assume that's all already setup and we just assign the role
+        to the user and the user to the tenant. If the user is already linked to
+        a tenant, we assume that's all already setup and we just assign the role
         if it's not already assigned. 
-        Do nothing if the user is the company owner unless allow_owner parameter is 
+        Do nothing if the user is the tenant owner unless allow_owner parameter is 
         specified This should be only in special circumstances such as provisioning.
         '''
-        company_schema = self.schema_name
+        tenant_schema = self.schema_name
 
         if not user_obj.is_active:
-            raise InactiveError("Can't assign inactive user to company role")
+            raise InactiveError("Can't assign inactive user to tenant role")
     
-        # Do nothing if the user is the company owner unless allow_owner parameter is specified
+        # Do nothing if the user is the tenant owner unless allow_owner parameter is specified
         # This should be only in special circumstances such as provisioning
         if not allow_owner and user_obj.id == self.owner.id:
-            raise RoleError("Can't assign additional roles to the company owner")
+            raise RoleError("Can't assign additional roles to the tenant owner")
     
         # Save current schema and restore it when we're done
         saved_schema = connection.get_schema()
-        # Set schema to this companys schema to start building permissions in that tenant
-        connection.set_schema(company_schema)
+        # Set schema to this tenants schema to start building permissions in that tenant
+        connection.set_schema(tenant_schema)
     
         try:
             group = self._get_group(role_name)
     
             if not self.user_set.filter(id=user_obj.id).exists():
-                # User not linked to this company, so we need to create tenant permissions
+                # User not linked to this tenant, so we need to create tenant permissions
                 user_tenant_perms = UserTenantPermissions.objects.create(
                     profile=user_obj,
                     is_staff=False, 
                     is_superuser=False
                 )
-                # Link user to company 
-                user_obj.companies.add(self)
+                # Link user to tenant 
+                user_obj.tenants.add(self)
                 # Assign role if not already assigned
                 user_tenant_perms.groups.add(group)
             else:
@@ -203,30 +203,30 @@ class Company(TenantMixin):
     
     def revoke_user_role(self, user_obj, role_name=None, allow_owner=False):
         '''
-        Company and user must exist. If no role is passed, all roles are deleted.
-        If the user specified is the owner of the company, by default nothing happens 
+        Tenant and user must exist. If no role is passed, all roles are deleted.
+        If the user specified is the owner of the tenant, by default nothing happens 
         (only has admin role, and that can't be revoked). Must specify allow_owner
         to override and allow an owner's role to be revoked. This should only be
-        specified in special cases, such as during delete_company
-        If the user has no remaining roles on the company, we then delete the tenant
-        permissions entry reflecting that user and unlink the user from the company
+        specified in special cases, such as during delete_tenant
+        If the user has no remaining roles on the tenant, we then delete the tenant
+        permissions entry reflecting that user and unlink the user from the tenant
         altogether at the global level.
         '''
-        company_schema = self.schema_name
+        tenant_schema = self.schema_name
     
-        # if user is the company.owner, and allow_owner not specified, do nothing
+        # if user is the tenant.owner, and allow_owner not specified, do nothing
         if not allow_owner and self.owner.id == user_obj.id:
-            raise RoleError("Cannot revoke roles from a company's owner")
+            raise RoleError("Cannot revoke roles from a tenant's owner")
     
         # Save current schema and restore it when we're done
         saved_schema = connection.get_schema()
-        # Set schema to this companys schema to start building permissions in that tenant
-        connection.set_schema(company_schema)
+        # Set schema to this tenants schema to start building permissions in that tenant
+        connection.set_schema(tenant_schema)
     
         try:
-            # if user is NOT linked to the company
+            # if user is NOT linked to the tenant
             if not self.user_set.filter(id=user_obj.id).exists():
-                raise DoesNotExist("User does not exist on the company specified")
+                raise DoesNotExist("User does not exist on the tenant specified")
     
             user_tenant_perms = user_obj.usertenantpermissions_set.first()
             groups = user_tenant_perms.groups
@@ -237,29 +237,29 @@ class Company(TenantMixin):
             else:
                 group = groups.filter(name=role_name)
                 if not group.exists():
-                    raise RoleError("User does not have specified role on company")
+                    raise RoleError("User does not have specified role on tenant")
                 groups.remove(group.first())
     
-            # If no roles remain on the company for the user delete tenant 
-            # permissions and unlink the user from the company 
+            # If no roles remain on the tenant for the user delete tenant 
+            # permissions and unlink the user from the tenant 
             if not groups.exists():
                 UserTenantPermissions.objects.filter(id=user_tenant_perms.id).delete()
-                # Unlink from company
-                user_obj.companies.remove(self)
+                # Unlink from tenant
+                user_obj.tenants.remove(self)
         finally:
             connection.set_schema(saved_schema)
     
     def get_current_roles(self, user_obj):
         '''
         Returns a list of Group objects designating the roles that the user has
-        on the given company.
+        on the given tenant.
         '''
-        company_schema = self.schema_name
+        tenant_schema = self.schema_name
     
         # Save current schema and restore it when we're done
         saved_schema = connection.get_schema()
-        # Set schema to this companys schema to start building permissions in that tenant
-        connection.set_schema(company_schema)
+        # Set schema to this tenants schema to start building permissions in that tenant
+        connection.set_schema(tenant_schema)
     
         try:
             user_tenant_perms = user_obj.usertenantpermissions_set.first()
@@ -267,17 +267,17 @@ class Company(TenantMixin):
         finally:
             connection.set_schema(saved_schema)
     
-        # We don't want to return a queryset or pass objects from the company schema
+        # We don't want to return a queryset or pass objects from the tenant schema
         # Because when the schema gets reset it will no longer be valid. So instead
         # We return a list of role names
         return groups
     
-    def delete_company(self):
+    def delete_tenant(self):
         '''
-        We don't actually delete the companys out of the database, but we associate them
+        We don't actually delete the tenant out of the database, but we associate them
         with a the public schema user and change their url to reflect their delete 
         datetime and previous owner
-        The caller should verify that the user deleting the company owns the company.
+        The caller should verify that the user deleting the tenant owns the tenant.
         '''
         # Prevent public tenant schema from being deleted
         if self.schema_name == get_public_schema_name():
@@ -285,7 +285,7 @@ class Company(TenantMixin):
 
         for user_obj in self.user_set.all():
             # All roles will be revoked since none specified. All
-            # users will be unlinked from the company
+            # users will be unlinked from the tenant
             self.revoke_user_role(user_obj, None, True)
     
         # Seconds since epoch, time() returns a float, so we convert to 
@@ -301,8 +301,8 @@ class Company(TenantMixin):
         # So we do not have to worry about a conflict with that
     
         # Set the owner to the system user (public schema owner)
-        public_company = get_tenant_model().objects.get(schema_name=get_public_schema_name())
-        self.owner = public_company.owner 
+        public_tenant = get_tenant_model().objects.get(schema_name=get_public_schema_name())
+        self.owner = public_tenant.owner 
         self.save()
         
     class Meta:
@@ -337,8 +337,8 @@ class UserProfileManager(BaseUserManager):
         # Profile might exist but not be active. If a profile does exist
         # all previous history logs will still be associated with the user,
         # but will not be accessible because the user won't be linked to 
-        # any companies from the user's previous membership. There are two 
-        # exceptions to this. 1) The user gets re-invited to a company it
+        # any tenants from the user's previous membership. There are two 
+        # exceptions to this. 1) The user gets re-invited to a tenant it
         # previously had access to (this is good thing IMO). 2) The public
         # schema if they had previous activity associated would be available
         if not profile:
@@ -349,10 +349,10 @@ class UserProfileManager(BaseUserManager):
         profile.set_password(password)
         profile.save()
         
-        # Get public company tenant and assign empty use role here to link user
-        # to the public company, and create tenant permissions entry 
-        public_company = get_tenant_model().objects.get(schema_name=get_public_schema_name())
-        public_company.assign_user_role(profile, PUBLIC_ROLE_DEFAULT, True)
+        # Get public tenant tenant and assign empty use role here to link user
+        # to the public tenant, and create tenant permissions entry 
+        public_tenant = get_tenant_model().objects.get(schema_name=get_public_schema_name())
+        public_tenant.assign_user_role(profile, PUBLIC_ROLE_DEFAULT, True)
         
         # Public tenant permissions object was created when we assigned a
         # role to the user above, if we are a staff/superuser we set it here
@@ -376,22 +376,22 @@ class UserProfileManager(BaseUserManager):
 
         # Check to make sure we don't try to delete the public tenant owner
         # that would be bad....
-        public_company = get_tenant_model().objects.get(schema_name=get_public_schema_name())
-        if user_obj.id == public_company.owner.id:
+        public_tenant = get_tenant_model().objects.get(schema_name=get_public_schema_name())
+        if user_obj.id == public_tenant.owner.id:
             raise DeleteError("Cannot delete the public tenant owner!")
 
-        # This includes the linked public tenant 'company'. It will delete the
+        # This includes the linked public tenant 'tenant'. It will delete the
         # Tenant permissions and unlink when user is deleted
-        for company in user_obj.companies.all():
-            # Unlink user from all roles in any company it doesn't own
-            # Specify true to allow any companies that this user owns
+        for tenant in user_obj.tenants.all():
+            # Unlink user from all roles in any tenant it doesn't own
+            # Specify true to allow any tenants that this user owns
             # without erroring. Don't specify role to revoke all
-            company.revoke_user_role(user_obj, None, True)
+            tenant.revoke_user_role(user_obj, None, True)
 
-            # If user owns the company, we need to call delete on the company
-            if company.owner.id == user_obj.id:
-                # Delete company will handle any other linked users to that company
-                company.delete_company()
+            # If user owns the tenant, we need to call delete on the tenant
+            if tenant.owner.id == user_obj.id:
+                # Delete tenant will handle any other linked users to that tenant
+                tenant.delete_tenant()
 
         # Set is_active, don't actually delete the object
         user_obj.is_active = False
@@ -400,13 +400,13 @@ class UserProfileManager(BaseUserManager):
 
 # This cant be located in the users app otherwise it would get loaded into
 # both the public schema and all tenant schemas. We want profiles only
-# in the public schema alongside the Company TenantModel
+# in the public schema alongside the TenantBase model 
 class UserProfile(AbstractBaseUser, PermissionsMixinFacade):
     """
     An authentication-only model that is in the public tenant schema but 
     linked from the authorization model (UserTenantPermissions)
     where as to allow for one global profile (public schema) for each user
-    but maintain permissions on a per tenant(company) basis.
+    but maintain permissions on a per tenant basis.
     To access permissions for a user, the request must come through the
     tenant that permissions are desired for. 
     Requires use of the ModelBackend
@@ -415,11 +415,11 @@ class UserProfile(AbstractBaseUser, PermissionsMixinFacade):
     USERNAME_FIELD = "email"
     objects = UserProfileManager()
 
-    companies = models.ManyToManyField(
+    tenants = models.ManyToManyField(
         settings.TENANT_MODEL,
-        verbose_name=_('companies'),
+        verbose_name=_('tenants'),
         blank=True,
-        help_text=_('The companies this user belongs to.'),
+        help_text=_('The tenants this user belongs to.'),
         related_name="user_set"
     )
 
