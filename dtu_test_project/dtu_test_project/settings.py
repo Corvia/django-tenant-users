@@ -38,7 +38,7 @@ SHARED_APPS = (
     'django.contrib.staticfiles',
 
     'tenant_users.permissions',
-    'tenant_users.companies',
+    'tenant_users.tenants',
     'customers',
     'users',
 )

@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from tenant_users.companies.models import UserProfile
+from tenant_users.tenants.models import UserProfile
 
 class TenantUser(UserProfile):
     name = models.CharField(

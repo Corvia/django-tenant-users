@@ -15,13 +15,13 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TenantUser',
             fields=[
-                ('id', models.AutoField(primary_key=True, auto_created=True, verbose_name='ID', serialize=False)),
+                ('id', models.AutoField(verbose_name='ID', auto_created=True, primary_key=True, serialize=False)),
                 ('password', models.CharField(verbose_name='password', max_length=128)),
-                ('last_login', models.DateTimeField(blank=True, verbose_name='last login', null=True)),
-                ('email', models.EmailField(unique=True, max_length=254, verbose_name='Email Address', db_index=True)),
+                ('last_login', models.DateTimeField(verbose_name='last login', blank=True, null=True)),
+                ('email', models.EmailField(verbose_name='Email Address', max_length=254, db_index=True, unique=True)),
                 ('is_active', models.BooleanField(default=True)),
-                ('name', models.CharField(blank=True, verbose_name='Name', max_length=100)),
-                ('companies', models.ManyToManyField(blank=True, related_name='user_set', to='customers.Client', verbose_name='companies', help_text='The companies this user belongs to.')),
+                ('name', models.CharField(verbose_name='Name', blank=True, max_length=100)),
+                ('tenants', models.ManyToManyField(verbose_name='tenants', blank=True, help_text='The tenants this user belongs to.', to='customers.Client', related_name='user_set')),
             ],
             options={
                 'abstract': False,

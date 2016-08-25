@@ -14,10 +14,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Client',
             fields=[
-                ('id', models.AutoField(primary_key=True, auto_created=True, verbose_name='ID', serialize=False)),
+                ('id', models.AutoField(verbose_name='ID', auto_created=True, primary_key=True, serialize=False)),
                 ('domain_url', models.CharField(max_length=128, unique=True)),
-                ('schema_name', models.CharField(max_length=63, validators=[tenant_schemas.postgresql_backend.base._check_schema_name], unique=True)),
-                ('slug', models.SlugField(blank=True, verbose_name='Company URL Name')),
+                ('schema_name', models.CharField(max_length=63, unique=True, validators=[tenant_schemas.postgresql_backend.base._check_schema_name])),
+                ('slug', models.SlugField(verbose_name='Tenant URL Name', blank=True)),
                 ('created', models.DateTimeField()),
                 ('modified', models.DateTimeField(blank=True)),
                 ('name', models.CharField(max_length=100)),

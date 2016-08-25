@@ -1,7 +1,7 @@
 from django.db import models
-from tenant_users.companies.models import Company
+from tenant_users.tenants.models import TenantBase
 
 
-class Client(Company):
+class Client(TenantBase):
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=200)
