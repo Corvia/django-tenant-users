@@ -9,11 +9,13 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='django-tenant-users',
-    version='0.2.16',
+    version='0.2.17',
     packages=[
         'tenant_users',
         'tenant_users.tenants',
+        'tenant_users.tenants.migrations',
         'tenant_users.permissions',
+        'tenant_users.permissions.migrations',
     ],
     include_package_data=True,
     license='MIT License', 
