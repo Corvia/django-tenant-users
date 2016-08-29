@@ -1,9 +1,15 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.db import connection
 from .models import ExistsError
 from ..compat import get_public_schema_name, get_tenant_model
 from ..permissions.roles import PUBLIC_TENANT_DEFAULT_ROLES, PUBLIC_ROLE_DEFAULT
 
+def get_current_tenant():
+    current_schema = connection.get_schema()
+    TenantModel = get_tenant_model()
+    tenant = TenantModel.objects.get(schema_name=current_schema)
+    return tenant
 
 def create_public_tenant(domain_url, owner_email):
     UserModel = get_user_model()
