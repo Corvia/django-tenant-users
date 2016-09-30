@@ -83,6 +83,7 @@ class AbstractBaseUserFacade(object):
     def is_active(self):
         return self.profile.is_active
 
+    @property
     def is_anonymous(self):
         return False
     
