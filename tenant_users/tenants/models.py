@@ -310,7 +310,7 @@ class TenantBase(TenantMixin):
 
 
 class UserProfileManager(BaseUserManager):
-    def _create_user(self, email, password, is_staff, is_superuser, **extra_fields):
+    def _create_user(self, email, password, is_staff, is_superuser, is_verified, **extra_fields):
         # Do some schema validation to protect against calling create user from inside
         # a tenant. Must create public tenant permissions during user creation. This
         # happens during assign role. This function cannot be used until a public
@@ -346,6 +346,7 @@ class UserProfileManager(BaseUserManager):
 
         profile.email = email
         profile.is_active = True
+        profile.is_verified = is_verified
         profile.set_password(password)
         profile.save()
         
@@ -365,10 +366,10 @@ class UserProfileManager(BaseUserManager):
         return profile
 
     def create_user(self, email=None, password=None, **extra_fields):
-        return self._create_user(email, password, False, False, **extra_fields)
+        return self._create_user(email, password, False, False, False, **extra_fields)
 
     def create_superuser(self, password, email=None, **extra_fields):
-        return self._create_user(email, password, True, True, **extra_fields)
+        return self._create_user(email, password, True, True, True, **extra_fields)
 
     def delete_user(self, user_obj):
         if not user_obj.is_active:
@@ -429,10 +430,16 @@ class UserProfile(AbstractBaseUser, PermissionsMixinFacade):
         db_index = True,
     )
 
-    is_active = models.BooleanField(default = True)
+    is_active = models.BooleanField(_('active'), default=True)
+
+    # Tracks whether the user's email has been verified
+    is_verified = models.BooleanField(_('verified'), default=False)
 
     class Meta:
         abstract = True
+
+    def has_verified_email(self):
+        return self.is_verified == True
 
     def delete(self, force_drop=False):
         if force_drop:
