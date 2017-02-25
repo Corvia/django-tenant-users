@@ -66,7 +66,7 @@ class TenantBase(TenantMixin):
         Internal helper function to make sure the specified app actually exists 
         '''
         if not ContentType.objects.filter(app_label=app_name).first():
-            raise DoesNotExist('App: %s not found in ContentTypes', app_name)
+            raise self.DoesNotExist('App: %s not found in ContentTypes', app_name)
     
     
     def _get_group(self, group_name):
@@ -75,7 +75,7 @@ class TenantBase(TenantMixin):
         '''
         group = Group.objects.filter(name=group_name).first()
         if not group:
-            raise DoesNotExist('Group: %s does not exist', group_name)
+            raise self.DoesNotExist('Group: %s does not exist', group_name)
         return group
     
     
@@ -90,7 +90,7 @@ class TenantBase(TenantMixin):
             content_type=content_type,
         ).first()
         if not permission:
-            raise DoesNotExist('Permission: %s does not exist', perm)
+            raise self.DoesNotExist('Permission: %s does not exist', perm)
         return permission
     
     
@@ -226,7 +226,7 @@ class TenantBase(TenantMixin):
         try:
             # if user is NOT linked to the tenant
             if not self.user_set.filter(id=user_obj.id).exists():
-                raise DoesNotExist("User does not exist on the tenant specified")
+                raise self.DoesNotExist("User does not exist on the tenant specified")
     
             user_tenant_perms = user_obj.usertenantpermissions_set.first()
             groups = user_tenant_perms.groups
