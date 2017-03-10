@@ -17,16 +17,12 @@ Table of Contents
 - `Configuring Cross Domain Cookies <cookies_>`_ 
 - `Creating a User <createuser_>`_ 
 - `Provisioning a Tenant <provisioning_>`_ 
-- `Advanced Usage: Setting up Roles <advanced_>`_ 
 - `Migrating and Creating the Public Tenant <migrating_>`_ 
 - `Creating a User <createuser_>`_ 
 
 This application expands the django users and permissions frameworks to work alongside
 django-tenant-schemas or django-tenants to allow global users with permissions on a per-tenant basis.
-This allows a single user to belong to multiple tenants and have different roles 
-and permissions in each tenant, including allowing permissions in the public tenant.
-This app also adds support for querying all tenants a user belongs to, and what roles
-the user has in a tenant.
+This allows a single user to belong to multiple tenants and permissions in each tenant, including allowing permissions in the public tenant. This app also adds support for querying all tenants a user belongs to.
 
 .. _overview:
 
@@ -45,7 +41,7 @@ A schema is quite similar to a search path on a file system "path1;path2;path3" 
 Global Authentication Solution
 ------------------------------
 
-With this in mind, it's easy to see that we can create a users table at the global level in the public schema but NOT in the tenants schemas and the users table will still be searched and found, regardless of which tenant is selected. However, the problem is that we need to create our permissions on a per tenant basis, not at a global level. In fact, since the public schema also represents the website, the permissions for a user at the global level should only reflect the permissions for the website (i.e. can I post on the blog?). It's really an entirely different permission set at the public schema level that we need to support (different roles).
+With this in mind, it's easy to see that we can create a users table at the global level in the public schema but NOT in the tenants schemas and the users table will still be searched and found, regardless of which tenant is selected. However, the problem is that we need to create our permissions on a per tenant basis, not at a global level. In fact, since the public schema also represents the website, the permissions for a user at the global level should only reflect the permissions for the website (i.e. can I post on the blog?). It's really an entirely different permission set at the public schema level that we need to support.
 
 The difficulty comes in at the Django level. Luckily Django supports using a custom user model. However, internally, the way Django uses the model tightly couples aspects of the authentication (user/pass and profile) and authorization (permissions) together, despite each one of those aspects inheriting from a separate mixin (parent tree: see PermissionsMixin and AbstractUserBase classes). As an artifact of the coupling, the authentication/permissions backend, as well as other components, make the assumption that it is one one model in the database. The built in function get_user_model() returns the model that is configured as the user model (whether its the stock django user model or a custom user model). We handle this in a relatively simplistic way. First, we decouple the two components (user profile and user permissions) into UserProfile and UserTenantPermissions. We install the UserProfile only at the SHARED_APPs (public schema) level. We install the Permissions model at ALL levels -- SHARED_APPs and TENANT_APPs (both public schema, and per tenant schema). Then we 'facade' the two together (see AbstractBaseUserFacade and TenantPermissionsMixinFacade classes) to make each model look and behave like it encapsulates all of the functionality of a single unified user model. The part that makes it a little more tricky (and perhaps more clever) is that the two models that are linked at any point in time for a query is defined by the currently set schema. 
 
@@ -53,24 +49,14 @@ Let's look at an example. When accessing the website (via a request), the public
 
 Next, we have to create a custom authentication backend to handle the new user/permission model segregation. Luckily this is fairly easy and almost requires no changes since both our models provide facade interfaces to each other! We don't have to change any of the logic in the auth backend (in fact the permission caching still even works at a per-tenant level automagially!). The only change we make is slight, and that is the way the default backend uses get_user_model() to look up meta data about the user model. We just override methods using this functionality to change this behavior and force it to use the tenant permissions model for permissions meta work, instead of the user model thats returned from get_user_model().
 
-Tenants are stored at the public schema level and are also what defines each tenant. Tenants and users are linked at the public level as well, so we can query a user and see what tenants it belongs to, or query a tenant and see what users are associated. However, the role and permissions of a user are defined inside the tenant's schema itself, so to view that data, we have to switch the schema over (normally this happens automatically, but in the case of wanting to view a users roles on a public profile page, we would have to force set the schema (connection.set_schema('EvilCorp'), as defined in the Tenant model for that tenant). We also have to remember to set it back. Most use cases will not ever have to touch the schema setting directly.
+Tenants are stored at the public schema level and are also what defines each tenant. Tenants and users are linked at the public level as well, so we can query a user and see what tenants it belongs to, or query a tenant and see what users are associated. However, the permissions of a user are defined inside the tenant's schema itself, so to view that data, we have to switch the schema over (normally this happens automatically, but in the case of wanting to view a users permissions on a public profile page, we would have to force set the schema (connection.set_schema('EvilCorp'), as defined in the Tenant model for that tenant). We also have to remember to set it back. Most use cases will not ever have to touch the schema setting directly.
 
 User and Tenant 'Deletion'
 ---------------------------
 
-With this solution, we also implement an alternative to avoid actually deleting users or tenants, so we need a way to make them disappear into the ether (from the users perspective) without conflict (i.e. don't allow a deleted tenant to permanently monopolize a tenant URL subdomain, and don't allow a users email to never be used again for signup). To handle the user delete, we just set the user is_active/staff/superuser to false and delete all links to any tenants it owns, as well as all instances of permissions it has in any tenant it was associated with. A user can "delete" a tenant manually, or in the case that a deleted user owns a tenant, we "delete" the tenant. When we "delete" a tenant, we disassociate any users with any roles/permissions, and then change the owner of the tenant's schema to the public schema's owner (the same owner that was configured when create_public_tenant command was run). When we do this, we also rename the tenant's URL to be ownerid-timestamp-originalurl. Not only does this encapsulate some of the history of the tenant's ownership, but it also frees up the URL namespace. Also, we never have to worry about schemas in the database conflicting because when we generate a tenant's schema, we append the timestamp (in seconds since the epoch) to the name. Thus, every schema ends up unique when made, eliminating any schema level conflicts.
+With this solution, we also implement an alternative to avoid actually deleting users or tenants, so we need a way to make them disappear into the ether (from the users perspective) without conflict (i.e. don't allow a deleted tenant to permanently monopolize a tenant URL subdomain, and don't allow a users email to never be used again for signup). To handle the user delete, we just set the user is_active/staff/superuser to false and delete all links to any tenants it owns, as well as all instances of permissions it has in any tenant it was associated with. A user can "delete" a tenant manually, or in the case that a deleted user owns a tenant, we "delete" the tenant. When we "delete" a tenant, we disassociate any users with any permissions, and then change the owner of the tenant's schema to the public schema's owner (the same owner that was configured when create_public_tenant command was run). When we do this, we also rename the tenant's URL to be ownerid-timestamp-originalurl. Not only does this encapsulate some of the history of the tenant's ownership, but it also frees up the URL namespace. Also, we never have to worry about schemas in the database conflicting because when we generate a tenant's schema, we append the timestamp (in seconds since the epoch) to the name. Thus, every schema ends up unique when made, eliminating any schema level conflicts.
 
 To do a full delete on Users/Tenants the delete methods can be overridden, or force_drop=True can be passed in to delete. 
-
-User Roles
-----------
-
-We leverage the built in django role (Group) and permission (Permission) classes that are inherited through the PermissionsMixin. However, with DRF (django rest framework) if you also want to support a 'view' permission in addition to the add/change/delete permissions (the default ones that are generated) then the view permission needs to be added for all ContentTypes. 
-
-One possibility is to use a post-migration hook to iterate over all ContentTypes and check if a 'view' permission exists for that content type. If it doesn't create it. It is important to note that roles and permissions exist at a per tenant level, so it must be done for each tenant when it's created or migrations occur.
-
-We populate all the default roles during tenant provisioning. However, as noted above we support roles/permissions at a per tenant level, so there is flexibility of user defined roles and modified permissions.
-
 
 .. _installation:
 
@@ -238,54 +224,16 @@ Note: the user with the specified email must exist before provisioning a tenant.
 
 Since provisioning a tenant also has to create the entire schema -- depending on the models installed, it can take a while. It is recommended that this does not occur in the request/response cycle. A good asynchronous option is to use a task runner like Celery (along with tenant-schemas-celery) to handle this.
 
-.. _advanced:
-
-Advanced Usage: Setting up default roles
-========================================
-
-By default all default roles are blank (no permissions). In settings.py populate the following to add default roles to the public tenant or tenants when they are created:
-
-- ``PUBLIC_TENANT_DEFAULT_ROLES``
-- ``PUBLIC_TENANT_DEFAULT_ROLES[PUBLIC_ROLE_DEFAULT]``
-- ``TENANT_DEFAULT_ROLES``
-- ``TENANT_DEFAULT_ROLES[TENANT_ROLE_ADMIN]``
-
-.. code-block:: python
-
-    TENANT_DEFAULT_ROLES = {
-        TENANT_ROLE_ADMIN : [
-            {
-                'app': 'my_custom_tenant_app',
-                'permissions': ['view', 'add', 'change', 'delete'],
-            },
-        ]
-    }
-
-During the provision_tenant call the default roles will be created on the newly provisioned Tenant using the TenantBase.create_roles() function. It can also be used at any time to create additional role types on a TenantBase. 
-
-Note: the 'view' permission is not a default permission in Django, but is often added and used in the context of Django Rest Framework. 
-
 .. _migrating:
 
 Migrate and Create the Public Tenant
 ====================================
 
-Django tenant schemas requires migrate_schemas to be called and a public tenant to be created. Here is an example of creating the public tenant.
+Django tenant schemas requires migrate_schemas to be called and a public tenant to be created. Here is an example of creating the public tenant along with a default 'system' tenant owner.
 
 
 .. code-block:: python
 
-    from tenant_users.permissions.roles import PUBLIC_TENANT_DEFAULT_ROLES, PUBLIC_ROLE_DEFAULT
-
-    # Create public tenant user. It does not go through object manager because public tenant
-    # does not exist yet
-    user = TenantUser.objects.create(email="admin@evilcorp.com", is_active=True)
-    user.set_password('password')
-    user.save()
-
-    public_tenant = Client.objects.create(domain_url='evilcorp.example.com', schema_name='public', name='Evilcorp Website')
-    public_tenant.create_roles(PUBLIC_TENANT_DEFAULT_ROLES)
-    # Assign default role (empty permission set by default) to public tenant owner
-    # and creates the tenant permissions for the user
-    public_tenant.assign_user_role(user, PUBLIC_ROLE_DEFAULT, True)
-
+    # Create public tenant user.
+    from tenant_users.tenants.utils import create_public_tenant
+    create_public_tenant("my.evilcorp.domain", "admin@evilcorp.com")
