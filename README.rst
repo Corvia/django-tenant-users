@@ -199,7 +199,7 @@ Warning: read the django documentation to understand the impacts of using ``SESS
 Creating a User
 ===============
 
-All users apart from the first public tenant user (see `Migrating and Creating the Public Tenant <migrating_>`_ for creating the first public tenant user) should be created through the object manager to handle all of the default roles and tenant permissions being created for the user.
+All users apart from the first public tenant user (see `Migrating and Creating the Public Tenant <migrating_>`_ for creating the first public tenant user) should be created through the object manager.
 
 .. code-block:: python
     
