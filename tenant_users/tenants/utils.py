@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 from django.db import connection
 from .models import ExistsError
 from ..compat import get_public_schema_name, get_tenant_model
-from ..permissions.roles import PUBLIC_TENANT_DEFAULT_ROLES, PUBLIC_ROLE_DEFAULT
 
 def get_current_tenant():
     current_schema = connection.get_schema()
@@ -15,11 +14,6 @@ def create_public_tenant(domain_url, owner_email):
     UserModel = get_user_model()
     TenantModel = get_tenant_model()
     public_schema_name = get_public_schema_name()
-
-    if hasattr(settings, "PUBLIC_TENANT_DEFAULT_ROLES"):
-        default_roles = settings.PUBLIC_TENANT_DEFAULT_ROLES
-    else:
-        default_roles = PUBLIC_TENANT_DEFAULT_ROLES
 
     if TenantModel.objects.filter(schema_name=public_schema_name).first():
         raise ExistsError("Public tenant already exists")
@@ -37,12 +31,8 @@ def create_public_tenant(domain_url, owner_email):
         name='Public Tenant',
         owner=profile)
 
-    # Create public tenant roles
-    public_tenant.create_roles(default_roles)
-
-    # Assign default role to public tenant user (empty permission set) and 
-    # creates the tenant permissions for the user.
-    public_tenant.assign_user_role(profile, PUBLIC_ROLE_DEFAULT, True)
+    # Add system user to public tenant (no permissions)
+    public_tenant.add_user(profile)
 
 def fix_tenant_urls(domain_url):
     '''

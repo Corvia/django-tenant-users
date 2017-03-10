@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 from ..compat import get_tenant_model
 
 from .models import InactiveError, ExistsError
-from ..permissions.roles import TENANT_DEFAULT_ROLES, TENANT_ROLE_ADMIN
 
 def provision_tenant(tenant_name, tenant_slug, user_email):
     """Create a tenant with default roles and permissions
@@ -40,19 +39,11 @@ def provision_tenant(tenant_name, tenant_slug, user_email):
             slug=tenant_slug,
             domain_url=tenant_domain, 
             schema_name=schema_name,
-            owner = user,
+            owner=user,
         )
 
-        if hasattr(settings, "TENANT_DEFAULT_ROLES"):
-            default_roles = settings.TENANT_DEFAULT_ROLES
-        else:
-            default_roles = TENANT_DEFAULT_ROLES
-
-        # Create the default roles and permissions inside the tenant
-        tenant.create_roles(default_roles)
-
-        # Set user to admin role on the tenant 
-        tenant.assign_user_role(user, TENANT_ROLE_ADMIN, True)
+        # Add user as a superuser inside the tenant
+        tenant.add_user(user, is_superuser=True)
     except:
         if tenant is not None:
             #Flag is set to auto-drop the schema for the tenant

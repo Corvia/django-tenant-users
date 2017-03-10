@@ -16,7 +16,7 @@ class PermissionsMixinFacade(object):
     class Meta:
         abstract = True
 
-    # This will throw a DoesNotExist exception i fthere is no tenant
+    # This will throw a DoesNotExist exception if there is no tenant
     # permissions matching the current schema, which means that this
     # user has no authorization, so we catch this exception and return
     # the appropriate False or empty set
