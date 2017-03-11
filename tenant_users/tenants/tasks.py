@@ -1,7 +1,9 @@
 import time
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from ..compat import get_tenant_model
+from django_tenants.utils import get_tenant_domain_model
+
+from ..compat import get_tenant_model, TENANT_SCHEMAS
 
 from .models import InactiveError, ExistsError
 
@@ -22,8 +24,12 @@ def provision_tenant(tenant_name, tenant_slug, user_email):
 
     tenant_domain = '{}.{}'.format(tenant_slug, settings.TENANT_USERS_DOMAIN)
 
-    if TenantModel.objects.filter(domain_url=tenant_domain).first():
-        raise ExistsError("Tenant URL already exists")
+    if TENANT_SCHEMAS:
+        if TenantModel.objects.filter(domain_url=tenant_domain).first():
+            raise ExistsError("Tenant URL already exists")
+    else:
+        if get_tenant_domain_model().objects.filter(domain=tenant_domain).first():
+            raise ExistsError("Tenant URL already exists.")
 
     time_string = str(int(time.time()))
     # Must be valid postgres schema characters see:
@@ -32,7 +38,7 @@ def provision_tenant(tenant_name, tenant_slug, user_email):
     # taking up url/schema namespace. 
     schema_name = '{}_{}'.format(tenant_slug, time_string)
 
-    try:
+    if TENANT_SCHEMAS:
         # Create a TenantModel object and tenant schema
         tenant = TenantModel.objects.create(
             name=tenant_name,
@@ -43,11 +49,21 @@ def provision_tenant(tenant_name, tenant_slug, user_email):
         )
 
         # Add user as a superuser inside the tenant
-        tenant.add_user(user, is_superuser=True)
-    except:
-        if tenant is not None:
-            #Flag is set to auto-drop the schema for the tenant
-            tenant.delete(True)
-        raise
+    else:
+        tenant = TenantModel.objects.create(name=tenant_name,
+                                            slug=tenant_slug,
+                                            schema_name=schema_name,
+                                            owner=user)
+
+        # Add one or more domains for the tenant
+        domain = get_tenant_domain_model().objects.create(domain=tenant_domain,
+                                                          tenant=tenant,
+                                                          is_primary=True)
+
+
+    tenant.add_user(user, is_superuser=True)
+    # if tenant is not None:
+    #     #Flag is set to auto-drop the schema for the tenant
+    #     tenant.delete(True)
 
     return tenant_domain
