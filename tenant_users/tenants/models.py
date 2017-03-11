@@ -103,7 +103,7 @@ class TenantBase(TenantMixin):
         if user_obj.id == self.owner.id:
             raise DeleteError("Cannot remove owner from tenant: %s" % self.owner)
 
-        user_tenant_perms = user_obj.usertenantpermissions_set.first()
+        user_tenant_perms = user_obj.usertenantpermissions
 
         # Remove all current groups from user..
         groups = user_tenant_perms.groups
@@ -160,7 +160,7 @@ class TenantBase(TenantMixin):
         old_owner = self.owner
 
         # Remove current owner superuser status but retain any assigned role(s)
-        old_owner_tenant = old_owner.usertenantpermissions_set.first()
+        old_owner_tenant = old_owner.usertenantpermissions
         old_owner_tenant.is_superuser = False
         old_owner_tenant.save()
 
@@ -173,7 +173,7 @@ class TenantBase(TenantMixin):
         try:
             # Set new user as superuser in this tenant if user already exists
             user = self.user_set.get(id=new_owner.id)
-            user_tenant = user.usertenantpermissions_set.first()
+            user_tenant = user.usertenantpermissions
             user_tenant.is_superuser = True
             user_tenant.save()
         except get_user_model().DoesNotExist:
@@ -234,7 +234,7 @@ class UserProfileManager(BaseUserManager):
         # Public tenant permissions object was created when we assigned a
         # role to the user above, if we are a staff/superuser we set it here
         if is_staff or is_superuser:
-            user_tenant = profile.usertenantpermissions_set.first()
+            user_tenant = profile.usertenantpermissions
             user_tenant.is_staff = is_staff
             user_tenant.is_superuser = is_superuser
             user_tenant.save()

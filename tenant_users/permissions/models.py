@@ -95,7 +95,7 @@ class UserTenantPermissions(PermissionsMixin, AbstractBaseUserFacade):
     schema including authentication aspects. See UserProfile model.
     '''
     # The profile stores all of the common information between tenants for a user
-    profile = models.ForeignKey(settings.AUTH_USER_MODEL) 
+    profile = models.OneToOneField(settings.AUTH_USER_MODEL)
 
     is_staff = models.BooleanField(_('staff status'), default=False,
         help_text=_('Designates whether the user can log into this tenants '
