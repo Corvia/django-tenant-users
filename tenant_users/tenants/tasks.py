@@ -38,32 +38,40 @@ def provision_tenant(tenant_name, tenant_slug, user_email, is_staff=False):
     # We generate unique schema names each time so we can keep tenants around without
     # taking up url/schema namespace. 
     schema_name = '{}_{}'.format(tenant_slug, time_string)
+    domain = None
 
-    if TENANT_SCHEMAS:
-        # Create a TenantModel object and tenant schema
-        tenant = TenantModel.objects.create(
-            name=tenant_name,
-            slug=tenant_slug,
-            domain_url=tenant_domain, 
-            schema_name=schema_name,
-            owner=user,
-        )
+    # noinspection PyBroadException
+    try:
 
-        # Add user as a superuser inside the tenant
-    else:  # django-tenants
-        tenant = TenantModel.objects.create(name=tenant_name,
-                                            slug=tenant_slug,
-                                            schema_name=schema_name,
-                                            owner=user)
+        if TENANT_SCHEMAS:
+            # Create a TenantModel object and tenant schema
+            tenant = TenantModel.objects.create(
+                name=tenant_name,
+                slug=tenant_slug,
+                domain_url=tenant_domain,
+                schema_name=schema_name,
+                owner=user,
+            )
 
-        # Add one or more domains for the tenant
-        domain = get_tenant_domain_model().objects.create(domain=tenant_domain,
-                                                          tenant=tenant,
-                                                          is_primary=True)
+            # Add user as a superuser inside the tenant
+        else:  # django-tenants
+            tenant = TenantModel.objects.create(name=tenant_name,
+                                                slug=tenant_slug,
+                                                schema_name=schema_name,
+                                                owner=user)
 
-    tenant.add_user(user, is_superuser=True, is_staff=is_staff)
-    # if tenant is not None:
-    #     #Flag is set to auto-drop the schema for the tenant
-    #     tenant.delete(True)
+            # Add one or more domains for the tenant
+            domain = get_tenant_domain_model().objects.create(domain=tenant_domain,
+                                                              tenant=tenant,
+                                                              is_primary=True)
+
+        tenant.add_user(user, is_superuser=True, is_staff=is_staff)
+    except:
+        if domain is not None:
+            domain.delete()
+        if tenant is not None:
+            # Flag is set to auto-drop the schema for the tenant
+            tenant.delete(True)
+        raise
 
     return tenant_domain
