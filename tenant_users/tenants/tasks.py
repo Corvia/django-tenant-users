@@ -53,7 +53,6 @@ def provision_tenant(tenant_name, tenant_slug, user_email, is_staff=False):
                 owner=user,
             )
 
-            # Add user as a superuser inside the tenant
         else:  # django-tenants
             tenant = TenantModel.objects.create(name=tenant_name,
                                                 slug=tenant_slug,
@@ -64,7 +63,7 @@ def provision_tenant(tenant_name, tenant_slug, user_email, is_staff=False):
             domain = get_tenant_domain_model().objects.create(domain=tenant_domain,
                                                               tenant=tenant,
                                                               is_primary=True)
-
+        # Add user as a superuser inside the tenant
         tenant.add_user(user, is_superuser=True, is_staff=is_staff)
     except:
         if domain is not None:
