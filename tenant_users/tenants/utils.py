@@ -47,11 +47,12 @@ def create_public_tenant(domain_url, owner_email):
     # Add system user to public tenant (no permissions)
     public_tenant.add_user(profile)
 
+
 def fix_tenant_urls(domain_url):
-    '''
+    """
     Helper function to update the domain urls on all tenants
-    Useful for domain changes in development 
-    '''
+    Useful for domain changes in development
+    """
     TenantModel = get_tenant_model()
     public_schema_name = get_public_schema_name()
 

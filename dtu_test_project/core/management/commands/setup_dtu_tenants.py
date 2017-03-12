@@ -16,10 +16,10 @@ class Command(BaseCommand):
         TenantUser.objects.create_superuser(email="superuser@example.com", password='password', is_active=True)
 
         TenantUser.objects.create_user(email="tenant1@example.com", password='password', is_active=True, is_staff=True)
-        provision_tenant("Tenant1", "tenant1", "tenant1@example.com")
+        provision_tenant("Tenant1", "tenant1", "tenant1@example.com", is_staff=True)
 
         TenantUser.objects.create_user(email="tenant2@example.com", password='password', is_active=True, is_staff=True)
-        provision_tenant("Tenant2", "tenant2", "tenant2@example.com")
+        provision_tenant("Tenant2", "tenant2", "tenant2@example.com", is_staff=True)
         print('Done')
 
 

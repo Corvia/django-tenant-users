@@ -73,7 +73,6 @@ class TenantBase(TenantMixin):
         else:
             raise DeleteError("Not supported -- delete_tenant() should be used.")
 
-
     @schema_required
     def add_user(self, user_obj, is_superuser=False, is_staff=False):
         # User already is linked here.. 

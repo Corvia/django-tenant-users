@@ -8,7 +8,7 @@ from ..compat import get_tenant_model, TENANT_SCHEMAS
 from .models import InactiveError, ExistsError
 
 
-def provision_tenant(tenant_name, tenant_slug, user_email):
+def provision_tenant(tenant_name, tenant_slug, user_email, is_staff=False):
     """
     Create a tenant with default roles and permissions
 
@@ -62,7 +62,7 @@ def provision_tenant(tenant_name, tenant_slug, user_email):
                                                           tenant=tenant,
                                                           is_primary=True)
 
-    tenant.add_user(user, is_superuser=True)
+    tenant.add_user(user, is_superuser=True, is_staff=is_staff)
     # if tenant is not None:
     #     #Flag is set to auto-drop the schema for the tenant
     #     tenant.delete(True)
