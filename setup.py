@@ -9,7 +9,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='django-tenant-users',
-    version='0.3.4',
+    version='0.3.5',
     packages=[
         'tenant_users',
         'tenant_users.tenants',
