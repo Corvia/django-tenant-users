@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import sys
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -23,14 +24,20 @@ SECRET_KEY = '%-@80c)i9@htvdo#ulmrail^%kizuoddr$(8d6*2r^eczhj#^1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 AUTH_USER_MODEL = 'users.TenantUser'
 
 # Application definition
 
+if os.environ.get('TENANT_APP', 'tenant_schemas') == 'django_tenants':
+    TENANT_SCHEMAS = False
+else:
+    TENANT_SCHEMAS = True
+
 SHARED_APPS = (
-    'tenant_schemas',  # mandatory
+    'tenant_schemas' if TENANT_SCHEMAS else 'django_tenants',  # mandatory - django_tenants  -tenant_schemas
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -39,6 +46,7 @@ SHARED_APPS = (
 
     'tenant_users.permissions',
     'tenant_users.tenants',
+    'core',
     'customers',
     'users',
 )
@@ -50,9 +58,14 @@ TENANT_APPS = (
 )
 
 TENANT_MODEL = 'customers.Client'
+if not TENANT_SCHEMAS:
+    TENANT_DOMAIN_MODEL = 'customers.Domain'
+
+
 INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
 
 MIDDLEWARE_CLASSES = (
+    'tenant_schemas.middleware.TenantMiddleware' if TENANT_SCHEMAS else 'django_tenants.middleware.TenantMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -64,15 +77,17 @@ MIDDLEWARE_CLASSES = (
 )
 
 AUTHENTICATION_BACKENDS = (
-    'tenant_users.backend.UserBackend',
+    'tenant_users.permissions.backend.UserBackend',
 )
 
-ROOT_URLCONF = 'dtu_test_project.urls'
+ROOT_URLCONF = 'dtu_test_project.urls_tenants'
+PUBLIC_SCHEMA_URLCONF = 'dtu_test_project.urls_public'
+
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -93,16 +108,17 @@ WSGI_APPLICATION = 'dtu_test_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'tenant_schemas.postgresql_backend',
-        'NAME': 'dtu_test_project',
+        'ENGINE': 'tenant_schemas.postgresql_backend' if TENANT_SCHEMAS else 'django_tenants.postgresql_backend',
+        'NAME': os.environ.get('PG_DATABASE', 'dtu_test_project'),
         'USER': os.environ.get('PG_USER', 'postgres'),
         'PASSWORD': os.environ.get('PG_PASSWORD', 'password'),
         'HOST': '127.0.0.1',
     }
 }
 
+
 DATABASE_ROUTERS = (
-    'tenant_schemas.routers.TenantSyncRouter',
+    'tenant_schemas.routers.TenantSyncRouter' if TENANT_SCHEMAS else 'django_tenants.routers.TenantSyncRouter',
 )
 
 # Internationalization
@@ -123,3 +139,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+TENANT_USERS_DOMAIN = "example.com"
+
+SESSION_COOKIE_DOMAIN = '.example.com'

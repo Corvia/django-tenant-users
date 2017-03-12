@@ -1,18 +1,16 @@
 from django.conf import settings
 from django.contrib.auth.models import PermissionsMixin
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import Group, Permission
 from django.db import models
-from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
+
 class PermissionsMixinFacade(object):
-    '''
+    """
     This class is designed to shim the PermissionMixin class functions and
     delegate them down to the correct linked (based on the current schema)
     tenant permissions since we don't handle them in the user like stock
     django does. This is designed to be inherited from by the AUTH_USER_MODEL
-    '''
+    """
     class Meta:
         abstract = True
 
@@ -21,12 +19,21 @@ class PermissionsMixinFacade(object):
     # user has no authorization, so we catch this exception and return
     # the appropriate False or empty set
     def _get_tenant_perms(self):
-        return UserTenantPermissions.objects.get(profile_id=self.id)
+        user_tenant_permissions = UserTenantPermissions.objects.get(profile_id=self.id)
+        return user_tenant_permissions
+
+    def has_tenant_permissions(self):
+        try:
+            self._get_tenant_perms()
+            return True
+        except UserTenantPermissions.DoesNotExist:
+            return False
 
     @property
     def is_staff(self):
         try:
-            return self._get_tenant_perms().is_staff
+            _is_staff = self._get_tenant_perms().is_staff
+            return _is_staff
         except UserTenantPermissions.DoesNotExist:
             return False
 
@@ -69,13 +76,13 @@ class PermissionsMixinFacade(object):
 
 
 class AbstractBaseUserFacade(object):
-    '''
+    """
     This class is designed to shim functions on the authorization model
     that are actually part of the authentication model. Auth backends
     expect the models to be combined, but we separate them so we can
     have single authentication across the system, but have per
     tenant permissions
-    '''
+    """
     class Meta:
         abstract = True
 
@@ -89,14 +96,14 @@ class AbstractBaseUserFacade(object):
     
 
 class UserTenantPermissions(PermissionsMixin, AbstractBaseUserFacade):
-    '''
+    """
     This class serves as the authorization model (permissions) per-tenant.
     We keep all of the global user profile information in the public tenant
     schema including authentication aspects. See UserProfile model.
-    '''
+    """
     # The profile stores all of the common information between tenants for a user
     profile = models.OneToOneField(settings.AUTH_USER_MODEL)
 
     is_staff = models.BooleanField(_('staff status'), default=False,
-        help_text=_('Designates whether the user can log into this tenants '
-                    'admin site.'))
+                                   help_text=_('Designates whether the user can log into this tenants '
+                                               'admin site.'))

@@ -73,7 +73,6 @@ class TenantBase(TenantMixin):
         else:
             raise DeleteError("Not supported -- delete_tenant() should be used.")
 
-
     @schema_required
     def add_user(self, user_obj, is_superuser=False, is_staff=False):
         # User already is linked here.. 
@@ -241,8 +240,8 @@ class UserProfileManager(BaseUserManager):
 
         return profile
 
-    def create_user(self, email=None, password=None, **extra_fields):
-        return self._create_user(email, password, False, False, False, **extra_fields)
+    def create_user(self, email=None, password=None, is_staff=False, **extra_fields):
+        return self._create_user(email, password, is_staff, False, False, **extra_fields)
 
     def create_superuser(self, password, email=None, **extra_fields):
         return self._create_user(email, password, True, True, True, **extra_fields)

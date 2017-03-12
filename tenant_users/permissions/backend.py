@@ -2,6 +2,7 @@ from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import Permission
 from .models import UserTenantPermissions
 
+
 class UserBackend(ModelBackend):
     """
     Authenticates against UserProfile 
