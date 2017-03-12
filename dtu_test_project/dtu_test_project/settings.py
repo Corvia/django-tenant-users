@@ -24,7 +24,7 @@ SECRET_KEY = '%-@80c)i9@htvdo#ulmrail^%kizuoddr$(8d6*2r^eczhj#^1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 AUTH_USER_MODEL = 'users.TenantUser'
 
@@ -65,6 +65,7 @@ if not TENANT_SCHEMAS:
 INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
 
 MIDDLEWARE_CLASSES = (
+    'tenant_schemas.middleware.TenantMiddleware' if TENANT_SCHEMAS else 'django_tenants.middleware.TenantMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -79,7 +80,9 @@ AUTHENTICATION_BACKENDS = (
     'tenant_users.permissions.backend.UserBackend',
 )
 
-ROOT_URLCONF = 'dtu_test_project.urls'
+ROOT_URLCONF = 'dtu_test_project.urls_tenants'
+PUBLIC_SCHEMA_URLCONF = 'dtu_test_project.urls_public'
+
 
 TEMPLATES = [
     {
@@ -138,3 +141,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 TENANT_USERS_DOMAIN = "example.com"
+
+SESSION_COOKIE_DOMAIN = '.example.com'

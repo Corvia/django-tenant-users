@@ -15,12 +15,9 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
-from core.views import CreateUser, MainView, CreateSuperUser, CreateTenant
+from core.views import MainView
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^create-user/', CreateUser.as_view(), name='create_user'),
-    url(r'^create-super-user/', CreateSuperUser.as_view(), name='create_super_user'),
-    url(r'^create-tenant/', CreateTenant.as_view(), name='create_tenant'),
     url(r'^', MainView.as_view(), name='main'),
 ]

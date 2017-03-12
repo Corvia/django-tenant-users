@@ -7,8 +7,10 @@ from ..compat import get_tenant_model, TENANT_SCHEMAS
 
 from .models import InactiveError, ExistsError
 
+
 def provision_tenant(tenant_name, tenant_slug, user_email):
-    """Create a tenant with default roles and permissions
+    """
+    Create a tenant with default roles and permissions
 
     Returns:
     The FQDN for the tenant.
@@ -49,7 +51,7 @@ def provision_tenant(tenant_name, tenant_slug, user_email):
         )
 
         # Add user as a superuser inside the tenant
-    else:
+    else:  # django-tenants
         tenant = TenantModel.objects.create(name=tenant_name,
                                             slug=tenant_slug,
                                             schema_name=schema_name,
@@ -59,7 +61,6 @@ def provision_tenant(tenant_name, tenant_slug, user_email):
         domain = get_tenant_domain_model().objects.create(domain=tenant_domain,
                                                           tenant=tenant,
                                                           is_primary=True)
-
 
     tenant.add_user(user, is_superuser=True)
     # if tenant is not None:
