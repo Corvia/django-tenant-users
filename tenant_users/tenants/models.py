@@ -6,6 +6,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
+from django.dispatch import Signal
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from ..compat import TenantMixin
@@ -13,6 +14,9 @@ from ..compat import get_public_schema_name, get_tenant_model
 
 from ..permissions.models import UserTenantPermissions, \
     PermissionsMixinFacade
+
+tenant_user_removed = Signal(providing_args=["user"])
+tenant_user_added = Signal(providing_args=["user"])
 
 class InactiveError(Exception):
     pass
@@ -25,7 +29,6 @@ class DeleteError(Exception):
 
 class SchemaError(Exception):
     pass
-
 
 def schema_required(func):
     def inner(self, *args, **options):
@@ -88,6 +91,7 @@ class TenantBase(TenantMixin):
         # Link user to tenant 
         user_obj.tenants.add(self)
 
+        tenant_user_added.send(sender=self.__class__, user=user_obj)
 
     @schema_required
     def remove_user(self, user_obj):
@@ -112,6 +116,7 @@ class TenantBase(TenantMixin):
         UserTenantPermissions.objects.filter(id=user_tenant_perms.id).delete()
         user_obj.tenants.remove(self)
 
+        tenant_user_removed.send(sender=self.__class__, user=user_obj)
 
     def delete_tenant(self):
         '''
