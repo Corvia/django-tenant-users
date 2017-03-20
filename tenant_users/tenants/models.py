@@ -15,8 +15,17 @@ from ..compat import get_public_schema_name, get_tenant_model
 from ..permissions.models import UserTenantPermissions, \
     PermissionsMixinFacade
 
-tenant_user_removed = Signal(providing_args=["user"])
-tenant_user_added = Signal(providing_args=["user"])
+# An existing user removed from a tenant
+tenant_user_removed = Signal(providing_args=["user", "tenant"])
+
+# An existing user added to a tenant
+tenant_user_added = Signal(providing_args=["user", "tenant"])
+
+# A new user is created
+tenant_user_created = Signal(providing_args=["user"])
+
+# An existing user is deleted
+tenant_user_deleted = Signal(providing_args=["user"])
 
 class InactiveError(Exception):
     pass
@@ -91,7 +100,7 @@ class TenantBase(TenantMixin):
         # Link user to tenant 
         user_obj.tenants.add(self)
 
-        tenant_user_added.send(sender=self.__class__, user=user_obj)
+        tenant_user_added.send(sender=self.__class__, user=user_obj, tenant=self)
 
     @schema_required
     def remove_user(self, user_obj):
@@ -116,7 +125,7 @@ class TenantBase(TenantMixin):
         UserTenantPermissions.objects.filter(id=user_tenant_perms.id).delete()
         user_obj.tenants.remove(self)
 
-        tenant_user_removed.send(sender=self.__class__, user=user_obj)
+        tenant_user_removed.send(sender=self.__class__, user=user_obj, tenant=self)
 
     def delete_tenant(self):
         '''
@@ -243,6 +252,8 @@ class UserProfileManager(BaseUserManager):
             user_tenant.is_superuser = is_superuser
             user_tenant.save()
 
+        tenant_user_created.send(sender=self.__class__, user=profile)
+
         return profile
 
     def create_user(self, email=None, password=None, is_staff=False, **extra_fields):
@@ -276,6 +287,8 @@ class UserProfileManager(BaseUserManager):
         # Set is_active, don't actually delete the object
         user_obj.is_active = False
         user_obj.save()
+
+        tenant_user_deleted.send(sender=self.__class__, user=user_obj)
 
 
 # This cant be located in the users app otherwise it would get loaded into
