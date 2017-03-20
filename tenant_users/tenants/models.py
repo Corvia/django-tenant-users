@@ -87,17 +87,17 @@ class TenantBase(TenantMixin):
 
     @schema_required
     def add_user(self, user_obj, is_superuser=False, is_staff=False):
-        # User already is linked here.. 
+        # User already is linked here..
         if self.user_set.filter(id=user_obj.id).exists():
             raise ExistsError("User already added to tenant: %s" % user_obj)
 
         # User not linked to this tenant, so we need to create tenant permissions
         user_tenant_perms = UserTenantPermissions.objects.create(
             profile=user_obj,
-            is_staff=is_staff, 
+            is_staff=is_staff,
             is_superuser=is_superuser
         )
-        # Link user to tenant 
+        # Link user to tenant
         user_obj.tenants.add(self)
 
         tenant_user_added.send(sender=self.__class__, user=user_obj, tenant=self)
@@ -119,7 +119,7 @@ class TenantBase(TenantMixin):
 
         # Remove all current groups from user..
         groups = user_tenant_perms.groups
-        groups.clear() 
+        groups.clear()
 
         # Unlink from tenant
         UserTenantPermissions.objects.filter(id=user_tenant_perms.id).delete()
@@ -130,7 +130,7 @@ class TenantBase(TenantMixin):
     def delete_tenant(self):
         '''
         We don't actually delete the tenant out of the database, but we associate them
-        with a the public schema user and change their url to reflect their delete 
+        with a the public schema user and change their url to reflect their delete
         datetime and previous owner
         The caller should verify that the user deleting the tenant owns the tenant.
         '''
@@ -144,7 +144,7 @@ class TenantBase(TenantMixin):
                 continue
             self.remove_user(user_obj)
 
-        # Seconds since epoch, time() returns a float, so we convert to 
+        # Seconds since epoch, time() returns a float, so we convert to
         # an int first to truncate the decimal portion
         time_string = str(int(time.time()))
         new_url = "{}-{}-{}".format(
@@ -222,12 +222,12 @@ class UserProfileManager(BaseUserManager):
 
         profile = UserModel.objects.filter(email=email).first()
         if profile and profile.is_active:
-            raise ExistsError("User already exists!") 
+            raise ExistsError("User already exists!")
 
         # Profile might exist but not be active. If a profile does exist
         # all previous history logs will still be associated with the user,
-        # but will not be accessible because the user won't be linked to 
-        # any tenants from the user's previous membership. There are two 
+        # but will not be accessible because the user won't be linked to
+        # any tenants from the user's previous membership. There are two
         # exceptions to this. 1) The user gets re-invited to a tenant it
         # previously had access to (this is good thing IMO). 2) The public
         # schema if they had previous activity associated would be available
@@ -240,7 +240,7 @@ class UserProfileManager(BaseUserManager):
         profile.set_password(password)
         profile.save()
 
-        # Get public tenant tenant and link the user (no perms) 
+        # Get public tenant tenant and link the user (no perms)
         public_tenant = get_tenant_model().objects.get(schema_name=get_public_schema_name())
         public_tenant.add_user(profile)
 
@@ -293,15 +293,15 @@ class UserProfileManager(BaseUserManager):
 
 # This cant be located in the users app otherwise it would get loaded into
 # both the public schema and all tenant schemas. We want profiles only
-# in the public schema alongside the TenantBase model 
+# in the public schema alongside the TenantBase model
 class UserProfile(AbstractBaseUser, PermissionsMixinFacade):
     """
-    An authentication-only model that is in the public tenant schema but 
+    An authentication-only model that is in the public tenant schema but
     linked from the authorization model (UserTenantPermissions)
     where as to allow for one global profile (public schema) for each user
     but maintain permissions on a per tenant basis.
     To access permissions for a user, the request must come through the
-    tenant that permissions are desired for. 
+    tenant that permissions are desired for.
     Requires use of the ModelBackend
     """
 
