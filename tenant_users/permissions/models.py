@@ -58,7 +58,7 @@ class PermissionsMixinFacade(object):
 
     def has_perm(self, perm, obj=None):
         try:
-            return self._get_tenant_perms().has_perm(obj)  
+            return self._get_tenant_perms().has_perm(perm, obj)
         except UserTenantPermissions.DoesNotExist:
             return False
 

@@ -9,7 +9,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='django-tenant-users',
-    version='0.3.8',
+    version='0.3.9',
     packages=[
         'tenant_users',
         'tenant_users.tenants',
@@ -18,7 +18,7 @@ setup(
         'tenant_users.permissions.migrations',
     ],
     include_package_data=True,
-    license='MIT License', 
+    license='MIT License',
     description='A Django app to extend django-tenant-schemas to incorporate global multi-tenant users',
     long_description=README,
     url='https://www.github.com/Corvia/django-tenant-users',
@@ -27,9 +27,9 @@ setup(
     classifiers=[
         'Environment :: Web Environment',
         'Framework :: Django',
-        'Framework :: Django :: 1.8', 
+        'Framework :: Django :: 1.8',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',  
+        'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
