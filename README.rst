@@ -218,7 +218,7 @@ Note: the user with the specified email must exist before provisioning a tenant.
 
 .. code-block:: python
 
-    from tenants.tasks import provision_tenant
+    from tenant_users.tenants.tasks import provision_tenant
 
     fqdn = provision_tenant("EvilCorp", "evilcorp", "admin@evilcorp.com").
 
