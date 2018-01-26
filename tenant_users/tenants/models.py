@@ -63,7 +63,7 @@ class TenantBase(TenantMixin):
 
     # The owner of the tenant. Only they can delete it. This can be changed, but it
     # can't be blank. There should always be an owner.
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created = models.DateTimeField()
     modified = models.DateTimeField(blank=True)
 
