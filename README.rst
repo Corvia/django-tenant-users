@@ -164,8 +164,8 @@ The settings.py file entry would look like (see Django documentation for more de
 
 .. _authbackend:
 
-Setting up the Authentication Backend
-=====================================
+Setting up the Authentication Backends
+======================================
 
 At this point we now have all of the user, permissions, and tenant models configured. Because Django does not completely isolate authorization (permissions) from authentication (user/pass) we have to use a minimally modified authentication backend. Switch the authentication backend as follows:
 
@@ -173,13 +173,29 @@ At this point we now have all of the user, permissions, and tenant models config
 .. code-block:: python
 
     AUTHENTICATION_BACKENDS = (
-        'tenant_users.permissions.backend.UserBackend',
+        'tenant_users.permissions.backends.UserBackend',
     )
 
 Notes:
 If you want to use django admin you will have to utilize admin multisite. Warning: if you set this up incorrectly you could expose access to models that users are not permitted to access (due to the schema search path being present, and falling through. See notes in code).  
 You must reset migrations after updating the user model.  
 
+If need to use object level permissions you can add a second backend like this:
+
+.. code-block:: python
+
+    AUTHENTICATION_BACKENDS = (
+        'tenant_users.permissions.backends.UserBackend',
+        'tenant_users.permissions.backends.UserObjectBackend',
+    )
+
+This second backend requires guardian to be installed. install it:
+
+.. code-block:: bash
+
+    pip install django-tenant-users
+
+And add guardian app in the ``INSTALLED_APPS``, ``SHARED_APPS`` and ``TENANT_APPS` sections in your ``settings.py`` file.
 
 .. _cookies:
 
