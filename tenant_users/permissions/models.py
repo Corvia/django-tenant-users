@@ -2,6 +2,8 @@ from django.conf import settings
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.test.utils import override_settings
+from guardian.mixins import GuardianUserMixin
 
 
 class PermissionsMixinFacade(object):
@@ -93,7 +95,12 @@ class AbstractBaseUserFacade(object):
     @property
     def is_anonymous(self):
         return False
-    
+
+    # Required by guardian
+    @property
+    def is_authenticated(self):
+        return True
+
 
 class UserTenantPermissions(PermissionsMixin, AbstractBaseUserFacade):
     """

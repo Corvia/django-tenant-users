@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from ..compat import TenantMixin
 from ..compat import get_public_schema_name, get_tenant_model
+from guardian.mixins import GuardianUserMixin
 
 from ..permissions.models import UserTenantPermissions, \
     PermissionsMixinFacade
@@ -294,7 +295,7 @@ class UserProfileManager(BaseUserManager):
 # This cant be located in the users app otherwise it would get loaded into
 # both the public schema and all tenant schemas. We want profiles only
 # in the public schema alongside the TenantBase model
-class UserProfile(AbstractBaseUser, PermissionsMixinFacade):
+class UserProfile(AbstractBaseUser, GuardianUserMixin, PermissionsMixinFacade):
     """
     An authentication-only model that is in the public tenant schema but
     linked from the authorization model (UserTenantPermissions)

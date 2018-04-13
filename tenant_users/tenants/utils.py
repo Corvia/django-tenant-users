@@ -3,6 +3,23 @@ from django.contrib.auth import get_user_model
 from django.db import connection
 from .models import ExistsError
 from ..compat import get_public_schema_name, get_tenant_model, TENANT_SCHEMAS, get_tenant_domain_model
+from guardian.exceptions import NotUserNorGroup
+from guardian.utils import get_anonymous_user
+from django.contrib.auth.models import AnonymousUser, Group
+
+
+
+def get_tenant_identity(identity):
+    if isinstance(identity, AnonymousUser):
+        identity = get_anonymous_user()
+
+    if isinstance(identity.profile, get_user_model()):
+        return identity, None
+    elif isinstance(identity, Group):
+        return None, identity
+
+    raise NotUserNorGroup("User/AnonymousUser or Group instance is required "
+                          "(got %s)" % identity)
 
 
 def get_current_tenant():
