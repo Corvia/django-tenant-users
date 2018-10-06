@@ -238,6 +238,8 @@ class UserProfileManager(BaseUserManager):
         profile.is_active = True
         profile.is_verified = is_verified
         profile.set_password(password)
+        for attr, value in extra_fields.items():
+            setattr(profile, attr, value)
         profile.save()
 
         # Get public tenant tenant and link the user (no perms)
