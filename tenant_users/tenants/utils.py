@@ -12,7 +12,7 @@ def get_current_tenant():
     return tenant
 
 
-def create_public_tenant(domain_url, owner_email):
+def create_public_tenant(domain_url, owner_email, **owner_extra):
     UserModel = get_user_model()
     TenantModel = get_tenant_model()
     public_schema_name = get_public_schema_name()
@@ -20,9 +20,11 @@ def create_public_tenant(domain_url, owner_email):
     if TenantModel.objects.filter(schema_name=public_schema_name).first():
         raise ExistsError("Public tenant already exists")
 
-    # Create public tenant user. This user doesn't go through object manager 
+    # Create public tenant user. This user doesn't go through object manager
     # create_user function because public tenant does not exist yet
-    profile = UserModel.objects.create(email=owner_email, is_active=True)
+    profile = UserModel.objects.create(
+        email=owner_email, is_active=True, **owner_extra
+    )
     profile.set_unusable_password()
     profile.save()
 
