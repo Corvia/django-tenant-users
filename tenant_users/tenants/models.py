@@ -335,9 +335,9 @@ class UserProfile(AbstractBaseUser, PermissionsMixinFacade):
     def has_verified_email(self):
         return self.is_verified == True
 
-    def delete(self, force_drop=False):
+    def delete(self, force_drop=False, **kwargs):
         if force_drop:
-            super(UserProfile, self).delete(force_drop=True)
+            super(UserProfile, self).delete(**kwargs)
         else:
             raise DeleteError("UserProfile.objects.delete_user() should be used.")
 
