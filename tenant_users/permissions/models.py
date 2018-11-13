@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.functional import cached_property
 
 
 class PermissionsMixinFacade(object):
@@ -18,59 +19,60 @@ class PermissionsMixinFacade(object):
     # permissions matching the current schema, which means that this
     # user has no authorization, so we catch this exception and return
     # the appropriate False or empty set
+    @cached_property
     def _get_tenant_perms(self):
         user_tenant_permissions = UserTenantPermissions.objects.get(profile_id=self.id)
         return user_tenant_permissions
 
     def has_tenant_permissions(self):
         try:
-            self._get_tenant_perms()
+            self._get_tenant_perms
             return True
         except UserTenantPermissions.DoesNotExist:
             return False
 
-    @property
+    @cached_property
     def is_staff(self):
         try:
-            _is_staff = self._get_tenant_perms().is_staff
+            _is_staff = self._get_tenant_perms.is_staff
             return _is_staff
         except UserTenantPermissions.DoesNotExist:
             return False
 
-    @property
+    @cached_property
     def is_superuser(self):
         try:
-            return self._get_tenant_perms().is_superuser
+            return self._get_tenant_perms.is_superuser
         except UserTenantPermissions.DoesNotExist:
             return False
 
     def get_group_permissions(self, obj=None):
         try:
-            return self._get_tenant_perms().get_group_permissions(obj) 
+            return self._get_tenant_perms.get_group_permissions(obj) 
         except UserTenantPermissions.DoesNotExist:
             return set()
 
     def get_all_permissions(self, obj=None):
         try:
-            return self._get_tenant_perms().get_all_permissions(obj)        
+            return self._get_tenant_perms.get_all_permissions(obj)        
         except UserTenantPermissions.DoesNotExist:
             return set()
 
     def has_perm(self, perm, obj=None):
         try:
-            return self._get_tenant_perms().has_perm(perm, obj)
+            return self._get_tenant_perms.has_perm(perm, obj)
         except UserTenantPermissions.DoesNotExist:
             return False
 
     def has_perms(self, perm_list, obj=None):
         try:
-            return self._get_tenant_perms().has_perms(perm_list, obj)  
+            return self._get_tenant_perms.has_perms(perm_list, obj)  
         except UserTenantPermissions.DoesNotExist:
             return False
 
     def has_module_perms(self, app_label):
         try:
-            return self._get_tenant_perms().has_module_perms(app_label)
+            return self._get_tenant_perms.has_module_perms(app_label)
         except UserTenantPermissions.DoesNotExist:
             return False
 
