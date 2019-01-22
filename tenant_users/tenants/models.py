@@ -79,10 +79,9 @@ class TenantBase(TenantMixin):
 
         super(TenantBase, self).save(*args, **kwargs)
 
-    def delete(self, using=None, keep_parents=False, force_drop=False):
+    def delete(self, force_drop=False, *args, **kwargs):
         if force_drop:
-            super(TenantBase, self).delete(
-                using=using, keep_parents=keep_parents, force_drop=True)
+            super().delete(force_drop, *args, **kwargs)
         else:
             raise DeleteError("Not supported -- delete_tenant() should be used.")
 
@@ -334,9 +333,9 @@ class UserProfile(AbstractBaseUser, PermissionsMixinFacade):
     def has_verified_email(self):
         return self.is_verified == True
 
-    def delete(self, using=None, keep_parents=False, force_drop=False):
+    def delete(self, force_drop=False, *args, **kwargs):
         if force_drop:
-            super(UserProfile, self).delete(using=using, keep_parents=keep_parents)
+            super().delete(*args, **kwargs)
         else:
             raise DeleteError("UserProfile.objects.delete_user() should be used.")
 
