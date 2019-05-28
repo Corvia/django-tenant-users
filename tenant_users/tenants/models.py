@@ -115,14 +115,17 @@ class TenantBase(TenantMixin):
         if user_obj.id == self.owner.id:
             raise DeleteError("Cannot remove owner from tenant: %s" % self.owner)
 
-        user_tenant_perms = user_obj.usertenantpermissions
+        if user_obj.has_tenant_permissions():
+            user_tenant_perms = user_obj.usertenantpermissions
 
-        # Remove all current groups from user..
-        groups = user_tenant_perms.groups
-        groups.clear()
+            # Remove all current groups from user..
+            groups = user_tenant_perms.groups
+            groups.clear()
+
+            # Remove all tenant permissions from user
+            UserTenantPermissions.objects.filter(id=user_tenant_perms.id).delete()
 
         # Unlink from tenant
-        UserTenantPermissions.objects.filter(id=user_tenant_perms.id).delete()
         user_obj.tenants.remove(self)
 
         tenant_user_removed.send(sender=self.__class__, user=user_obj, tenant=self)
