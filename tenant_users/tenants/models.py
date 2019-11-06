@@ -107,9 +107,6 @@ class TenantBase(TenantMixin):
         # Test that user is already in the tenant
         self.user_set.get(id=user_obj.id)
 
-        if not user_obj.is_active:
-            raise InactiveError("User specified is not an active user: %s" % user_obj)
-
         # Dont allow removing an owner from a tenant. This must be done
         # Through delete tenant or transfer_ownership
         if user_obj.id == self.owner.id:
@@ -265,9 +262,6 @@ class UserProfileManager(BaseUserManager):
         return self._create_user(email, password, True, True, True, **extra_fields)
 
     def delete_user(self, user_obj):
-        if not user_obj.is_active:
-            raise InactiveError("User specified is not an active user!")
-
         # Check to make sure we don't try to delete the public tenant owner
         # that would be bad....
         public_tenant = get_tenant_model().objects.get(schema_name=get_public_schema_name())
