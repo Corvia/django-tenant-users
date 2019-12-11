@@ -1,16 +1,20 @@
 from django.conf import settings
 from django.contrib.auth.models import PermissionsMixin
-from django.db import models
+from django.db import models, connection
 from django.utils.translation import ugettext_lazy as _
 
 
 class PermissionsMixinFacade(object):
+
     """
     This class is designed to shim the PermissionMixin class functions and
     delegate them down to the correct linked (based on the current schema)
     tenant permissions since we don't handle them in the user like stock
     django does. This is designed to be inherited from by the AUTH_USER_MODEL
     """
+
+    PERMISSION_CACHE_BY_SCHEMA = {}
+
     class Meta:
         abstract = True
 
@@ -18,9 +22,20 @@ class PermissionsMixinFacade(object):
     # permissions matching the current schema, which means that this
     # user has no authorization, so we catch this exception and return
     # the appropriate False or empty set
+
+    @property
+    def schema_cache_key(self):
+        return '{}_{}'.format(connection.get_schema(), self.id)
+
     def _get_tenant_perms(self):
-        user_tenant_permissions = UserTenantPermissions.objects.get(profile_id=self.id)
-        return user_tenant_permissions
+        key = self.schema_cache_key
+
+        if key not in PermissionsMixinFacade.PERMISSION_CACHE_BY_SCHEMA:
+            permissions = UserTenantPermissions.objects.get(profile_id=self.id)
+
+            PermissionsMixinFacade.PERMISSION_CACHE_BY_SCHEMA[key] = permissions
+
+        return PermissionsMixinFacade.PERMISSION_CACHE_BY_SCHEMA[key]
 
     def has_tenant_permissions(self):
         try:
