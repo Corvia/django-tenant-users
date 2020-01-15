@@ -118,7 +118,7 @@ Next we need to modify the TenantModel, which you should already have configured
 
 .. code-block:: python
 
-    customers/model.py
+    # customers/model.py
 
     from tenant_users.tenants.models import TenantBase
 
@@ -143,7 +143,7 @@ Now we need to do the same thing to the User model. If you are not using a custo
 
 .. code-block:: python
 
-    users/models.py
+    # users/models.py
 
     from tenant_users.tenants.models import UserProfile
     
