@@ -37,7 +37,7 @@ class tenant_cached_property:
         if instance is None:
             return self
 
-        current_schema = connection.get_schema()
+        current_schema = connection.schema_name
 
         if current_schema not in instance.__dict__.keys():
             instance.__dict__[current_schema] = {}
