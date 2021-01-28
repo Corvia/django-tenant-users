@@ -6,7 +6,7 @@ from ..compat import get_public_schema_name, get_tenant_model, TENANT_SCHEMAS, g
 
 
 def get_current_tenant():
-    current_schema = connection.get_schema()
+    current_schema = connection.schema_name
     TenantModel = get_tenant_model()
     tenant = TenantModel.objects.get(schema_name=current_schema)
     return tenant
