@@ -26,7 +26,7 @@ class PermissionsMixinFacade(object):
 
     def has_tenant_permissions(self):
         try:
-            self._get_tenant_perms()
+            self._get_tenant_perms
             return True
         except UserTenantPermissions.DoesNotExist:
             return False
@@ -34,7 +34,7 @@ class PermissionsMixinFacade(object):
     @tenant_cached_property
     def is_staff(self):
         try:
-            _is_staff = self._get_tenant_perms().is_staff
+            _is_staff = self._get_tenant_perms.is_staff
             return _is_staff
         except UserTenantPermissions.DoesNotExist:
             return False
@@ -42,37 +42,37 @@ class PermissionsMixinFacade(object):
     @tenant_cached_property
     def is_superuser(self):
         try:
-            return self._get_tenant_perms().is_superuser
+            return self._get_tenant_perms.is_superuser
         except UserTenantPermissions.DoesNotExist:
             return False
 
     def get_group_permissions(self, obj=None):
         try:
-            return self._get_tenant_perms().get_group_permissions(obj)
+            return self._get_tenant_perms.get_group_permissions(obj)
         except UserTenantPermissions.DoesNotExist:
             return set()
 
     def get_all_permissions(self, obj=None):
         try:
-            return self._get_tenant_perms().get_all_permissions(obj)
+            return self._get_tenant_perms.get_all_permissions(obj)
         except UserTenantPermissions.DoesNotExist:
             return set()
 
     def has_perm(self, perm, obj=None):
         try:
-            return self._get_tenant_perms().has_perm(perm, obj)
+            return self._get_tenant_perms.has_perm(perm, obj)
         except UserTenantPermissions.DoesNotExist:
             return False
 
     def has_perms(self, perm_list, obj=None):
         try:
-            return self._get_tenant_perms().has_perms(perm_list, obj)
+            return self._get_tenant_perms.has_perms(perm_list, obj)
         except UserTenantPermissions.DoesNotExist:
             return False
 
     def has_module_perms(self, app_label):
         try:
-            return self._get_tenant_perms().has_module_perms(app_label)
+            return self._get_tenant_perms.has_module_perms(app_label)
         except UserTenantPermissions.DoesNotExist:
             return False
 
@@ -95,7 +95,7 @@ class AbstractBaseUserFacade(object):
     @property
     def is_anonymous(self):
         return False
-    
+
 
 class UserTenantPermissions(PermissionsMixin, AbstractBaseUserFacade):
     """
