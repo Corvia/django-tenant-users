@@ -34,8 +34,7 @@ class PermissionsMixinFacade(object):
     @tenant_cached_property
     def is_staff(self):
         try:
-            _is_staff = self.tenant_perms.is_staff
-            return _is_staff
+            return self.tenant_perms.is_staff
         except UserTenantPermissions.DoesNotExist:
             return False
 
