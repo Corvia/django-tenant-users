@@ -43,7 +43,7 @@ def schema_required(func):
     def inner(self, *args, **options):
         tenant_schema = self.schema_name
         # Save current schema and restore it when we're done
-        saved_schema = connection.get_schema()
+        saved_schema = connection.schema_name
         # Set schema to this tenants schema to start building permissions in that tenant
         connection.set_schema(tenant_schema)
         try:
@@ -204,7 +204,7 @@ class UserProfileManager(BaseUserManager):
         # schema already exists
         UserModel = get_user_model()
 
-        if connection.get_schema() != get_public_schema_name():
+        if connection.schema_name != get_public_schema_name():
             raise SchemaError("Schema must be public for UserProfileManager user creation")
 
         if not email:
