@@ -1,0 +1,44 @@
+---
+# Default compose file for development and production.
+# Should be used directly in development.
+# Automatically loads `docker-compose.override.yml` if it exists.
+# No extra steps required.
+# Should be used together with `docker/docker-compose.prod.yml`
+# in production.
+
+version: '3.6'
+services:
+  db:
+    image: 'postgres:13-alpine'
+    restart: unless-stopped
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - webnet
+    env_file: ./config/.env
+
+  web:
+    build:
+      target: development_build
+      context: .
+      dockerfile: ./docker/Dockerfile
+      args:
+        DJANGO_ENV: development
+
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+    networks:
+      - webnet
+    env_file: ./config/.env
+    environment:
+      DJANGO_DATABASE_HOST: db
+
+networks:
+  # Network for your internals, use it by default:
+  webnet:
+
+volumes:
+  pgdata:
+  django-static:
