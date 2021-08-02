@@ -58,8 +58,8 @@ jobs:
             -wait-retry-interval "1s" \
             -timeout "30s"
 
+      - uses: excitedleigh/setup-nox@v2.0.0
       - name: "Run nox sessions"
-        uses: excitedleigh/setup-nox@v2.0.0
         run: nox
 
       - name: Stop docker-compose services
