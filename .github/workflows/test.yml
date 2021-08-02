@@ -67,7 +67,7 @@ jobs:
 
       - uses: excitedleigh/setup-nox@v2.0.0
       - name: "Run nox sessions"
-        run: nox
+        run: poetry run nox
 
       - name: Stop docker-compose services
         if: always()
