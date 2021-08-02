@@ -13,7 +13,10 @@ def main() -> None:
     2. Warns if Django is not installed
     3. Executes any given command
     """
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'test_project.settings')
+    os.environ.setdefault(
+        'DJANGO_SETTINGS_MODULE',
+        'test_django_tenants.test_django_tenants.settings',
+    )
 
     try:
         from django.core import management  # noqa: WPS433

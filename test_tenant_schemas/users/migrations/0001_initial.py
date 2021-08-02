@@ -1,10 +1,10 @@
 from django.db import migrations, models
 
-from tenant_users import permissions
+from tenant_users.permissions.models import PermissionsMixinFacade
 
 
 class Migration(migrations.Migration):
-    """Initial migration for test_project.users app."""
+    """Initial migration for test_tenant_schemas.users app."""
 
     initial = True
 
@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     'id',
-                    models.AutoField(
+                    models.BigAutoField(
                         auto_created=True,
                         primary_key=True,
                         serialize=False,
@@ -35,9 +35,7 @@ class Migration(migrations.Migration):
                 (
                     'last_login',
                     models.DateTimeField(
-                        blank=True,
-                        null=True,
-                        verbose_name='last login',
+                        blank=True, null=True, verbose_name='last login'
                     ),
                 ),
                 (
@@ -60,7 +58,7 @@ class Migration(migrations.Migration):
                     'is_verified',
                     models.BooleanField(default=False, verbose_name='verified'),
                 ),
-                ('name', models.CharField(blank=True, max_length=80)),
+                ('name', models.CharField(blank=True, max_length=64)),
                 (
                     'tenants',
                     models.ManyToManyField(
@@ -77,7 +75,7 @@ class Migration(migrations.Migration):
             },
             bases=(
                 models.Model,
-                permissions.models.PermissionsMixinFacade,
+                PermissionsMixinFacade,
             ),
         ),
     ]

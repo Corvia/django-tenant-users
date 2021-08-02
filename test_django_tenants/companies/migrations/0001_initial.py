@@ -1,11 +1,11 @@
 from django.db import migrations, models
-from django_tenants.postgresql_backend.base import (  # noqa: WPS450
+from django_tenants.postgresql_backend.base import (  # noqa: WPS433, WPS450
     _check_schema_name as check_schema_name,
 )
 
 
 class Migration(migrations.Migration):
-    """Initial migration for test_project.companies app."""
+    """Initial migration for test_django_tenants.companies app."""
 
     initial = True
 
@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     'id',
-                    models.AutoField(
+                    models.BigAutoField(
                         auto_created=True,
                         primary_key=True,
                         serialize=False,
@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
                 ),
                 ('created', models.DateTimeField()),
                 ('modified', models.DateTimeField(blank=True)),
-                ('name', models.CharField(blank=True, max_length=80)),
+                ('name', models.CharField(max_length=64)),
                 ('description', models.TextField()),
             ],
             options={
@@ -54,7 +54,7 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     'id',
-                    models.AutoField(
+                    models.BigAutoField(
                         auto_created=True,
                         primary_key=True,
                         serialize=False,
