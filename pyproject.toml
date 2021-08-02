@@ -1,0 +1,89 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.nitpick]
+style = "https://raw.githubusercontent.com/wemake-services/wemake-python-styleguide/master/styles/nitpick-style-wemake.toml"
+
+
+[tool.black]
+target-version = ['py36', 'py37', 'py38']
+skip-string-normalization = true
+include = '\.pyi?$'
+
+
+[tool.poetry]
+name = "django-tenant-users"
+description = "A Django app to extend django-tenants to incorporate global multi-tenant users"
+version = "0.3.12"
+license = "MIT License"
+
+packages = [
+  { include = 'tenant_users' },
+]
+
+authors = [
+  "Corvia Technologies, LLC <support@corvia.tech>",
+]
+
+readme = "README.rst"
+
+repository = "https://www.github.com/Corvia/django-tenant-users"
+
+keywords = [
+  "django",
+  "django-tenant-users",
+]
+
+classifiers = [
+  "Environment :: Web Environment",
+  "Framework :: Django",
+  "Framework :: Django :: 1.11",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.5",
+  "Programming Language :: Python :: 3.6",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+]
+
+[tool.poetry.dependencies]
+python = "^3.6.2"
+
+
+[tool.poetry.dev-dependencies]
+django = "^3.2"
+
+mypy = "^0.902"
+django-stubs = "^1.8"
+
+wemake-python-styleguide = "^0.15"
+flake8-pytest-style = "^1.4"
+nitpick = "^0.26"
+
+safety = "^1.10"
+
+pytest = "^6.2"
+pytest-cov = "^2.12"
+pytest-randomly = "^3.0"
+
+sphinx = "^4.0"
+sphinx-autodoc-typehints = "^1.12"
+doc8 = "^0.8"
+m2r2 = "^0.2"
+tomlkit = "^0.7"
+pytest-pythonpath = "^0.7.3"
+pytest-django = "^4.4.0"
+black = "^21.6b0"
+python-decouple = "^3.4"
+psycopg2-binary = "~2.8.0"
+pytest-deadfixtures = "^2.2.1"
+pytest-testmon = "^1.1.1"
+pytest-timeout = "^1.4.2"
+hypothesis = "^6.14.3"
+nox = "^2021.6.12"
+nox-poetry = "^0.8.6"
