@@ -41,6 +41,13 @@ jobs:
           path: .venv
           key: venv-${{ hashFiles('poetry.lock') }}
 
+      - name: Install dependencies
+        run: |
+          source "$HOME/.poetry/env"
+          poetry config virtualenvs.in-project true
+          poetry install
+          poetry run pip install -U pip
+
       - name: Pull and run postgresql-db
         run: |
           docker-compose pull postgresql-db
