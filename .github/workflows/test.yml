@@ -1,0 +1,67 @@
+---
+name: test
+'on':
+  push:
+  pull_request:
+    branches:
+      # Branches from forks have the form 'user:branch-name'. Reference:
+      # https://github.community/t/how-to-trigger-an-action-on-push-or-pull-request-but-not-both/16662/9
+      - '**:**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    env:
+      DJANGO_DATABASE_USER: django
+      DJANGO_DATABASE_PASSWORD: passwd123
+      DJANGO_DATABASE_NAME: db
+      DJANGO_DATABASE_HOST: 127.0.0.1
+      DJANGO_DATABASE_PORT: 5432
+      DOCKERIZE_VERSION: v0.6.1
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install poetry
+        run: |
+          curl -sSL \
+            "https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py" | python
+          # add `poetry` to `${PATH}`
+          echo "${HOME}/.poetry/bin" >> ${GITHUB_PATH}
+
+      - name: Set up cache
+        uses: actions/cache@v1
+        with:
+          path: .venv
+          key: venv-${{ hashFiles('poetry.lock') }}
+
+      - name: Pull and run postgresql-db
+        run: |
+          docker-compose pull postgresql-db
+          docker-compose up --detach postgresql-db
+
+      - name: Wait for postgresql-db
+        run: |
+          wget \
+            https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \
+          && tar -C . -xzvf dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \
+          && rm dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \
+          && chmod +x dockerize
+          ./dockerize \
+            -wait "tcp://localhost:5432" \
+            -wait-retry-interval "1s" \
+            -timeout "30s"
+
+      - name: "Run nox sessions"
+        uses: excitedleigh/setup-nox@v2.0.0
+        run: nox
+
+      - name: Stop docker-compose services
+        if: always()
+        run: docker-compose down || true
