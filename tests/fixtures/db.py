@@ -6,108 +6,78 @@ https://pytest-django.readthedocs.io/en/latest/database.html
 
 import pytest
 from django.contrib.auth import get_user_model
+from django.core.management import call_command
 from django.db import connection
-from django.test import TestCase, TransactionTestCase
-from django_tenants.utils import (
-    get_public_schema_name,
-    get_tenant_domain_model,
-    get_tenant_model,
-    schema_context,
-)
 
+from tenant_users import compat
+from tenant_users.tenants.tasks import provision_tenant
 from tenant_users.tenants.utils import create_public_tenant
-from test_project.companies.models import Company
 
-TEST_TENANT_NAME = 'test'
+#: Constants
+TenantModel = compat.get_tenant_model()
+TenantUser = get_user_model()
+TEST_TENANT_NAME = 'pytest'
+TEST_USER_EMAIL = 'primary-user@test.com'
+
+
+@pytest.fixture(scope='session')
+def django_db_setup(django_db_setup, django_db_blocker):  # noqa: PT004
+    """Override the database setup to ensure proper setup."""
+    with django_db_blocker.unblock():
+        _provision_public_tenant()
+
+        public_tenant = TenantModel.objects.get(
+            schema_name=compat.get_public_schema_name(),
+        )
+        connection.set_tenant(public_tenant)
+
+
+def _provision_public_tenant():
+    """Handle public tenant schema."""
+    schema_name = compat.get_public_schema_name()
+
+    try:
+        TenantModel.objects.get(schema_name=schema_name)
+    except TenantModel.DoesNotExist:
+        create_public_tenant('public.test.com', TEST_USER_EMAIL)
+        _migrate_schemas(schema_name)
 
 
 @pytest.fixture()
-def db(request, django_db_setup, django_db_blocker):  # noqa: PT004
-    """
-    Django db fixture.
+def test_tenants(db, create_tenant):  # noqa: PT004
+    """Provision a few tenants for testing."""
+    tenant_user = TenantUser.objects.get(email=TEST_USER_EMAIL)
+    for tenant_slug in ('one', 'two'):
+        create_tenant(tenant_user, tenant_slug)
 
-    Seeing as this has the same signature, it overrides the fixture in
-    pytest_django.fixtures
-
-    It doesn't support quite the same things, such as transactional tests or
-    resetting of sequences.
-
-    The way our setup works here, is that due to performance reasons we want
-    to override this, and then create our public and test tenant, before
-    entering into the `atomic` block that pytest and Django normally runs tests
-    in - this way we only have to do the heavy work of migrating our schemas
-    once every test run, rather than every test.
-    """
-    django_db_blocker.unblock()
-    request.addfinalizer(django_db_blocker.restore)  # noqa: PT021
-
-    # Create the public and the test tenant.
-    # We do this right before the pre_setup so it doesn't
-    # get axed by the atomic block()
-    with schema_context(get_public_schema_name()):
-        # Get or create the public tenant
-        _get_or_create_public_tenant()
-
-        # Get the User
-        tenant_user = get_user_model().objects.get(email='test@test.com')
-
-        # Get or create the test tenant
-        tenant = _get_or_create_test_tenant(tenant_user)
-
-    connection.set_tenant(tenant)
-
-    # Here we distinguish between a transactional test or not (corresponding to
-    # Django's TestCase or its TransactionTestCase. Some tests that create/drop
-    # tenants can't be run inside an atomic block, so must be marked as
-    # transactional.
-    if 'transactional' in request.keywords:
-        test_case = TransactionTestCase(methodName='__init__')
-    else:
-        # This performs the rest of the test in an atomic() block which will
-        # roll back the changes.
-        test_case = TestCase(methodName='__init__')
-
-    test_case._pre_setup()  # type: ignore # noqa: WPS437
-    # Post-teardown function here reverts the atomic blocks to leave the DB
-    # in a fresh state.
-    request.addfinalizer(
-        test_case._post_teardown,  # type: ignore # noqa: WPS437, PT021
-    )  # This rolls the atomic block back
+    return TenantModel.objects.exclude(schema_name='public')
 
 
-def _get_or_create_public_tenant() -> Company:
-    try:
-        public_tenant = Company.objects.get(
-            schema_name=get_public_schema_name(),
-        )
-    except Company.DoesNotExist:
-        create_public_tenant('public.test.com', 'test@test.com')
-        public_tenant = Company.objects.get(
-            schema_name=get_public_schema_name(),
-        )
-    return public_tenant
+@pytest.fixture()
+def create_tenant():
+    """Create tenant helper fixture."""
+
+    def create_tenant_function(  # noqa: WPS430
+        tenant_user,
+        tenant_slug,
+        is_staff=False,
+    ):
+        """Handle provisioning of a new tenant."""
+        provision_tenant(tenant_slug, tenant_slug, tenant_user.email, is_staff)
+        tenant = TenantModel.objects.get(slug=tenant_slug)
+        _migrate_schemas(tenant.schema_name)
+
+        return tenant
+
+    return create_tenant_function
 
 
-def _get_or_create_test_tenant(tenant_user) -> Company:
-    """Fixture that gives us a test_tenant if we need it."""
-    try:
-        tenant = Company.objects.get(schema_name=TEST_TENANT_NAME)
-    except Company.DoesNotExist:
-        tenant = get_tenant_model()(
-            name='Test',
-            slug=TEST_TENANT_NAME,
-            schema_name=TEST_TENANT_NAME,
-            owner=tenant_user,
-        )
-        tenant.save(
+def _migrate_schemas(schema_name):
+    """Call migrate_schemas if using django-tenant-schemas."""
+    if compat.TENANT_SCHEMAS:
+        call_command(
+            'migrate_schemas',
+            schema_name=schema_name,
+            interactive=False,
             verbosity=0,
-        )  # This saves the tenant and creates the tenant schema.
-
-        # Setup the domain
-        get_tenant_domain_model().objects.create(
-            domain='tenant.test.com',
-            tenant=tenant,
-            is_primary=True,
         )
-
-    return tenant

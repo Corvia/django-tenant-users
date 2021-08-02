@@ -1,18 +1,18 @@
 import pytest
-from django.db import connection
-from django_tenants.test.client import TenantClient
-from django_tenants.utils import schema_context
+from django.contrib.auth import get_user_model
 
-from test_project.companies.models import Company
-from test_project.users.models import TenantUser
+from tenant_users.compat import get_tenant_model, schema_context
 
+#: Constants
+TenantModel = get_tenant_model()
+TenantUser = get_user_model()
 _USER_PASS = 'test1234'  # noqa: S105
 
 
 @pytest.fixture()
-def public_tenant(db) -> Company:
+def public_tenant(db) -> TenantModel:
     """Returns Public Tenant instance."""
-    return Company.objects.get(schema_name='public')
+    return TenantModel.objects.get(schema_name='public')
 
 
 @pytest.fixture()
@@ -23,3 +23,10 @@ def tenant_user_admin(db) -> TenantUser:
             _USER_PASS,
             email='super@user.com',
         )
+
+
+@pytest.fixture()
+def tenant_user(db) -> TenantUser:
+    """Returns Admin User instance."""
+    with schema_context('public'):
+        return TenantUser.objects.create_user(email='tenant-user@test.com')
