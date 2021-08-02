@@ -54,8 +54,9 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.6.2"
 
+
 [tool.poetry.dev-dependencies]
-django = "^2.2"
+django = "^3.2"
 
 mypy = "^0.902"
 django-stubs = "^1.8"
@@ -77,12 +78,12 @@ m2r2 = "^0.2"
 tomlkit = "^0.7"
 pytest-pythonpath = "^0.7.3"
 pytest-django = "^4.4.0"
-tox-poetry-installer = "^0.8.1"
 black = "^21.6b0"
-django-tenants = "^3.3.2"
 python-decouple = "^3.4"
 psycopg2-binary = "~2.8.0"
-django-coverage-plugin = "^2.0.0"
 pytest-deadfixtures = "^2.2.1"
 pytest-testmon = "^1.1.1"
 pytest-timeout = "^1.4.2"
+hypothesis = "^6.14.3"
+nox = "^2021.6.12"
+nox-poetry = "^0.8.6"
