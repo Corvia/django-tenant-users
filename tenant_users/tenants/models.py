@@ -1,8 +1,12 @@
 import time
 from django.db import models
 from django.db import connection
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
-    Permission, Group
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    Permission,
+    Group,
+)
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
@@ -12,8 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 from ..compat import TenantMixin
 from ..compat import get_public_schema_name, get_tenant_model
 
-from ..permissions.models import UserTenantPermissions, \
-    PermissionsMixinFacade
+from ..permissions.models import UserTenantPermissions, PermissionsMixinFacade
 
 # An existing user removed from a tenant
 tenant_user_removed = Signal(providing_args=["user", "tenant"])
@@ -27,17 +30,22 @@ tenant_user_created = Signal(providing_args=["user"])
 # An existing user is deleted
 tenant_user_deleted = Signal(providing_args=["user"])
 
+
 class InactiveError(Exception):
     pass
+
 
 class ExistsError(Exception):
     pass
 
+
 class DeleteError(Exception):
     pass
 
+
 class SchemaError(Exception):
     pass
+
 
 def schema_required(func):
     def inner(self, *args, **options):
@@ -52,6 +60,7 @@ def schema_required(func):
             # Even if an exception is raised we need to reset our schema state
             connection.set_schema(saved_schema)
         return result
+
     return inner
 
 
@@ -59,6 +68,7 @@ class TenantBase(TenantMixin):
     """
     Contains global data and settings for the tenant model.
     """
+
     slug = models.SlugField(_('Tenant URL Name'), blank=True)
 
     # The owner of the tenant. Only they can delete it. This can be changed, but it
@@ -93,9 +103,7 @@ class TenantBase(TenantMixin):
 
         # User not linked to this tenant, so we need to create tenant permissions
         user_tenant_perms = UserTenantPermissions.objects.create(
-            profile=user_obj,
-            is_staff=is_staff,
-            is_superuser=is_superuser
+            profile=user_obj, is_staff=is_staff, is_superuser=is_superuser
         )
         # Link user to tenant
         user_obj.tenants.add(self)
@@ -144,17 +152,15 @@ class TenantBase(TenantMixin):
         # Seconds since epoch, time() returns a float, so we convert to
         # an int first to truncate the decimal portion
         time_string = str(int(time.time()))
-        new_url = "{}-{}-{}".format(
-            time_string,
-            str(self.owner.id),
-            self.domain_url
-        )
+        new_url = "{}-{}-{}".format(time_string, str(self.owner.id), self.domain_url)
         self.domain_url = new_url
         # The schema generated each time (even with same url slug) will be unique.
         # So we do not have to worry about a conflict with that
 
         # Set the owner to the system user (public schema owner)
-        public_tenant = get_tenant_model().objects.get(schema_name=get_public_schema_name())
+        public_tenant = get_tenant_model().objects.get(
+            schema_name=get_public_schema_name()
+        )
 
         old_owner = self.owner
 
@@ -197,7 +203,9 @@ class TenantBase(TenantMixin):
 
 
 class UserProfileManager(BaseUserManager):
-    def _create_user(self, email, password, is_staff, is_superuser, is_verified, **extra_fields):
+    def _create_user(
+        self, email, password, is_staff, is_superuser, is_verified, **extra_fields
+    ):
         # Do some schema validation to protect against calling create user from inside
         # a tenant. Must create public tenant permissions during user creation. This
         # happens during assign role. This function cannot be used until a public
@@ -205,7 +213,9 @@ class UserProfileManager(BaseUserManager):
         UserModel = get_user_model()
 
         if connection.schema_name != get_public_schema_name():
-            raise SchemaError("Schema must be public for UserProfileManager user creation")
+            raise SchemaError(
+                "Schema must be public for UserProfileManager user creation"
+            )
 
         if not email:
             raise ValueError("Users must have an email address.")
@@ -240,7 +250,9 @@ class UserProfileManager(BaseUserManager):
         profile.save()
 
         # Get public tenant tenant and link the user (no perms)
-        public_tenant = get_tenant_model().objects.get(schema_name=get_public_schema_name())
+        public_tenant = get_tenant_model().objects.get(
+            schema_name=get_public_schema_name()
+        )
         public_tenant.add_user(profile)
 
         # Public tenant permissions object was created when we assigned a
@@ -256,7 +268,9 @@ class UserProfileManager(BaseUserManager):
         return profile
 
     def create_user(self, email=None, password=None, is_staff=False, **extra_fields):
-        return self._create_user(email, password, is_staff, False, False, **extra_fields)
+        return self._create_user(
+            email, password, is_staff, False, False, **extra_fields
+        )
 
     def create_superuser(self, password, email=None, **extra_fields):
         return self._create_user(email, password, True, True, True, **extra_fields)
@@ -264,7 +278,9 @@ class UserProfileManager(BaseUserManager):
     def delete_user(self, user_obj):
         # Check to make sure we don't try to delete the public tenant owner
         # that would be bad....
-        public_tenant = get_tenant_model().objects.get(schema_name=get_public_schema_name())
+        public_tenant = get_tenant_model().objects.get(
+            schema_name=get_public_schema_name()
+        )
         if user_obj.id == public_tenant.owner.id:
             raise DeleteError("Cannot delete the public tenant owner!")
 
@@ -309,13 +325,13 @@ class UserProfile(AbstractBaseUser, PermissionsMixinFacade):
         verbose_name=_('tenants'),
         blank=True,
         help_text=_('The tenants this user belongs to.'),
-        related_name="user_set"
+        related_name="user_set",
     )
 
     email = models.EmailField(
         _("Email Address"),
-        unique = True,
-        db_index = True,
+        unique=True,
+        db_index=True,
     )
 
     is_active = models.BooleanField(_('active'), default=True)

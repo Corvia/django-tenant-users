@@ -12,6 +12,7 @@ class PermissionsMixinFacade(object):
     tenant permissions since we don't handle them in the user like stock
     django does. This is designed to be inherited from by the AUTH_USER_MODEL
     """
+
     class Meta:
         abstract = True
 
@@ -84,6 +85,7 @@ class AbstractBaseUserFacade(object):
     have single authentication across the system, but have per
     tenant permissions
     """
+
     class Meta:
         abstract = True
 
@@ -102,9 +104,14 @@ class UserTenantPermissions(PermissionsMixin, AbstractBaseUserFacade):
     We keep all of the global user profile information in the public tenant
     schema including authentication aspects. See UserProfile model.
     """
+
     # The profile stores all of the common information between tenants for a user
     profile = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
-    is_staff = models.BooleanField(_('staff status'), default=False,
-                                   help_text=_('Designates whether the user can log into this tenants '
-                                               'admin site.'))
+    is_staff = models.BooleanField(
+        _('staff status'),
+        default=False,
+        help_text=_(
+            'Designates whether the user can log into this tenants ' 'admin site.'
+        ),
+    )
