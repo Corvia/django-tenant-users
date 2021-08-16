@@ -2,7 +2,8 @@ from django.conf import settings
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from .functional import tenant_cached_property
+
+from tenant_users.permissions.functional import tenant_cached_property
 
 
 class PermissionsMixinFacade(object):
@@ -13,7 +14,7 @@ class PermissionsMixinFacade(object):
     django does. This is designed to be inherited from by the AUTH_USER_MODEL
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     # This will throw a DoesNotExist exception if there is no tenant
@@ -22,8 +23,9 @@ class PermissionsMixinFacade(object):
     # the appropriate False or empty set
     @tenant_cached_property
     def tenant_perms(self):
-        user_tenant_permissions = UserTenantPermissions.objects.get(profile_id=self.id)
-        return user_tenant_permissions
+        return UserTenantPermissions.objects.get(
+            profile_id=self.id,
+        )
 
     def has_tenant_permissions(self):
         try:
@@ -86,7 +88,7 @@ class AbstractBaseUserFacade(object):
     tenant permissions
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     @property
@@ -105,13 +107,21 @@ class UserTenantPermissions(PermissionsMixin, AbstractBaseUserFacade):
     schema including authentication aspects. See UserProfile model.
     """
 
-    # The profile stores all of the common information between tenants for a user
-    profile = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    # The profile stores all of the common information between
+    # tenants for a user
+    profile = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
 
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,
         help_text=_(
-            'Designates whether the user can log into this tenants ' 'admin site.'
+            'Designates whether the user can log into this tenants admin site.',
         ),
     )
+
+    def __str__(self):
+        """Return string representation."""
+        return self.profile.username
