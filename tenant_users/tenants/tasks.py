@@ -23,7 +23,6 @@ def provision_tenant(tenant_name, tenant_slug, user_email, is_staff=False):
 
     UserModel = get_user_model()
     TenantModel = get_tenant_model()
-    DomainModel = get_tenant_domain_model()
 
     user = UserModel.objects.get(email=user_email)
     if not user.is_active:
@@ -35,6 +34,7 @@ def provision_tenant(tenant_name, tenant_slug, user_email, is_staff=False):
         if TenantModel.objects.filter(domain_url=tenant_domain).exists():
             raise ExistsError('Tenant URL already exists')
     else:
+        DomainModel = get_tenant_domain_model()
         if DomainModel.objects.filter(domain=tenant_domain).exists():
             raise ExistsError('Tenant URL already exists.')
 
