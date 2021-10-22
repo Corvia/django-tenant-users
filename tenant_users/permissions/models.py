@@ -101,8 +101,8 @@ class AbstractBaseUserFacade(object):
 
 
 class UserTenantPermissions(PermissionsMixin, AbstractBaseUserFacade):
-    """
-    This class serves as the authorization model (permissions) per-tenant.
+    """This class serves as the authorization model (permissions) per-tenant.
+
     We keep all of the global user profile information in the public tenant
     schema including authentication aspects. See UserProfile model.
     """
@@ -124,4 +124,4 @@ class UserTenantPermissions(PermissionsMixin, AbstractBaseUserFacade):
 
     def __str__(self):
         """Return string representation."""
-        return self.profile.username
+        return str(self.profile)
