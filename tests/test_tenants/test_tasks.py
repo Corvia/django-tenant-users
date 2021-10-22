@@ -20,16 +20,22 @@ def test_provision_tenant(tenant_user_admin):
         slug,
         tenant_user_admin,
     )
-    
-    assert tenant_domain == _get_tenant_domain(slug)
-    
 
-def _get_tenant_domain(slug):
-    """ Accommodate for subfolders by just returning the slug."""
-    
-    if hasattr(settings, 'TENANT_SUBFOLDER_PREFIX'):
-        return slug
-    return '{0}.{1}'.format(slug, settings.TENANT_USERS_DOMAIN)
+    assert tenant_domain == '{0}.{1}'.format(slug, settings.TENANT_USERS_DOMAIN)
+
+
+@pytest.mark.django_db()
+def test_provision_tenant_with_subfolder(settings, tenant_user_admin):
+    """Tests tasks.provision_tenant() for correctness when using subfolders."""
+    settings.TENANT_SUBFOLDER_PREFIX = 'clients'
+    slug = 'sample'
+    tenant_domain = tasks.provision_tenant(
+        'Sample Tenant',
+        slug,
+        tenant_user_admin,
+    )
+
+    assert tenant_domain == slug
 
 
 @pytest.mark.django_db()
