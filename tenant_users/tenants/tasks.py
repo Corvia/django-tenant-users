@@ -27,8 +27,11 @@ def provision_tenant(tenant_name, tenant_slug, user_email, is_staff=False):
     user = UserModel.objects.get(email=user_email)
     if not user.is_active:
         raise InactiveError('Inactive user passed to provision tenant')
-
-    tenant_domain = '{0}.{1}'.format(tenant_slug, settings.TENANT_USERS_DOMAIN)
+    
+    if hasattr(settings, 'TENANT_SUBFOLDER_PREFIX'):
+        tenant_domain = tenant_slug
+    else:
+        tenant_domain = '{0}.{1}'.format(tenant_slug, settings.TENANT_USERS_DOMAIN)
 
     if TENANT_SCHEMAS:
         if TenantModel.objects.filter(domain_url=tenant_domain).exists():

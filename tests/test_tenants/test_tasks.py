@@ -25,6 +25,20 @@ def test_provision_tenant(tenant_user_admin):
 
 
 @pytest.mark.django_db()
+def test_provision_tenant_with_subfolder(settings, tenant_user_admin):
+    """Tests tasks.provision_tenant() for correctness when using subfolders."""
+    settings.TENANT_SUBFOLDER_PREFIX = 'clients'
+    slug = 'sample'
+    tenant_domain = tasks.provision_tenant(
+        'Sample Tenant',
+        slug,
+        tenant_user_admin,
+    )
+
+    assert tenant_domain == slug
+
+
+@pytest.mark.django_db()
 def test_provision_tenant_inactive_user(tenant_user):
     """Test tenant creation with inactive user."""
     tenant_user.is_active = False
