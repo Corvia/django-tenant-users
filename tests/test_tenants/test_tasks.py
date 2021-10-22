@@ -20,8 +20,16 @@ def test_provision_tenant(tenant_user_admin):
         slug,
         tenant_user_admin,
     )
+    
+    assert tenant_domain == _get_tenant_domain(slug)
+    
 
-    assert tenant_domain == '{0}.{1}'.format(slug, settings.TENANT_USERS_DOMAIN)
+def _get_tenant_domain(slug):
+    """ Accommodate for subfolders by just returning the slug."""
+    
+    if hasattr(settings, 'TENANT_SUBFOLDER_PREFIX'):
+        return slug
+    return '{0}.{1}'.format(slug, settings.TENANT_USERS_DOMAIN)
 
 
 @pytest.mark.django_db()
