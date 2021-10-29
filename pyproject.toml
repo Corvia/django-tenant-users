@@ -72,7 +72,7 @@ nitpick = "^0.28"
 safety = "^1.10"
 
 pytest = "^6.2"
-pytest-cov = "^2.12"
+pytest-cov = "^3.0"
 pytest-randomly = "^3.0"
 
 sphinx = "^4.0"
