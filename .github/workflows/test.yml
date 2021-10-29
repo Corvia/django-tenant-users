@@ -31,7 +31,7 @@ jobs:
           echo "${HOME}/.poetry/bin" >> ${GITHUB_PATH}
 
       - name: Set up cache
-        uses: actions/cache@v1
+        uses: actions/cache@v2.1.6
         with:
           path: .venv
           key: venv-${{ hashFiles('poetry.lock') }}
