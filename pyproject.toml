@@ -62,7 +62,7 @@ python = "^3.6.2"
 [tool.poetry.dev-dependencies]
 django = "^3.2"
 
-mypy = "^0.902"
+mypy = "^0.910"
 django-stubs = "^1.8"
 
 wemake-python-styleguide = "^0.15"
