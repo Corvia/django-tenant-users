@@ -312,7 +312,7 @@ bcrypt = ["bcrypt"]
 
 [[package]]
 name = "django-stubs"
-version = "1.8.0"
+version = "1.9.0"
 description = "Mypy stubs for Django"
 category = "dev"
 optional = false
@@ -320,13 +320,16 @@ python-versions = ">=3.6"
 
 [package.dependencies]
 django = "*"
-django-stubs-ext = "*"
-mypy = ">=0.790"
+django-stubs-ext = ">=0.3.0"
+mypy = ">=0.910"
+toml = "*"
+types-pytz = "*"
+types-PyYAML = "*"
 typing-extensions = "*"
 
 [[package]]
 name = "django-stubs-ext"
-version = "0.2.0"
+version = "0.3.1"
 description = "Monkey-patching and extensions for django-stubs"
 category = "dev"
 optional = false
@@ -334,6 +337,7 @@ python-versions = ">=3.6"
 
 [package.dependencies]
 django = "*"
+typing-extensions = "*"
 
 [[package]]
 name = "doc8"
@@ -1517,6 +1521,22 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "types-pytz"
+version = "2021.3.0"
+description = "Typing stubs for pytz"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "types-pyyaml"
+version = "6.0.0"
+description = "Typing stubs for PyYAML"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "typing-extensions"
 version = "3.10.0.2"
 description = "Backported and Experimental Type Hints for Python 3.5+"
@@ -1614,7 +1634,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6.2"
-content-hash = "4febda7e08dcaf7bab2bfb1f63b13157ff3fc678681230efd635e7ae98ed5939"
+content-hash = "5a48e22b414b28d0878b5a5c7c6401c951bb90f6ac1cccbc86836e51f779a892"
 
 [metadata.files]
 aiocontextvars = [
@@ -1772,12 +1792,12 @@ django = [
     {file = "Django-3.2.8.tar.gz", hash = "sha256:f6d2c4069c9b9bfac03bedff927ea1f9e0d29e34525cec8a68fd28eb2a8df7af"},
 ]
 django-stubs = [
-    {file = "django-stubs-1.8.0.tar.gz", hash = "sha256:717967d7fee0a6af0746724a0be80d72831a982a40fa8f245a6a46f4cafd157b"},
-    {file = "django_stubs-1.8.0-py3-none-any.whl", hash = "sha256:bde9e44e3c4574c2454e74a3e607cc3bc23b0441bb7d1312cd677d5e30984b74"},
+    {file = "django-stubs-1.9.0.tar.gz", hash = "sha256:664843091636a917faf5256d028476559dc360fdef9050b6df87ab61b21607bf"},
+    {file = "django_stubs-1.9.0-py3-none-any.whl", hash = "sha256:59c9f81af64d214b1954eaf90f037778c8d2b9c2de946a3cda177fefcf588fbd"},
 ]
 django-stubs-ext = [
-    {file = "django-stubs-ext-0.2.0.tar.gz", hash = "sha256:c14f297835a42c1122421ec7e2d06579996b29d33b8016002762afa5d78863af"},
-    {file = "django_stubs_ext-0.2.0-py3-none-any.whl", hash = "sha256:bd4a1e36ef2ba0ef15801933c85c68e59b383302c873795c6ecfc25950c7ecdb"},
+    {file = "django-stubs-ext-0.3.1.tar.gz", hash = "sha256:783c198d7e39a41be0b90fd843fa2770243a642922af679be4b19e03b82c8c28"},
+    {file = "django_stubs_ext-0.3.1-py3-none-any.whl", hash = "sha256:a51a3e9e844d4e1cacaaedbb33bf3def78a3956eed5d9575a640bd97ccd99cec"},
 ]
 doc8 = [
     {file = "doc8-0.9.1-py3-none-any.whl", hash = "sha256:0aa46f489dc8cdc908c0125c7b5c1c01eafe2f8c09b4bf3946cabeec90489d68"},
@@ -2451,6 +2471,14 @@ typed-ast = [
     {file = "typed_ast-1.4.3-cp39-cp39-win32.whl", hash = "sha256:209596a4ec71d990d71d5e0d312ac935d86930e6eecff6ccc7007fe54d703808"},
     {file = "typed_ast-1.4.3-cp39-cp39-win_amd64.whl", hash = "sha256:9c6d1a54552b5330bc657b7ef0eae25d00ba7ffe85d9ea8ae6540d2197a3788c"},
     {file = "typed_ast-1.4.3.tar.gz", hash = "sha256:fb1bbeac803adea29cedd70781399c99138358c26d05fcbd23c13016b7f5ec65"},
+]
+types-pytz = [
+    {file = "types-pytz-2021.3.0.tar.gz", hash = "sha256:86a61967834dceeaaf98b6902ed8357efdd262bb8afcaf4bc8ccecf748592778"},
+    {file = "types_pytz-2021.3.0-py3-none-any.whl", hash = "sha256:b5027e5de50a4c978cd60ca16849d934d44c44ebd7d29cf13ada009efaa9feef"},
+]
+types-pyyaml = [
+    {file = "types-PyYAML-6.0.0.tar.gz", hash = "sha256:3d3591ddfc488fc30be3c506a0c0fe54da968fe98d8b76ab12e59d455330ffca"},
+    {file = "types_PyYAML-6.0.0-py3-none-any.whl", hash = "sha256:746f23d351245d176d7bc89eef79e2ee94b4e7306f7d23bfefb3dc946c0fb58d"},
 ]
 typing-extensions = [
     {file = "typing_extensions-3.10.0.2-py2-none-any.whl", hash = "sha256:d8226d10bc02a29bcc81df19a26e56a9647f8b0a6d4a83924139f4a8b01f17b7"},

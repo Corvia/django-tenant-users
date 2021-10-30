@@ -63,7 +63,7 @@ python = "^3.6.2"
 django = "^3.2"
 
 mypy = "^0.910"
-django-stubs = "^1.8"
+django-stubs = "^1.9"
 
 wemake-python-styleguide = "^0.15"
 flake8-pytest-style = "^1.4"
