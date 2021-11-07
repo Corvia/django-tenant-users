@@ -1,7 +1,7 @@
 import pytest
 from django.contrib.auth import get_user_model
 
-from tenant_users.compat import get_tenant_model, schema_context
+from django_tenants.utils import get_tenant_model, schema_context
 
 #: Constants
 TenantModel = get_tenant_model()
