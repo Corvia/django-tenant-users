@@ -50,24 +50,3 @@ def create_public_tenant(domain_url, owner_email, **owner_extra):
 
     # Add system user to public tenant (no permissions)
     public_tenant.add_user(profile)
-
-
-def fix_tenant_urls(domain_url):
-    """
-    Helper function to update the domain urls on all tenants
-    Useful for domain changes in development
-    """
-    TenantModel = get_tenant_model()
-    public_schema_name = get_public_schema_name()
-
-    tenants = TenantModel.objects.all()
-    for tenant in tenants:
-        if tenant.schema_name == public_schema_name:
-            tenant.domain_url = domain_url
-        else:
-            # Assume the URL is wrong, parse out the subdomain
-            # and glue it back to the domain URL configured
-            slug = tenant.domain_url.split('.')[0]
-            new_url = '{0}.{1}'.format(slug, domain_url)
-            tenant.domain_url = new_url
-        tenant.save()
