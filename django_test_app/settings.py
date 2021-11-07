@@ -13,7 +13,7 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -44,8 +44,8 @@ SHARED_APPS = [
     'tenant_users.permissions',
     'tenant_users.tenants',
     # Test project apps
-    'test_django_tenants.companies',
-    'test_django_tenants.users',
+    'django_test_app.companies',
+    'django_test_app.users',
 ]
 
 TENANT_APPS = [
