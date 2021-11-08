@@ -1,10 +1,32 @@
-## 0.4.0 (2021-10-14)
+# Version history
 
+We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` release.
+
+## {{ Next Version }}
+
+### Breaking Changes
+
+- Support for [django-tenant-schemas](https://github.com/bernardopires/django-tenant-schemas) has been removed due to last release being in 2017
+- Removed `tenant_users.compat` module as you can now directly import from `django_tenants.utils`
+
+### Features
+
+- Adds `settings.TENANT_SUBFOLDER_PREFIX` support from `django_tenants` #85
+
+### Bug Fixes
+
+- Fixes string representation of `UserTenantPermissions` object #84
+
+### Misc
+
+- Testing has been simplified to a single test project
+- Moves to Github Actions strategy.matrix
+
+## 0.4.0 (2021-10-14)
 
 ### Bug Fixes
 
 - Replace deprecated `connection.get_schema()` with `connection.schema_name`
-
 
 ### Features
 
