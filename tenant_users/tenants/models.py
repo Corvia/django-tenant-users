@@ -7,12 +7,9 @@ from django.db import connection, models
 from django.dispatch import Signal
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+from django_tenants.models import TenantMixin
+from django_tenants.utils import get_public_schema_name, get_tenant_model
 
-from tenant_users.compat import (
-    TenantMixin,
-    get_public_schema_name,
-    get_tenant_model,
-)
 from tenant_users.permissions.models import (
     PermissionsMixinFacade,
     UserTenantPermissions,

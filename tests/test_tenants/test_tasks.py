@@ -1,13 +1,13 @@
 import pytest
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django_tenants.utils import get_tenant_model
 
-from tenant_users import compat
 from tenant_users.tenants import tasks
 from tenant_users.tenants.models import ExistsError, InactiveError
 
 #: Constants
-TenantModel = compat.get_tenant_model()
+TenantModel = get_tenant_model()
 TenantUser = get_user_model()
 
 

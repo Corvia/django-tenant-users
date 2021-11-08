@@ -1,11 +1,11 @@
 import pytest
 from django.contrib.auth import get_user_model
+from django_tenants.utils import get_tenant_model, schema_context
 
-from tenant_users import compat
 from tenant_users.tenants import models
 
 #: Constants
-TenantModel = compat.get_tenant_model()
+TenantModel = get_tenant_model()
 TenantUser = get_user_model()
 
 
@@ -13,7 +13,7 @@ TenantUser = get_user_model()
 def test_create_user_in_tenant_schema(test_tenants):
     """Ensures error is raised when user creation isn't in public schema."""
     tenant = test_tenants.first()
-    with compat.schema_context(tenant.schema_name):
+    with schema_context(tenant.schema_name):
         with pytest.raises(models.SchemaError, match='Schema must be public'):
             TenantUser.objects.create_user(email='user@schema.com')
 

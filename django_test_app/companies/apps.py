@@ -5,4 +5,4 @@ class CompaniesConfig(AppConfig):
     """Configuration for ``companies``."""
 
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'test_tenant_schemas.companies'
+    name = 'django_test_app.companies'

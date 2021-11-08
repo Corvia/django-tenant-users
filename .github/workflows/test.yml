@@ -7,63 +7,65 @@ name: test
 jobs:
   build:
     runs-on: ubuntu-latest
-    continue-on-error: true
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8, 3.9]
+        django-version:
+          - 'Django~=2.2.0'
+          - 'Django~=3.1.0'
+          - 'Django~=3.2.0'
+
     env:
       DJANGO_DATABASE_USER: django
       DJANGO_DATABASE_PASSWORD: passwd123
       DJANGO_DATABASE_NAME: db
       DJANGO_DATABASE_HOST: 127.0.0.1
-      DJANGO_DATABASE_PORT: 5432
-      DOCKERIZE_VERSION: v0.6.1
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: ${{ env.DJANGO_DATABASE_USER }}
+          POSTGRES_PASSWORD: ${{ env.DJANGO_DATABASE_PASSWORD }}
+        ports:
+        - 5432/tcp
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 3.8
+
+      - name: Set up python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
+          python-version: ${{ matrix.python-version }}
 
-      - name: Install poetry
-        run: |
-          curl -sSL \
-            "https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py" | python
-          # add `poetry` to `${PATH}`
-          echo "${HOME}/.poetry/bin" >> ${GITHUB_PATH}
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
 
       - name: Set up cache
         uses: actions/cache@v2.1.6
         with:
           path: .venv
-          key: venv-${{ hashFiles('poetry.lock') }}
+          key: venv-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
 
       - name: Install dependencies
         run: |
-          source "$HOME/.poetry/env"
-          poetry config virtualenvs.in-project true
           poetry install
           poetry run pip install -U pip
+          poetry run pip install -U "${{ matrix.django-version }}"
 
-      - name: Pull and run postgresql-db
+      - name: Run tests
         run: |
-          docker-compose pull postgresql-db
-          docker-compose up --detach postgresql-db
-
-      - name: Wait for postgresql-db
-        run: |
-          wget \
-            https://github.com/jwilder/dockerize/releases/download/${DOCKERIZE_VERSION}/dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \
-          && tar -C . -xzvf dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \
-          && rm dockerize-linux-amd64-${DOCKERIZE_VERSION}.tar.gz \
-          && chmod +x dockerize
-          ./dockerize \
-            -wait "tcp://localhost:5432" \
-            -wait-retry-interval "1s" \
-            -timeout "30s"
-
-      - uses: excitedleigh/setup-nox@v2.0.0
-      - name: "Run nox sessions"
-        run: poetry run nox
-
-      - name: Stop docker-compose services
-        if: always()
-        run: docker-compose down || true
+          poetry run pytest
+          poetry check
+          poetry run pip check
+        env:
+          DJANGO_DATABASE_PORT: ${{ job.services.postgres.ports[5432] }}
