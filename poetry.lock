@@ -352,7 +352,7 @@ Django = ">=2.1,<4.0"
 
 [[package]]
 name = "doc8"
-version = "0.9.1"
+version = "0.10.1"
 description = "Style checker for Sphinx (or other) RST documentation"
 category = "dev"
 optional = false
@@ -1645,7 +1645,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6.2"
-content-hash = "565a6a6bac388389a456e59ebf5d145594d692d73a6f6aaf1a7d70978ad8642f"
+content-hash = "e1d6c05ff5fd3ad8fbef6c7210e9387bbaf1db426ddf7ec2a8c71bca69787d85"
 
 [metadata.files]
 aiocontextvars = [
@@ -1814,8 +1814,8 @@ django-tenants = [
     {file = "django-tenants-3.3.4.tar.gz", hash = "sha256:6544833a5c3d995f8376e8259a23daa007f2900eeadd59ade985204d7e620a08"},
 ]
 doc8 = [
-    {file = "doc8-0.9.1-py3-none-any.whl", hash = "sha256:0aa46f489dc8cdc908c0125c7b5c1c01eafe2f8c09b4bf3946cabeec90489d68"},
-    {file = "doc8-0.9.1.tar.gz", hash = "sha256:0e967db31ea10699667dd07790f98cf9d612ee6864df162c64e4954a8e30f90d"},
+    {file = "doc8-0.10.1-py3-none-any.whl", hash = "sha256:551a61df5915f0107e518d582fead47a0a56df7d4a9374feab955ea14dedea84"},
+    {file = "doc8-0.10.1.tar.gz", hash = "sha256:376e50f4e70a1ae935416ddfcf93db35dd5d4cc0e557f2ec72f0667d0ace4548"},
 ]
 docutils = [
     {file = "docutils-0.17.1-py2.py3-none-any.whl", hash = "sha256:cf316c8370a737a022b72b56874f6602acf974a37a9fba42ec2876387549fc61"},
