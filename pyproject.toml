@@ -63,7 +63,7 @@ python = "^3.6.2"
 django = "^3.2"
 django-tenants = "^3.4.0"
 
-mypy = "^0.921"
+mypy = "^0.930"
 django-stubs = "^1.9"
 
 wemake-python-styleguide = "^0.16"
