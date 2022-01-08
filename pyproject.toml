@@ -61,7 +61,7 @@ python = "^3.6.2"
 
 [tool.poetry.dev-dependencies]
 django = "^3.2"
-django-tenants = "^3.4.0"
+django-tenants = "^3.4.1"
 
 mypy = "^0.930"
 django-stubs = "^1.9"
