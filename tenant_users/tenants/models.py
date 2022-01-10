@@ -6,7 +6,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import connection, models
 from django.dispatch import Signal
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django_tenants.models import TenantMixin
 from django_tenants.utils import get_public_schema_name, get_tenant_model
 
@@ -16,16 +16,16 @@ from tenant_users.permissions.models import (
 )
 
 # An existing user removed from a tenant
-tenant_user_removed = Signal(providing_args=['user', 'tenant'])
+tenant_user_removed = Signal()
 
 # An existing user added to a tenant
-tenant_user_added = Signal(providing_args=['user', 'tenant'])
+tenant_user_added = Signal()
 
 # A new user is created
-tenant_user_created = Signal(providing_args=['user'])
+tenant_user_created = Signal()
 
 # An existing user is deleted
-tenant_user_deleted = Signal(providing_args=['user'])
+tenant_user_deleted = Signal()
 
 
 class InactiveError(Exception):
