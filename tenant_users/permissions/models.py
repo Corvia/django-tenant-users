@@ -107,6 +107,13 @@ class UserTenantPermissions(PermissionsMixin, AbstractBaseUserFacade):
     schema including authentication aspects. See UserProfile model.
     """
 
+    id = models.AutoField(
+        auto_created=True,
+        primary_key=True,
+        serialize=False,
+        verbose_name='ID',
+    )
+
     # The profile stores all of the common information between
     # tenants for a user
     profile = models.OneToOneField(
