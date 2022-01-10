@@ -62,7 +62,7 @@ jobs:
         run: |
           poetry install
           poetry run pip install -U pip
-          poetry run pip install -U "${{ matrix.django-version }}.*"
+          poetry run pip install -U "django==${{ matrix.django-version }}.*"
 
       - name: Run tests
         run: |
