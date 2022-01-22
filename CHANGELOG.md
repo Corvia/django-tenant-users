@@ -11,11 +11,14 @@ We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` relea
 
 ### Features
 
-- Adds `settings.TENANT_SUBFOLDER_PREFIX` support from `django_tenants` #85
+- Adds `settings.TENANT_SUBFOLDER_PREFIX` support from `django_tenants` [#85](https://github.com/Corvia/django-tenant-users/issues/85)
+- Adds support for Django 4.0 [#158](https://github.com/Corvia/django-tenant-users/issues/158)
+- Drops `django 3.1` support
+- Drops `python 3.6` support
 
 ### Bug Fixes
 
-- Fixes string representation of `UserTenantPermissions` object #84
+- Fixes string representation of `UserTenantPermissions` object [#84](https://github.com/Corvia/django-tenant-users/issues/84)
 
 ### Misc
 

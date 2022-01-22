@@ -8,7 +8,7 @@ style = "https://raw.githubusercontent.com/wemake-services/wemake-python-stylegu
 
 
 [tool.black]
-target-version = ['py36', 'py37', 'py38']
+target-version = ['py37', 'py38', 'py39', 'py310']
 skip-string-normalization = true
 include = '\.pyi?$'
 
@@ -40,23 +40,23 @@ classifiers = [
   "Environment :: Web Environment",
   "Framework :: Django",
   "Framework :: Django :: 2.2",
-  "Framework :: Django :: 3.1",
   "Framework :: Django :: 3.2",
+  "Framework :: Django :: 4.0",
   "Intended Audience :: Developers",
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.6",
   "Programming Language :: Python :: 3.7",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
   "Topic :: Internet :: WWW/HTTP",
   "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6.2"
+python = "^3.7"
 
 
 [tool.poetry.dev-dependencies]
@@ -90,5 +90,3 @@ pytest-deadfixtures = "^2.2.1"
 pytest-testmon = "^1.2.2"
 pytest-timeout = "^2.1.0"
 hypothesis = "^6.31.6"
-nox = "^2022.1.7"
-nox-poetry = "^0.8.6"

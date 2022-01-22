@@ -15,7 +15,7 @@ def main() -> None:
     """
     os.environ.setdefault(
         'DJANGO_SETTINGS_MODULE',
-        'test_django_tenants.test_django_tenants.settings',
+        'django_test_app.settings',
     )
 
     try:

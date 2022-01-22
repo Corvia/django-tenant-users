@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from tenant_users.permissions.functional import tenant_cached_property
 
@@ -106,6 +106,13 @@ class UserTenantPermissions(PermissionsMixin, AbstractBaseUserFacade):
     We keep all of the global user profile information in the public tenant
     schema including authentication aspects. See UserProfile model.
     """
+
+    id = models.AutoField(
+        auto_created=True,
+        primary_key=True,
+        serialize=False,
+        verbose_name='ID',
+    )
 
     # The profile stores all of the common information between
     # tenants for a user
