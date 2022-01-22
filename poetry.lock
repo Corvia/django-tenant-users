@@ -340,14 +340,14 @@ typing-extensions = "*"
 
 [[package]]
 name = "django-tenants"
-version = "3.4.1"
+version = "3.4.2"
 description = "Tenant support for Django using PostgreSQL schemas."
 category = "dev"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-Django = ">=2.1,<=4.0"
+Django = ">=2.1,<=4.1"
 
 [[package]]
 name = "doc8"
@@ -1637,7 +1637,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6.2"
-content-hash = "421aca5bf09feb95710ad057b022c548cc84baa1c29f37e72dae097e12ee88a1"
+content-hash = "91548b4b7d801383a3800d72a2dd60e5cb8599cd000ca80d4ddac30de9f2da61"
 
 [metadata.files]
 aiocontextvars = [
@@ -1803,7 +1803,7 @@ django-stubs-ext = [
     {file = "django_stubs_ext-0.3.1-py3-none-any.whl", hash = "sha256:a51a3e9e844d4e1cacaaedbb33bf3def78a3956eed5d9575a640bd97ccd99cec"},
 ]
 django-tenants = [
-    {file = "django-tenants-3.4.1.tar.gz", hash = "sha256:e029d93da0d166fe80df7684e2f1acff330a94f8c7cf461c1d4a92e68f39dc1a"},
+    {file = "django-tenants-3.4.2.tar.gz", hash = "sha256:b83bcbd2ef3dbbf4a732784c417fad823834e6658070f631ecf1f1509cabcf35"},
 ]
 doc8 = [
     {file = "doc8-0.10.1-py3-none-any.whl", hash = "sha256:551a61df5915f0107e518d582fead47a0a56df7d4a9374feab955ea14dedea84"},
