@@ -1,24 +1,45 @@
 ===================
 django-tenant-users
 ===================
+.. image:: https://github.com/Corvia/django-tenant-users/actions/workflows/test.yml/badge.svg
+    :alt: Build Status
+    :target: https://github.com/Corvia/django-tenant-users/actions/workflows/test.yml
+
+.. image:: https://codecov.io/gh/Corvia/django-tenant-users/branch/master/graph/badge.svg?token=PRS5HhOYPl
+    :alt: codecov
+    :target: https://codecov.io/gh/Corvia/django-tenant-users
+
 .. image:: https://img.shields.io/pypi/v/django-tenant-users.svg?maxAge=180
+    :alt: PyPI Package
+    :target: https://pypi.org/project/django-tenant-users/
+
+.. image:: https://img.shields.io/pypi/pyversions/django-tenant-users.svg?maxAge=180
+    :alt: Python Versions
+    :target: https://pypi.org/project/django-tenant-users/
+
+.. image:: https://img.shields.io/pypi/djversions/django-tenant-users.svg?maxAge=180
+    :alt: Django Versions
+    :target: https://pypi.org/project/django-tenant-users/
+
 .. image:: https://img.shields.io/pypi/dm/django-tenant-users.svg?maxAge=180
+    :alt: PyPI Monthly Downloads
+    :target: https://pypi.org/project/django-tenant-users/
 
 Table of Contents
 =================
 
-- `Overview <overview_>`_  
-- `Installation <installation_>`_ 
-- `Test Project <testproject_>`_ 
-- `Basic Settings <basicsettings_>`_ 
-- `Modifying the Tenant Model <tenantmodel_>`_ 
-- `Creating the User Model <usermodel_>`_ 
-- `Configuring the Authentication Backend <authbackend_>`_ 
-- `Configuring Cross Domain Cookies <cookies_>`_ 
-- `Creating a User <createuser_>`_ 
-- `Provisioning a Tenant <provisioning_>`_ 
-- `Migrating and Creating the Public Tenant <migrating_>`_ 
-- `Creating a User <createuser_>`_ 
+- `Overview <overview_>`_
+- `Installation <installation_>`_
+- `Test Project <testproject_>`_
+- `Basic Settings <basicsettings_>`_
+- `Modifying the Tenant Model <tenantmodel_>`_
+- `Creating the User Model <usermodel_>`_
+- `Configuring the Authentication Backend <authbackend_>`_
+- `Configuring Cross Domain Cookies <cookies_>`_
+- `Creating a User <createuser_>`_
+- `Provisioning a Tenant <provisioning_>`_
+- `Migrating and Creating the Public Tenant <migrating_>`_
+- `Creating a User <createuser_>`_
 
 This application expands the django users and permissions frameworks to work alongside
 django-tenant-schemas or django-tenants to allow global users with permissions on a per-tenant basis.
@@ -43,7 +64,7 @@ Global Authentication Solution
 
 With this in mind, it's easy to see that we can create a users table at the global level in the public schema but NOT in the tenants schemas and the users table will still be searched and found, regardless of which tenant is selected. However, the problem is that we need to create our permissions on a per tenant basis, not at a global level. In fact, since the public schema also represents the website, the permissions for a user at the global level should only reflect the permissions for the website (i.e. can I post on the blog?). It's really an entirely different permission set at the public schema level that we need to support.
 
-The difficulty comes in at the Django level. Luckily Django supports using a custom user model. However, internally, the way Django uses the model tightly couples aspects of the authentication (user/pass and profile) and authorization (permissions) together, despite each one of those aspects inheriting from a separate mixin (parent tree: see PermissionsMixin and AbstractUserBase classes). As an artifact of the coupling, the authentication/permissions backend, as well as other components, make the assumption that it is one one model in the database. The built in function get_user_model() returns the model that is configured as the user model (whether its the stock django user model or a custom user model). We handle this in a relatively simplistic way. First, we decouple the two components (user profile and user permissions) into UserProfile and UserTenantPermissions. We install the UserProfile only at the SHARED_APPs (public schema) level. We install the Permissions model at ALL levels -- SHARED_APPs and TENANT_APPs (both public schema, and per tenant schema). Then we 'facade' the two together (see AbstractBaseUserFacade and TenantPermissionsMixinFacade classes) to make each model look and behave like it encapsulates all of the functionality of a single unified user model. The part that makes it a little more tricky (and perhaps more clever) is that the two models that are linked at any point in time for a query is defined by the currently set schema. 
+The difficulty comes in at the Django level. Luckily Django supports using a custom user model. However, internally, the way Django uses the model tightly couples aspects of the authentication (user/pass and profile) and authorization (permissions) together, despite each one of those aspects inheriting from a separate mixin (parent tree: see PermissionsMixin and AbstractUserBase classes). As an artifact of the coupling, the authentication/permissions backend, as well as other components, make the assumption that it is one one model in the database. The built in function get_user_model() returns the model that is configured as the user model (whether its the stock django user model or a custom user model). We handle this in a relatively simplistic way. First, we decouple the two components (user profile and user permissions) into UserProfile and UserTenantPermissions. We install the UserProfile only at the SHARED_APPs (public schema) level. We install the Permissions model at ALL levels -- SHARED_APPs and TENANT_APPs (both public schema, and per tenant schema). Then we 'facade' the two together (see AbstractBaseUserFacade and TenantPermissionsMixinFacade classes) to make each model look and behave like it encapsulates all of the functionality of a single unified user model. The part that makes it a little more tricky (and perhaps more clever) is that the two models that are linked at any point in time for a query is defined by the currently set schema.
 
 Let's look at an example. When accessing the website (via a request), the public schema is set (because its the public tenant), then the public Permissions model located in the public schema is what gets looked up by permissions queries, as well as the public user model (which is also located in the public schema). When a request comes in for a tenant, "EvilCorp" the EvilCorp schema is selected automatically via the middleware. However, remember that the schema set is really a search path that also contains the public schema appended to the end (see above). Thus, when a query comes in looking up permissions, it finds a permissions model INSIDE the EvilCorp tenant, and uses those permissions (rather than the model in the public schema), but when it looks up the UserProfile, nothing exists in the EvilCorp tenant schema so it falls back and searches the public schema and finds the UserProfile there. So essentially we end up 'glueing' these components together at run time for any given query using the schema search path.
 
@@ -56,18 +77,18 @@ User and Tenant 'Deletion'
 
 With this solution, we also implement an alternative to avoid actually deleting users or tenants, so we need a way to make them disappear into the ether (from the users perspective) without conflict (i.e. don't allow a deleted tenant to permanently monopolize a tenant URL subdomain, and don't allow a users email to never be used again for signup). To handle the user delete, we just set the user is_active/staff/superuser to false and delete all links to any tenants it owns, as well as all instances of permissions it has in any tenant it was associated with. A user can "delete" a tenant manually, or in the case that a deleted user owns a tenant, we "delete" the tenant. When we "delete" a tenant, we disassociate any users with any permissions, and then change the owner of the tenant's schema to the public schema's owner (the same owner that was configured when create_public_tenant command was run). When we do this, we also rename the tenant's URL to be ownerid-timestamp-originalurl. Not only does this encapsulate some of the history of the tenant's ownership, but it also frees up the URL namespace. Also, we never have to worry about schemas in the database conflicting because when we generate a tenant's schema, we append the timestamp (in seconds since the epoch) to the name. Thus, every schema ends up unique when made, eliminating any schema level conflicts.
 
-To do a full delete on Users/Tenants the delete methods can be overridden, or force_drop=True can be passed in to delete. 
+To do a full delete on Users/Tenants the delete methods can be overridden, or force_drop=True can be passed in to delete.
 
 .. _installation:
 
 Installation
 ============
-Assuming you already have django-tenant-schemas or django-tenants installed and configured, the first step is to install ``django-tenant-users``. 
+Assuming you already have django-tenant-schemas or django-tenants installed and configured, the first step is to install ``django-tenant-users``.
 
 .. code-block:: bash
 
     pip install django-tenant-users
-    
+
 .. _testproject:
 
 Test Project
@@ -89,7 +110,7 @@ You'll have to make the following additions to the ``SHARED_APPS`` and ``TENANT_
         'django.contrib.auth', # Defined in both shared apps and tenant apps
         'django.contrib.contenttypes', # Defined in both shared apps and tenant apps
         'tenant_users.permissions', # Defined in both shared apps and tenant apps
-        'tenant_users.tenants', # defined only in shared apps 
+        'tenant_users.tenants', # defined only in shared apps
         'customers', # Custom defined app that contains the TenantModel. Must NOT exist in TENANT_APPS
         'users', # Custom app that contains the new User Model (see below). Must NOT exist in TENANT_APPS
         # ...
@@ -130,7 +151,7 @@ The settings.py file entry should look like:
 
 .. code-block:: python
 
-    settings.py 
+    settings.py
 
     TENANT_MODEL = 'customers.Client'
 
@@ -146,7 +167,7 @@ Now we need to do the same thing to the User model. If you are not using a custo
     # users/models.py
 
     from tenant_users.tenants.models import UserProfile
-    
+
     class TenantUser(UserProfile):
         name = models.CharField(
             _("Name"),
@@ -159,7 +180,7 @@ The settings.py file entry would look like (see Django documentation for more de
 .. code-block:: python
 
     settings.py
-    
+
     AUTH_USER_MODEL = 'users.TenantUser'
 
 .. _authbackend:
@@ -177,8 +198,8 @@ At this point we now have all of the user, permissions, and tenant models config
     )
 
 Notes:
-If you want to use django admin you will have to utilize admin multisite. Warning: if you set this up incorrectly you could expose access to models that users are not permitted to access (due to the schema search path being present, and falling through. See notes in code).  
-You must reset migrations after updating the user model.  
+If you want to use django admin you will have to utilize admin multisite. Warning: if you set this up incorrectly you could expose access to models that users are not permitted to access (due to the schema search path being present, and falling through. See notes in code).
+You must reset migrations after updating the user model.
 
 
 .. _cookies:
@@ -186,7 +207,7 @@ You must reset migrations after updating the user model.
 Setting up cross domain cookies
 ===============================
 
-Setting up cross domain cookies will allow a single sign on to access any of the tenants with the same session cookies. 
+Setting up cross domain cookies will allow a single sign on to access any of the tenants with the same session cookies.
 
 .. code-block:: python
 
@@ -202,10 +223,10 @@ Creating a User
 All users apart from the first public tenant user (see `Migrating and Creating the Public Tenant <migrating_>`_ for creating the first public tenant user) should be created through the object manager.
 
 .. code-block:: python
-    
+
     user = TenantUser.objects.create_user(email="user@evilcorp.com", password='password', is_active=True)
 
-Currently all users rely on an email for the username. 
+Currently all users rely on an email for the username.
 
 .. _provisioning:
 
