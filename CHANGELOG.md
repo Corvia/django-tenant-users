@@ -4,6 +4,8 @@ We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` relea
 
 ## {{ Next Version }}
 
+## 1.0.0 (2022-02-09)
+
 ### Breaking Changes
 
 - Support for [django-tenant-schemas](https://github.com/bernardopires/django-tenant-schemas) has been removed due to last release being in 2017
