@@ -71,3 +71,8 @@ jobs:
           poetry run pip check
         env:
           DJANGO_DATABASE_PORT: ${{ job.services.postgres.ports[5432] }}
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          file: ./coverage.xml
