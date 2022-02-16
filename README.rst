@@ -94,7 +94,7 @@ Assuming you already have django-tenant-schemas or django-tenants installed and 
 Test Project
 ============
 
-All of the following settings/configuration can be seen in the dtu_test_project located in the `GitHub repository <https://github.com/Corvia/django-tenant-users.git>`_
+All of the following settings/configuration can be seen in `django_test_app <https://github.com/Corvia/django-tenant-users/tree/master/django_test_app>`_.
 
 .. _basicsettings:
 
@@ -111,7 +111,7 @@ You'll have to make the following additions to the ``SHARED_APPS`` and ``TENANT_
         'django.contrib.contenttypes', # Defined in both shared apps and tenant apps
         'tenant_users.permissions', # Defined in both shared apps and tenant apps
         'tenant_users.tenants', # defined only in shared apps
-        'customers', # Custom defined app that contains the TenantModel. Must NOT exist in TENANT_APPS
+        'companies', # Custom defined app that contains the TenantModel. Must NOT exist in TENANT_APPS
         'users', # Custom app that contains the new User Model (see below). Must NOT exist in TENANT_APPS
         # ...
     ]
