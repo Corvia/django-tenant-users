@@ -78,7 +78,7 @@ pytest-randomly = "^3.11"
 
 sphinx = "^4.4"
 sphinx-autodoc-typehints = "^1.17"
-doc8 = "^0.10"
+doc8 = "^0.11"
 m2r2 = "^0.3"
 tomlkit = "^0.10"
 pytest-pythonpath = "^0.7.4"
