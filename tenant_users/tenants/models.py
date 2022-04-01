@@ -2,6 +2,7 @@ import time
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import connection, models
 from django.dispatch import Signal
@@ -258,11 +259,6 @@ class UserProfileManager(BaseUserManager):
         if not email:
             raise ValueError('Users must have an email address.')
 
-        # If no password is submitted, just assign a random one to lock down
-        # the account a little bit.
-        if not password:
-            password = self.make_random_password(length=30)
-
         email = self.normalize_email(email)
 
         profile = UserModel.objects.filter(email=email).first()
@@ -312,7 +308,7 @@ class UserProfileManager(BaseUserManager):
         is_staff=False,
         **extra_fields,
     ):
-        return self._create_user(
+        user = self._create_user(
             email,
             password,
             is_staff,
@@ -320,6 +316,11 @@ class UserProfileManager(BaseUserManager):
             False,
             **extra_fields,
         )
+
+        if not password:
+            user.set_unusable_password()
+
+        return user
 
     def create_superuser(self, password, email=None, **extra_fields):
         return self._create_user(
