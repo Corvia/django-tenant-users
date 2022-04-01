@@ -235,24 +235,24 @@ bcrypt = ["bcrypt"]
 
 [[package]]
 name = "django-stubs"
-version = "1.9.0"
+version = "1.10.1"
 description = "Mypy stubs for Django"
 category = "dev"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
 django = "*"
-django-stubs-ext = ">=0.3.0"
-mypy = ">=0.910"
-toml = "*"
+django-stubs-ext = ">=0.4.0"
+mypy = ">=0.930,<0.950"
+tomli = "*"
 types-pytz = "*"
 types-PyYAML = "*"
 typing-extensions = "*"
 
 [[package]]
 name = "django-stubs-ext"
-version = "0.3.1"
+version = "0.4.0"
 description = "Monkey-patching and extensions for django-stubs"
 category = "dev"
 optional = false
@@ -1569,7 +1569,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "0c08fbe8ed688ef7e74306b3107adad7e4d1f6ee62720d33e53c5b03b2fa1df9"
+content-hash = "f1e4932c4c47c9f28b3e5d3ad957a7443a554777de4aba8a4bb9af64bb0b153f"
 
 [metadata.files]
 alabaster = [
@@ -1725,12 +1725,12 @@ django = [
     {file = "Django-3.2.12.tar.gz", hash = "sha256:9772e6935703e59e993960832d66a614cf0233a1c5123bc6224ecc6ad69e41e2"},
 ]
 django-stubs = [
-    {file = "django-stubs-1.9.0.tar.gz", hash = "sha256:664843091636a917faf5256d028476559dc360fdef9050b6df87ab61b21607bf"},
-    {file = "django_stubs-1.9.0-py3-none-any.whl", hash = "sha256:59c9f81af64d214b1954eaf90f037778c8d2b9c2de946a3cda177fefcf588fbd"},
+    {file = "django-stubs-1.10.1.tar.gz", hash = "sha256:2ec21fc14dba392156e0ec8438e1863c86ddb295f1c8d88eecd7e0e04977c843"},
+    {file = "django_stubs-1.10.1-py3-none-any.whl", hash = "sha256:dfffa933e3c7f5cae92c860fbd6cf4ae58c4f78eed93843612f863207c9e0e1a"},
 ]
 django-stubs-ext = [
-    {file = "django-stubs-ext-0.3.1.tar.gz", hash = "sha256:783c198d7e39a41be0b90fd843fa2770243a642922af679be4b19e03b82c8c28"},
-    {file = "django_stubs_ext-0.3.1-py3-none-any.whl", hash = "sha256:a51a3e9e844d4e1cacaaedbb33bf3def78a3956eed5d9575a640bd97ccd99cec"},
+    {file = "django-stubs-ext-0.4.0.tar.gz", hash = "sha256:3104c4748c34bd741c310a3e6af90dffba46e41bccbe243896e38a708262876b"},
+    {file = "django_stubs_ext-0.4.0-py3-none-any.whl", hash = "sha256:901fc77b6338ea29fa381300ff598dd57d461a4882b756404e2aa7724f76fd7d"},
 ]
 django-tenants = [
     {file = "django-tenants-3.4.2.tar.gz", hash = "sha256:b83bcbd2ef3dbbf4a732784c417fad823834e6658070f631ecf1f1509cabcf35"},
