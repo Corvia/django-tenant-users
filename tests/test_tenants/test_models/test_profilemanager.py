@@ -26,6 +26,17 @@ def test_create_user_no_email():
 
 
 @pytest.mark.django_db()
+def test_create_user_with_password(client):
+    """Ensures created user with password is valid."""
+    secret = 'Secret#'
+    email = 'user@test.com'
+    user = TenantUser.objects.create_user(email, password=secret)
+
+    assert user.has_usable_password() is True
+    assert client.login(username=email, password=secret) is True
+
+
+@pytest.mark.django_db()
 def test_create_user_without_password():
     """Ensures created user gets unusable password if excluded."""
     user = TenantUser.objects.create_user('user@test.com')
