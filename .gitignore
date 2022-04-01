@@ -225,7 +225,7 @@ fabric.properties
 
 # Configuration file with private data:
 *.env
-.env
+.env*
 
 # Local settings files:
 *local.py
