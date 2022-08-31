@@ -36,9 +36,8 @@ Table of Contents
 - `Creating the User Model <usermodel_>`_
 - `Configuring the Authentication Backend <authbackend_>`_
 - `Configuring Cross Domain Cookies <cookies_>`_
-- `Creating a User <createuser_>`_
-- `Provisioning a Tenant <provisioning_>`_
 - `Migrating and Creating the Public Tenant <migrating_>`_
+- `Provisioning a Tenant <provisioning_>`_
 - `Creating a User <createuser_>`_
 
 This application expands the django users and permissions frameworks to work alongside
@@ -197,9 +196,12 @@ At this point we now have all of the user, permissions, and tenant models config
         'tenant_users.permissions.backend.UserBackend',
     )
 
-Notes:
+
+
+**Notes**:
 If you want to use django admin you will have to utilize admin multisite. Warning: if you set this up incorrectly you could expose access to models that users are not permitted to access (due to the schema search path being present, and falling through. See notes in code).
 You must reset migrations after updating the user model.
+
 
 
 .. _cookies:
@@ -215,6 +217,38 @@ Setting up cross domain cookies will allow a single sign on to access any of the
 
 Warning: read the django documentation to understand the impacts of using ``SESSION_COOKIE_DOMAIN``
 
+.. _migrating:
+
+Migrate and Create the Public Tenant
+====================================
+
+Django tenant schemas requires ``migrate_schemas`` to be called and a public tenant to be created. Here is an example of creating the public tenant along with a default 'system' tenant owner.
+
+
+.. code-block:: python
+
+    # Create public tenant user.
+    from tenant_users.tenants.utils import create_public_tenant
+    create_public_tenant(domain_url="my.evilcorp.domain", owner_email="admin@evilcorp.com")
+
+.. _provisioning:
+
+Provisioning a Tenant
+======================
+
+Here is an example to provision a tenant with the url "evilcorp.example.com". The Domain Name is taken from the ``TENANT_USERS_DOMAIN`` Variable in the Django settings file.
+
+The user with the specified email will not be created by the ``provision_tenant`` command and has to exist beforhand. The user will be the owner of the tenant. In this example the Adminuser from the section above is used. To create another user see `Creating a User Section <createuser_>`_
+
+.. code-block:: python
+
+    from tenant_users.tenants.tasks import provision_tenant
+
+    fqdn = provision_tenant(tenant_name="EvilCorp", tenant_slug="evilcorp", user_email="admin@evilcorp.com").
+
+**Note:** Since provisioning a tenant also has to create the entire schema -- depending on the models installed, it can take a while. It is recommended that this does not occur in the request/response cycle. A good asynchronous option is to use a task runner like Celery (along with tenant-schemas-celery) to handle this.
+
+
 .. _createuser:
 
 Creating a User
@@ -228,33 +262,3 @@ All users apart from the first public tenant user (see `Migrating and Creating t
 
 Currently all users rely on an email for the username.
 
-.. _provisioning:
-
-Provisioning a Tenant
-======================
-
-Here is an example to provision a tenant with the url "evilcorp.example.com". Note that we set the ``TENANT_USERS_DOMAIN`` above to example.com.
-
-Note: the user with the specified email must exist before provisioning a tenant. That's because users can exist without a tenant, but a tenant can't exist without a user (owner).
-
-.. code-block:: python
-
-    from tenant_users.tenants.tasks import provision_tenant
-
-    fqdn = provision_tenant("EvilCorp", "evilcorp", "admin@evilcorp.com").
-
-Since provisioning a tenant also has to create the entire schema -- depending on the models installed, it can take a while. It is recommended that this does not occur in the request/response cycle. A good asynchronous option is to use a task runner like Celery (along with tenant-schemas-celery) to handle this.
-
-.. _migrating:
-
-Migrate and Create the Public Tenant
-====================================
-
-Django tenant schemas requires migrate_schemas to be called and a public tenant to be created. Here is an example of creating the public tenant along with a default 'system' tenant owner.
-
-
-.. code-block:: python
-
-    # Create public tenant user.
-    from tenant_users.tenants.utils import create_public_tenant
-    create_public_tenant("my.evilcorp.domain", "admin@evilcorp.com")
