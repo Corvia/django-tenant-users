@@ -74,21 +74,13 @@ class TenantBase(TenantMixin):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
     )
-    created = models.DateTimeField()
-    modified = models.DateTimeField(blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
 
     # Schema will be automatically created and synced when it is saved
     auto_create_schema = True
     # Schema will be automatically deleted when related tenant is deleted
     auto_drop_schema = True
-
-    def save(self, *args, **kwargs):
-        """Override saving Tenant object."""
-        if not self.pk:
-            self.created = timezone.now()
-        self.modified = timezone.now()
-
-        super().save(*args, **kwargs)
 
     def delete(self, force_drop=False, *args, **kwargs):
         """Override deleting of Tenant object."""
