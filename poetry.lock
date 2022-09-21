@@ -18,7 +18,7 @@ python-versions = "*"
 name = "asgiref"
 version = "3.4.1"
 description = "ASGI specs, helper code, and adapters"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -220,7 +220,7 @@ tests = ["check-manifest (>=0.42)", "mock (>=1.3.0)", "pytest (==5.4.3)", "pytes
 name = "django"
 version = "3.2.15"
 description = "A high-level Python Web framework that encourages rapid development and clean, pragmatic design."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -269,7 +269,7 @@ typing-extensions = "*"
 name = "django-tenants"
 version = "3.4.5"
 description = "Tenant support for Django using PostgreSQL schemas."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -1140,7 +1140,7 @@ unidecode = ["Unidecode (>=1.1.1)"]
 name = "pytz"
 version = "2021.1"
 description = "World timezone definitions, modern and historical"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -1414,7 +1414,7 @@ test = ["pytest"]
 name = "sqlparse"
 version = "0.4.2"
 description = "A non-validating SQL parser."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.5"
 
@@ -1516,7 +1516,7 @@ python-versions = "*"
 name = "typing-extensions"
 version = "3.10.0.2"
 description = "Backported and Experimental Type Hints for Python 3.5+"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -1600,7 +1600,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=4.6)", "pytest-black (
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "e5f7d663b00c568efdf8d3d0cb5239f3c6c68aec0e5b0be30a59643c18d6f9a6"
+content-hash = "da217837adff5d4e4635e0b571ecaa3395ec8b459be47a1214cf775d95a129fb"
 
 [metadata.files]
 alabaster = [

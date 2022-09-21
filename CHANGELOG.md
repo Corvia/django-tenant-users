@@ -4,6 +4,14 @@ We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` relea
 
 ## {{ Next Version }}
 
+### Features
+
+- Adds support for Django 4.1
+
+### Misc
+
+- There is now a direct dependency on django-tenants and support versions of Django (2.2, 3.2, 4.0, and 4.1)
+
 ## 1.0.0 (2022-02-09)
 
 ### Breaking Changes
