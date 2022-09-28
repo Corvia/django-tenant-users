@@ -62,7 +62,7 @@ django-tenants = "^3.4.5"
 
 
 [tool.poetry.dev-dependencies]
-mypy = "^0.971"
+mypy = "^0.981"
 django-stubs = "^1.12"
 
 wemake-python-styleguide = "^0.16"
