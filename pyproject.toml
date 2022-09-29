@@ -65,7 +65,7 @@ django-tenants = "^3.4.5"
 mypy = "^0.981"
 django-stubs = "^1.12"
 
-wemake-python-styleguide = "^0.16"
+wemake-python-styleguide = "^0.17"
 flake8-pytest-style = "^1.6"
 nitpick = "^0.32"
 
