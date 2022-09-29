@@ -30,15 +30,15 @@ Table of Contents
 
 - `Overview <overview_>`_
 - `Installation <installation_>`_
-- `Test Project <testproject_>`_
-- `Basic Settings <basicsettings_>`_
-- `Modifying the Tenant Model <tenantmodel_>`_
-- `Creating the User Model <usermodel_>`_
-- `Configuring the Authentication Backend <authbackend_>`_
-- `Configuring Cross Domain Cookies <cookies_>`_
-- `Migrating and Creating the Public Tenant <migrating_>`_
-- `Provisioning a Tenant <provisioning_>`_
-- `Creating a User <createuser_>`_
+- `Test Project <test-project_>`_
+- `Basic Settings <basic-settings_>`_
+- `Modifying the Tenant Model <modifying-the-tenant-model_>`_
+- `Creating the User Model <creating-the-user-model_>`_
+- `Setting up the Authentication Backend <setting-up-the-authentication-backend_>`_
+- `Setting up Cross Domain Cookies <setting-up-cross-domain-cookies_>`_
+- `Migrating and Creating the Public Tenant <migrating-and-creating-the-public-tenant_>`_
+- `Provisioning a Tenant <provisioning-a-tenant_>`_
+- `Creating a User <creating-a-user_>`_
 
 This application expands the django users and permissions frameworks to work alongside
 django-tenant-schemas or django-tenants to allow global users with permissions on a per-tenant basis.
@@ -88,14 +88,14 @@ Assuming you already have django-tenant-schemas or django-tenants installed and 
 
     pip install django-tenant-users
 
-.. _testproject:
+.. _test-project:
 
 Test Project
 ============
 
 All of the following settings/configuration can be seen in `django_test_app <https://github.com/Corvia/django-tenant-users/tree/master/django_test_app>`_.
 
-.. _basicsettings:
+.. _basic-settings:
 
 Basic Settings
 ==============
@@ -129,7 +129,7 @@ You will have to set the ``TENANT_USERS_DOMAIN`` setting to the domain hosting t
 
     TENANT_USERS_DOMAIN = "example.com"
 
-.. _tenantmodel:
+.. _modifying-the-tenant-model:
 
 Modifying the Tenant Model
 ==========================
@@ -154,7 +154,7 @@ The settings.py file entry should look like:
 
     TENANT_MODEL = 'customers.Client'
 
-.. _usermodel:
+.. _creating-the-user-model:
 
 Creating the User Model
 =======================
@@ -182,7 +182,7 @@ The settings.py file entry would look like (see Django documentation for more de
 
     AUTH_USER_MODEL = 'users.TenantUser'
 
-.. _authbackend:
+.. _setting-up-the-authentication-backend:
 
 Setting up the Authentication Backend
 =====================================
@@ -204,7 +204,7 @@ You must reset migrations after updating the user model.
 
 
 
-.. _cookies:
+.. _setting-up-cross-domain-cookies:
 
 Setting up cross domain cookies
 ===============================
@@ -217,9 +217,9 @@ Setting up cross domain cookies will allow a single sign on to access any of the
 
 Warning: read the django documentation to understand the impacts of using ``SESSION_COOKIE_DOMAIN``
 
-.. _migrating:
+.. _migrating-and-creating-the-public-tenant:
 
-Migrate and Create the Public Tenant
+Migrating and Creating the Public Tenant
 ====================================
 
 Django tenant schemas requires ``migrate_schemas`` to be called and a public tenant to be created. Here is an example of creating the public tenant along with a default 'system' tenant owner.
@@ -231,7 +231,7 @@ Django tenant schemas requires ``migrate_schemas`` to be called and a public ten
     from tenant_users.tenants.utils import create_public_tenant
     create_public_tenant(domain_url="my.evilcorp.domain", owner_email="admin@evilcorp.com")
 
-.. _provisioning:
+.. _provisioning-a-tenant:
 
 Provisioning a Tenant
 ======================
@@ -249,7 +249,7 @@ The user with the specified email will not be created by the ``provision_tenant`
 **Note:** Since provisioning a tenant also has to create the entire schema -- depending on the models installed, it can take a while. It is recommended that this does not occur in the request/response cycle. A good asynchronous option is to use a task runner like Celery (along with tenant-schemas-celery) to handle this.
 
 
-.. _createuser:
+.. _creating-a-user:
 
 Creating a User
 ===============

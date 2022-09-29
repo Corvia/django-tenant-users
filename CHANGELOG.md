@@ -40,6 +40,7 @@ We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` relea
 ### Bug Fixes
 
 - Replace deprecated `connection.get_schema()` with `connection.schema_name`
+- Topic hyperlinks on readme fixed
 
 ### Features
 
