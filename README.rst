@@ -220,7 +220,7 @@ Warning: read the django documentation to understand the impacts of using ``SESS
 .. _migrating-and-creating-the-public-tenant:
 
 Migrating and Creating the Public Tenant
-====================================
+========================================
 
 Django tenant schemas requires ``migrate_schemas`` to be called and a public tenant to be created. Here is an example of creating the public tenant along with a default 'system' tenant owner.
 
@@ -238,7 +238,7 @@ Provisioning a Tenant
 
 Here is an example to provision a tenant with the url "evilcorp.example.com". The Domain Name is taken from the ``TENANT_USERS_DOMAIN`` Variable in the Django settings file.
 
-The user with the specified email will not be created by the ``provision_tenant`` command and has to exist beforhand. The user will be the owner of the tenant. In this example the Adminuser from the section above is used. To create another user see `Creating a User Section <createuser_>`_
+The user with the specified email will not be created by the ``provision_tenant`` command and has to exist beforhand. The user will be the owner of the tenant. In this example the Adminuser from the section above is used. To create another user see `Creating a User Section <creating-a-user_>`_
 
 .. code-block:: python
 
@@ -254,11 +254,10 @@ The user with the specified email will not be created by the ``provision_tenant`
 Creating a User
 ===============
 
-All users apart from the first public tenant user (see `Migrating and Creating the Public Tenant <migrating_>`_ for creating the first public tenant user) should be created through the object manager.
+All users apart from the first public tenant user (see `Migrating and Creating the Public Tenant <migrating-and-creating-the-public-tenant_>`_ for creating the first public tenant user) should be created through the object manager.
 
 .. code-block:: python
 
     user = TenantUser.objects.create_user(email="user@evilcorp.com", password='password', is_active=True)
 
 Currently all users rely on an email for the username.
-
