@@ -4,6 +4,12 @@ We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` relea
 
 ## {{ Next Version }}
 
+## 1.1.1 (tba)
+
+### Misc
+
+- Remove deprecation warning regarding default_app_config for django >= 3.2
+
 ## 1.1.0 (2022-10-01)
 
 ### Features
