@@ -56,7 +56,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 dev = ["coverage[toml] (>=5.0.2)", "furo", "hypothesis", "mypy", "pre-commit", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "six", "sphinx", "sphinx-notfound-page", "zope.interface"]
 docs = ["furo", "sphinx", "sphinx-notfound-page", "zope.interface"]
 tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "mypy", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "six", "zope.interface"]
-tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "mypy", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "six"]
+tests-no-zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "mypy", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "six"]
 
 [[package]]
 name = "autorepr"
@@ -144,7 +144,7 @@ optional = false
 python-versions = ">=3.5.0"
 
 [package.extras]
-unicode_backport = ["unicodedata2"]
+unicode-backport = ["unicodedata2"]
 
 [[package]]
 name = "click"
@@ -267,7 +267,7 @@ typing-extensions = "*"
 
 [[package]]
 name = "django-tenants"
-version = "3.4.5"
+version = "3.4.6"
 description = "Tenant support for Django using PostgreSQL schemas."
 category = "main"
 optional = false
@@ -691,9 +691,9 @@ python-versions = ">=3.6.1,<4.0"
 
 [package.extras]
 colors = ["colorama (>=0.4.3,<0.5.0)"]
-pipfile_deprecated_finder = ["pipreqs", "requirementslib"]
+pipfile-deprecated-finder = ["pipreqs", "requirementslib"]
 plugins = ["setuptools"]
-requirements_deprecated_finder = ["pip-api", "pipreqs"]
+requirements-deprecated-finder = ["pip-api", "pipreqs"]
 
 [[package]]
 name = "jinja2"
@@ -1171,7 +1171,7 @@ urllib3 = ">=1.21.1,<1.27"
 
 [package.extras]
 socks = ["PySocks (>=1.5.6,!=1.5.7)", "win-inet-pton"]
-use_chardet_on_py3 = ["chardet (>=3.0.2,<5)"]
+use-chardet-on-py3 = ["chardet (>=3.0.2,<5)"]
 
 [[package]]
 name = "requests-cache"
@@ -1768,7 +1768,7 @@ django-stubs-ext = [
     {file = "django_stubs_ext-0.4.0-py3-none-any.whl", hash = "sha256:901fc77b6338ea29fa381300ff598dd57d461a4882b756404e2aa7724f76fd7d"},
 ]
 django-tenants = [
-    {file = "django-tenants-3.4.5.tar.gz", hash = "sha256:ebfa523e25f63b087ad71305f2cbe823479d24a24df266836fdc9af73bcebb50"},
+    {file = "django-tenants-3.4.6.tar.gz", hash = "sha256:f07a2e8648a4d11bedae3cf6e1b5bf159a8125c0c1a84997b0b458316615c199"},
 ]
 doc8 = [
     {file = "doc8-1.0.0-py3-none-any.whl", hash = "sha256:0c6c3104fa7f7bb2103589c0a8e272c105fdff3ddd1ef4808e51b2782185e9ab"},
