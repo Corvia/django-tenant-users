@@ -267,7 +267,7 @@ typing-extensions = "*"
 
 [[package]]
 name = "django-tenants"
-version = "3.4.6"
+version = "3.4.7"
 description = "Tenant support for Django using PostgreSQL schemas."
 category = "main"
 optional = false
@@ -1768,7 +1768,7 @@ django-stubs-ext = [
     {file = "django_stubs_ext-0.4.0-py3-none-any.whl", hash = "sha256:901fc77b6338ea29fa381300ff598dd57d461a4882b756404e2aa7724f76fd7d"},
 ]
 django-tenants = [
-    {file = "django-tenants-3.4.6.tar.gz", hash = "sha256:f07a2e8648a4d11bedae3cf6e1b5bf159a8125c0c1a84997b0b458316615c199"},
+    {file = "django-tenants-3.4.7.tar.gz", hash = "sha256:9e2e28ee9e813c59600dc49ec4370c7e2fb0da26fb06ba1d0a1849ebcba01cd6"},
 ]
 doc8 = [
     {file = "doc8-1.0.0-py3-none-any.whl", hash = "sha256:0c6c3104fa7f7bb2103589c0a8e272c105fdff3ddd1ef4808e51b2782185e9ab"},
