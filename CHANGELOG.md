@@ -4,11 +4,13 @@ We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` relea
 
 ## {{ Next Version }}
 
-## 1.1.1 (tba)
+## 1.1.1 (2022-11-26)
 
 ### Misc
 
-- Remove deprecation warning regarding default_app_config for django >= 3.2
+- Remove deprecation warning regarding default_app_config for django >= 3.2 [#326](https://github.com/Corvia/django-tenant-users/pull/326)
+- Add Django 4.1 to PyPi Trove classifiers list
+- Update downstream dependencies to latest versions
 
 ## 1.1.0 (2022-10-01)
 
