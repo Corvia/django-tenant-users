@@ -122,11 +122,11 @@ class TenantBase(TenantMixin):
     def remove_user(self, user_obj):
         """Remove user from tenant."""
         # Test that user is already in the tenant
-        self.user_set.get(id=user_obj.id)
+        self.user_set.get(pk=user_obj.pk)
 
         # Dont allow removing an owner from a tenant. This must be done
         # Through delete tenant or transfer_ownership
-        if user_obj.id == self.owner.id:
+        if user_obj.pk == self.owner.pk:
             raise DeleteError(
                 'Cannot remove owner from tenant: {0}'.format(
                     self.owner,
@@ -140,7 +140,7 @@ class TenantBase(TenantMixin):
         groups.clear()
 
         # Unlink from tenant
-        UserTenantPermissions.objects.filter(id=user_tenant_perms.id).delete()
+        UserTenantPermissions.objects.filter(pk=user_tenant_perms.pk).delete()
         user_obj.tenants.remove(self)
 
         tenant_user_removed.send(
@@ -165,7 +165,7 @@ class TenantBase(TenantMixin):
 
         for user_obj in self.user_set.all():
             # Don't delete owner at this point
-            if user_obj.id == self.owner.id:
+            if user_obj.pk == self.owner.pk:
                 continue
             self.remove_user(user_obj)
 
@@ -174,7 +174,7 @@ class TenantBase(TenantMixin):
         time_string = str(int(time.time()))
         new_url = '{0}-{1}-{2}'.format(
             time_string,
-            str(self.owner.id),
+            str(self.owner.pk),
             self.domain_url,
         )
         self.domain_url = new_url
@@ -193,7 +193,7 @@ class TenantBase(TenantMixin):
 
         # Remove old owner as a user if the owner still exists after
         # the transfer
-        if self.user_set.filter(id=user_obj.id).exists():
+        if self.user_set.filter(pk=user_obj.pk).exists():
             self.remove_user(old_owner)
 
     @schema_required
