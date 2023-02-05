@@ -24,7 +24,7 @@ class PermissionsMixinFacade(object):
     @tenant_cached_property
     def tenant_perms(self):
         return UserTenantPermissions.objects.get(
-            profile_id=self.id,
+            profile_id=self.pk,
         )
 
     def has_tenant_permissions(self):
