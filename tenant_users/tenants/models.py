@@ -2,11 +2,9 @@ import time
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import connection, models
 from django.dispatch import Signal
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_tenants.models import TenantMixin
 from django_tenants.utils import get_public_schema_name, get_tenant_model
@@ -95,7 +93,7 @@ class TenantBase(TenantMixin):
     def add_user(self, user_obj, is_superuser=False, is_staff=False):
         """Add user to tenant."""
         # User already is linked here..
-        if self.user_set.filter(id=user_obj.id).exists():
+        if self.user_set.filter(id=user_obj.pk).exists():
             raise ExistsError(
                 'User already added to tenant: {0}'.format(
                     user_obj,
@@ -122,11 +120,11 @@ class TenantBase(TenantMixin):
     def remove_user(self, user_obj):
         """Remove user from tenant."""
         # Test that user is already in the tenant
-        self.user_set.get(id=user_obj.id)
+        self.user_set.get(pk=user_obj.pk)
 
         # Dont allow removing an owner from a tenant. This must be done
         # Through delete tenant or transfer_ownership
-        if user_obj.id == self.owner.id:
+        if user_obj.pk == self.owner.pk:
             raise DeleteError(
                 'Cannot remove owner from tenant: {0}'.format(
                     self.owner,
@@ -134,13 +132,12 @@ class TenantBase(TenantMixin):
             )
 
         user_tenant_perms = user_obj.usertenantpermissions
-
         # Remove all current groups from user..
         groups = user_tenant_perms.groups
         groups.clear()
 
         # Unlink from tenant
-        UserTenantPermissions.objects.filter(id=user_tenant_perms.id).delete()
+        UserTenantPermissions.objects.filter(pk=user_tenant_perms.pk).delete()
         user_obj.tenants.remove(self)
 
         tenant_user_removed.send(
@@ -165,7 +162,7 @@ class TenantBase(TenantMixin):
 
         for user_obj in self.user_set.all():
             # Don't delete owner at this point
-            if user_obj.id == self.owner.id:
+            if user_obj.pk == self.owner.pk:
                 continue
             self.remove_user(user_obj)
 
@@ -174,7 +171,7 @@ class TenantBase(TenantMixin):
         time_string = str(int(time.time()))
         new_url = '{0}-{1}-{2}'.format(
             time_string,
-            str(self.owner.id),
+            str(self.owner.pk),
             self.domain_url,
         )
         self.domain_url = new_url
@@ -193,7 +190,7 @@ class TenantBase(TenantMixin):
 
         # Remove old owner as a user if the owner still exists after
         # the transfer
-        if self.user_set.filter(id=user_obj.id).exists():
+        if self.user_set.filter(pk=user_obj.pk).exists():
             self.remove_user(old_owner)
 
     @schema_required
@@ -213,7 +210,7 @@ class TenantBase(TenantMixin):
 
         try:
             # Set new user as superuser in this tenant if user already exists
-            user = self.user_set.get(id=new_owner.id)
+            user = self.user_set.get(pk=new_owner.pk)
             user_tenant = user.usertenantpermissions
             user_tenant.is_superuser = True
             user_tenant.save()
@@ -330,7 +327,7 @@ class UserProfileManager(BaseUserManager):
         public_tenant = get_tenant_model().objects.get(
             schema_name=get_public_schema_name(),
         )
-        if user_obj.id == public_tenant.owner.id:
+        if user_obj.pk == public_tenant.owner.pk:
             raise DeleteError('Cannot delete the public tenant owner!')
 
         # This includes the linked public tenant 'tenant'. It will delete the
@@ -338,7 +335,7 @@ class UserProfileManager(BaseUserManager):
         for tenant in user_obj.tenants.all():
             # If user owns the tenant, we call delete on the tenant
             # which will delete the user from the tenant as well
-            if tenant.owner.id == user_obj.id:
+            if tenant.owner.pk == user_obj.pk:
                 # Delete tenant will handle any other linked users to
                 # that tenant
                 tenant.delete_tenant()
