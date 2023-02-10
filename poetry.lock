@@ -420,13 +420,13 @@ typing-extensions = "*"
 
 [[package]]
 name = "django-tenants"
-version = "3.4.7"
+version = "3.4.8"
 description = "Tenant support for Django using PostgreSQL schemas."
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-tenants-3.4.7.tar.gz", hash = "sha256:9e2e28ee9e813c59600dc49ec4370c7e2fb0da26fb06ba1d0a1849ebcba01cd6"},
+    {file = "django-tenants-3.4.8.tar.gz", hash = "sha256:ab8ddfe04db92abc1f6bf5e20c644a99af3f89effcffd5d819e3cca08474a41d"},
 ]
 
 [package.dependencies]
