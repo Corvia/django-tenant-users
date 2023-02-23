@@ -380,14 +380,14 @@ bcrypt = ["bcrypt"]
 
 [[package]]
 name = "django-stubs"
-version = "1.14.0"
+version = "1.15.0"
 description = "Mypy stubs for Django"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "django-stubs-1.14.0.tar.gz", hash = "sha256:d53bcd4975a54ca5c9abbbd33b61f40d44191971018f2ea54f73b0a6a99e1a8b"},
-    {file = "django_stubs-1.14.0-py3-none-any.whl", hash = "sha256:b081d64d923171f79d4e57899b0980da847e4046b91166e3658a6151645a36c5"},
+    {file = "django-stubs-1.15.0.tar.gz", hash = "sha256:0bbf9eb172c5b06eccff2d704c7c3906e4a2c6146df8c32ee9f3a51e29265581"},
+    {file = "django_stubs-1.15.0-py3-none-any.whl", hash = "sha256:25010658acac0ce4a69211b55dd719fd16dbfe54fcfe5c878d0c8db07bdd5482"},
 ]
 
 [package.dependencies]
@@ -400,7 +400,7 @@ types-PyYAML = "*"
 typing-extensions = "*"
 
 [package.extras]
-compatible-mypy = ["mypy (>=0.991,<1.0)"]
+compatible-mypy = ["mypy (>=1.0,<1.1)"]
 
 [[package]]
 name = "django-stubs-ext"
