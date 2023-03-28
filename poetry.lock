@@ -1620,14 +1620,14 @@ pytest = "*"
 
 [[package]]
 name = "pytest-testmon"
-version = "2.0.0"
+version = "2.0.2"
 description = "selects tests affected by changed files and methods"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pytest-testmon-2.0.0.tar.gz", hash = "sha256:e8157b24c60482d16f42316f2ed722bd34bc158c205da7f107f25dde6ced9fe7"},
-    {file = "pytest_testmon-2.0.0-py3-none-any.whl", hash = "sha256:965d73b822b4443765be4ee83ca2238dbcefbe7e8808f60ab28445232271673b"},
+    {file = "pytest-testmon-2.0.2.tar.gz", hash = "sha256:cd364f6fdc446b0d94b1efe7b1bea0919348177e1dca0d3b06123ece621bffec"},
+    {file = "pytest_testmon-2.0.2-py3-none-any.whl", hash = "sha256:500d24a498460f421d6dfb13c722764c3079ac9f72a916e86701f025b7dc6d37"},
 ]
 
 [package.dependencies]
