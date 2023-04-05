@@ -58,7 +58,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.7"
-Django = ">=2.2, <4.2, !=3.0.*, !=3.1.*"
+Django = ">=3.2"
 django-tenants = "^3.4.5"
 
 
