@@ -73,7 +73,7 @@ nitpick = ">=0.32,<0.34"
 
 safety = "^2.2"
 
-pytest = "^6.2"
+pytest = "^7.2.2"
 pytest-cov = "^4.0"
 pytest-randomly = "^3.12"
 
@@ -82,7 +82,6 @@ sphinx-autodoc-typehints = "^1.19"
 doc8 = "^1.0"
 m2r2 = "^0.3"
 tomlkit = "^0.11"
-pytest-pythonpath = "^0.7.4"
 pytest-django = "^4.5.2"
 black = ">=22.8,<24.0"
 python-decouple = "^3.6"
