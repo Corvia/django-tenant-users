@@ -4,6 +4,11 @@ We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` relea
 
 ## {{ Next Version }}
 
+### Features
+
+- Adds support for Django 4.2
+-
+
 ## 1.1.1 (2022-11-26)
 
 ### Misc
@@ -16,7 +21,8 @@ We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` relea
 
 ### Features
 
-- Adds support for Django 4.1
+- Adds support for Django 4.2
+- Drops support for Django 2.2
 
 ### Misc
 
