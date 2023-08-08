@@ -4,10 +4,15 @@ We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` relea
 
 ## {{ Next Version }}
 
+## 1.2.0 (2023-08-08)
+
 ### Features
 
 - Adds support for Django 4.2
--
+
+### Fixes
+
+- Used pk instead of id for universal access by @ysidromdenis [#355](https://github.com/Corvia/django-tenant-users/pull/357)
 
 ## 1.1.1 (2022-11-26)
 
