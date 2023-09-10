@@ -248,6 +248,12 @@ The user with the specified email will not be created by the ``provision_tenant`
 
 **Note:** Since provisioning a tenant also has to create the entire schema -- depending on the models installed, it can take a while. It is recommended that this does not occur in the request/response cycle. A good asynchronous option is to use a task runner like Celery (along with tenant-schemas-celery) to handle this.
 
+With multi-tenant types
+=======================
+let ``MULTI_TYPE_DATABASE_FIELD='type'``
+.. code-block:: python
+
+    fqdn = provision_tenant(tenant_name="EvilCorp", tenant_slug="evilcorp", user_email="admin@evilcorp.com",tenant_type="tenant_type").
 
 .. _creating-a-user:
 
