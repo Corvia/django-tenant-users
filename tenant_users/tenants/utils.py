@@ -58,7 +58,6 @@ def create_public_tenant(
         is_active=True,
         **owner_extra,
     )
-    profile = UserModel.objects.create(email=owner_email, is_active=True, **owner_extra)
     # Set the owner user's password as unusable if not provided
     if 'password' not in owner_extra:
         profile.set_unusable_password()
