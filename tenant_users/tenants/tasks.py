@@ -18,12 +18,12 @@ import re
 
 def provision_tenant(
     tenant_name,
+    tenant_slug,
     user_email,
-    tenant_slug: str = None,
-    tenant_type: str = None,
-    schema_name: str = None,
     is_staff=False,
     is_superuser=True,
+    tenant_type=None,
+    schema_name=None,
     tenant_extra_data={},
 ):
     """Creates a tenant with default roles and permissions.
