@@ -26,13 +26,12 @@ def _debug(settings) -> None:
 @pytest.fixture(autouse=False)
 def tenant_type_settings(settings):
     settings.HAS_MULTI_TYPE_TENANTS = True
-    settings.MULTI_TYPE_DATABASE_FIELD = "tenant_type"
+    settings.MULTI_TYPE_DATABASE_FIELD = "type"
+    delattr(settings, 'SHARED_APPS')
+    delattr(settings, 'TENANT_APPS')
 
-    settings.TENANT_MODEL = 'companies.CompanyWithType'
-    settings.TENANT_DOMAIN_MODEL = 'companies.DomainWithType'
-
-    settings.TENANT_TYPES = {
-        "public": {
+    tenant_types = {
+        "public": {  # this is the name of the public schema from get_public_schema_name
             "APPS": [
                 'django_tenants',
                 'django.contrib.admin',
@@ -45,20 +44,32 @@ def tenant_type_settings(settings):
                 'tenant_users.tenants',
                 'django_test_app.companies',
                 'django_test_app.users',
-            ]
+            ],
+            # "URLCONF": "dts_test_project.urls",
         },
-        "example_type": {
+        "type2": {  # this is the name of the public schema from get_public_schema_name
             "APPS": [
                 'django.contrib.auth',
                 'django.contrib.contenttypes',
                 'tenant_users.permissions',
-            ]
+            ],
+            # "URLCONF": "dts_test_project.urls",
         },
+        # "type2": {  # this is the name of the public schema from get_public_schema_name
+        #     "APPS": [
+        #         'django.contrib.auth',
+        #         'django.contrib.contenttypes',
+        #     ],
+        #     # "URLCONF": "dts_test_project.urls",
+        # },
     }
-    apps = []
-    for schema in settings.TENANT_TYPES:
-        apps += [
-            app for app in settings.TENANT_TYPES[schema]["APPS"] if app not in apps
+
+    settings.TENANT_TYPES = tenant_types
+
+    installed_apps = []
+    for schema in tenant_types:
+        installed_apps += [
+            app for app in tenant_types[schema]["APPS"] if app not in installed_apps
         ]
-    settings.INSTALLED_APPS = apps
-    # YourModel.add_to_class('dynamic_field', models.CharField(max_length=100))
+
+    settings.INSTALLED_APPS = installed_apps
