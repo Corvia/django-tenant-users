@@ -63,7 +63,7 @@ def provision_tenant(
     if hasattr(settings, "TENANT_SUBFOLDER_PREFIX"):
         tenant_domain = tenant_slug
     else:
-        tenant_domain = f"{0}.{1}".format(tenant_slug, settings.TENANT_USERS_DOMAIN)
+        tenant_domain = "{0}.{1}".format(tenant_slug, settings.TENANT_USERS_DOMAIN)
 
     DomainModel = get_tenant_domain_model()
     if DomainModel.objects.filter(domain=tenant_domain).exists():
@@ -74,7 +74,7 @@ def provision_tenant(
         # https://www.postgresql.org/docs/9.2/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS
         # We generate unique schema names each time so we can keep tenants around
         # without taking up url/schema namespace.
-        schema_name = f"{0}_{1}".format(tenant_slug, time_string)
+        schema_name = "{0}_{1}".format(tenant_slug, time_string)
 
     domain = None
 
