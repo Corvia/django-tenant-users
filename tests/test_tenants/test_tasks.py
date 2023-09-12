@@ -6,8 +6,8 @@ from django.contrib.auth import get_user_model
 from django.db import DatabaseError, connection
 from django_tenants.utils import get_tenant_model
 
-from tenant_users.tenants import tasks
 from tenant_users.tenants.models import ExistsError, InactiveError
+from tenant_users.tenants.tasks import provision_tenant
 
 #: Constants
 TenantModel = get_tenant_model()
@@ -34,7 +34,7 @@ def list_schemas():
 def test_provision_tenant(tenant_user_admin):
     """Tests tasks.provision_tenant() for correctness."""
     slug = 'sample'
-    tenant_domain = tasks.provision_tenant(
+    tenant_domain = provision_tenant(
         'Sample Tenant',
         slug,
         tenant_user_admin,
@@ -48,7 +48,7 @@ def test_provision_tenant_with_subfolder(settings, tenant_user_admin):
     """Tests tasks.provision_tenant() for correctness when using subfolders."""
     settings.TENANT_SUBFOLDER_PREFIX = 'clients'
     slug = 'sample'
-    tenant_domain = tasks.provision_tenant(
+    tenant_domain = provision_tenant(
         'Sample Tenant',
         slug,
         tenant_user_admin,
@@ -64,7 +64,7 @@ def test_provision_tenant_inactive_user(tenant_user):
     tenant_user.save()
 
     with pytest.raises(InactiveError, match='Inactive user passed'):
-        tasks.provision_tenant(
+        provision_tenant(
             'inactive_test',
             'inactive_test',
             tenant_user.email,
@@ -78,7 +78,7 @@ def test_duplicate_tenant_url(test_tenants, tenant_user):
     slug = test_tenants.first().slug
 
     with pytest.raises(ExistsError, match='URL already exists'):
-        tasks.provision_tenant(slug, slug, tenant_user.email)
+        provision_tenant(slug, slug, tenant_user.email)
 
 
 def test_provision_with_schema_name(tenant_user):
@@ -90,7 +90,7 @@ def test_provision_with_schema_name(tenant_user):
     """
     slug = 'sample'
     custom_schema_name = 'my_custom_name'
-    tasks.provision_tenant(
+    provision_tenant(
         'Sample Tenant',
         slug,
         tenant_user.email,
@@ -115,7 +115,7 @@ def test_provision_tenant_tenant_creation_exception(tenant_user):
         side_effect=DatabaseError("Database error"),
     ):
         with pytest.raises(Exception, match="Database error"):
-            tasks.provision_tenant("Test Tenant", "test-tenant", tenant_user.email)
+            provision_tenant("Test Tenant", "test-tenant", tenant_user.email)
 
 
 def test_provision_tenant_domain_creation_exception(tenant_user):
@@ -135,7 +135,7 @@ def test_provision_tenant_domain_creation_exception(tenant_user):
         side_effect=DatabaseError("Domain error"),
     ):
         with pytest.raises(Exception, match="Domain error"):
-            tasks.provision_tenant("Test Tenant", slug, tenant_user.email)
+            provision_tenant("Test Tenant", slug, tenant_user.email)
 
     # Ensure tenant was cleaned up
     assert not TenantModel.objects.filter(slug=slug).exists()
@@ -158,7 +158,7 @@ def test_provision_tenant_user_add_exception(tenant_user):
         side_effect=InactiveError("Exception error"),
     ):
         with pytest.raises(Exception, match="Exception error"):
-            tasks.provision_tenant("Test Tenant", slug, tenant_user.email)
+            provision_tenant("Test Tenant", slug, tenant_user.email)
 
     # Ensure user wasn't added to a tenant
     assert tenant_user.tenants.count() == 1
