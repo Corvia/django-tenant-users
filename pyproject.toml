@@ -9,7 +9,6 @@ style = "https://raw.githubusercontent.com/wemake-services/wemake-python-stylegu
 
 [tool.black]
 target-version = ['py37', 'py38', 'py39', 'py310', 'py311']
-skip-string-normalization = true
 include = '\.pyi?$'
 
 
