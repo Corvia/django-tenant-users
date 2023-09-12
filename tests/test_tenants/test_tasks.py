@@ -14,7 +14,7 @@ TenantModel = get_tenant_model()
 TenantUser = get_user_model()
 
 
-def list_schemas():
+def list_schemas() -> list[str]:
     """
     Retrieve a list of all schemas present in the PostgreSQL database.
 
@@ -30,9 +30,8 @@ def list_schemas():
     return schemas
 
 
-@pytest.mark.django_db()
-def test_provision_tenant(tenant_user_admin):
-    """Tests tasks.provision_tenant() for correctness."""
+def test_provision_tenant(tenant_user_admin) -> None:
+    """Tests provision_tenant() for correctness."""
     slug = 'sample'
     tenant_domain = provision_tenant(
         'Sample Tenant',
@@ -43,9 +42,8 @@ def test_provision_tenant(tenant_user_admin):
     assert tenant_domain == '{0}.{1}'.format(slug, settings.TENANT_USERS_DOMAIN)
 
 
-@pytest.mark.django_db()
-def test_provision_tenant_with_subfolder(settings, tenant_user_admin):
-    """Tests tasks.provision_tenant() for correctness when using subfolders."""
+def test_provision_tenant_with_subfolder(settings, tenant_user_admin) -> None:
+    """Tests provision_tenant() for correctness when using subfolders."""
     settings.TENANT_SUBFOLDER_PREFIX = 'clients'
     slug = 'sample'
     tenant_domain = provision_tenant(
@@ -57,8 +55,7 @@ def test_provision_tenant_with_subfolder(settings, tenant_user_admin):
     assert tenant_domain == slug
 
 
-@pytest.mark.django_db()
-def test_provision_tenant_inactive_user(tenant_user):
+def test_provision_tenant_inactive_user(tenant_user) -> None:
     """Test tenant creation with inactive user."""
     tenant_user.is_active = False
     tenant_user.save()
@@ -71,8 +68,7 @@ def test_provision_tenant_inactive_user(tenant_user):
         )
 
 
-@pytest.mark.django_db()
-def test_duplicate_tenant_url(test_tenants, tenant_user):
+def test_duplicate_tenant_url(test_tenants, tenant_user) -> None:
     """Tests duplicate URL error."""
     # Get first non-public tenant to use
     slug = test_tenants.first().slug
@@ -81,7 +77,7 @@ def test_duplicate_tenant_url(test_tenants, tenant_user):
         provision_tenant(slug, slug, tenant_user.email)
 
 
-def test_provision_with_schema_name(tenant_user):
+def test_provision_with_schema_name(tenant_user) -> None:
     """
     Test tenant provisioning with a custom schema name.
 
@@ -103,7 +99,7 @@ def test_provision_with_schema_name(tenant_user):
     assert custom_schema_name in list_schemas()
 
 
-def test_provision_tenant_tenant_creation_exception(tenant_user):
+def test_provision_tenant_tenant_creation_exception(tenant_user) -> None:
     """
     Test exception handling during tenant creation.
 
@@ -118,7 +114,7 @@ def test_provision_tenant_tenant_creation_exception(tenant_user):
             provision_tenant("Test Tenant", "test-tenant", tenant_user.email)
 
 
-def test_provision_tenant_domain_creation_exception(tenant_user):
+def test_provision_tenant_domain_creation_exception(tenant_user) -> None:
     """
     Test exception handling during domain creation for a tenant.
 
@@ -144,7 +140,7 @@ def test_provision_tenant_domain_creation_exception(tenant_user):
     assert len(schemas) == len(list_schemas())
 
 
-def test_provision_tenant_user_add_exception(tenant_user):
+def test_provision_tenant_user_add_exception(tenant_user: TenantUser) -> None:
     """
     Test exception handling when adding a user to a tenant.
 
