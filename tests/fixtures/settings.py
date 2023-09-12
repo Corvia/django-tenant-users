@@ -31,7 +31,7 @@ def tenant_type_settings(settings):
     delattr(settings, 'TENANT_APPS')
 
     tenant_types = {
-        "public": {  # this is the name of the public schema from get_public_schema_name
+        "public": {
             "APPS": [
                 'django_tenants',
                 'django.contrib.admin',
@@ -45,23 +45,14 @@ def tenant_type_settings(settings):
                 'django_test_app.companies',
                 'django_test_app.users',
             ],
-            # "URLCONF": "dts_test_project.urls",
         },
-        "type2": {  # this is the name of the public schema from get_public_schema_name
+        "type2": {
             "APPS": [
                 'django.contrib.auth',
                 'django.contrib.contenttypes',
                 'tenant_users.permissions',
             ],
-            # "URLCONF": "dts_test_project.urls",
         },
-        # "type2": {  # this is the name of the public schema from get_public_schema_name
-        #     "APPS": [
-        #         'django.contrib.auth',
-        #         'django.contrib.contenttypes',
-        #     ],
-        #     # "URLCONF": "dts_test_project.urls",
-        # },
     }
 
     settings.TENANT_TYPES = tenant_types
