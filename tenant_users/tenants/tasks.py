@@ -76,29 +76,23 @@ def provision_tenant(
         # without taking up url/schema namespace.
         schema_name = "{0}_{1}".format(tenant_slug, time_string)
 
-    domain = None
+    # Validate tenant type if multi-tenants are enabled
+    if has_multi_type_tenants():
+        valid_tenant_types = get_tenant_types()
 
-    # noinspection PyBroadException
-    try:
-        # Check if multi-tenants
-        # tenant_name
-        if has_multi_type_tenants():
-            valid_tenant_types = get_tenant_types()
-
-            if tenant_type not in valid_tenant_types:
-                valid_type_str = ", ".join(valid_tenant_types)
-                error_message = "{} is not a valid tenant type. Choices are {}.".format(
-                    tenant_type, valid_type_str
-                )
-                raise SchemaError(error_message)
-
-            tenant_extra_data.update(
-                {get_multi_type_database_field_name(): tenant_type}
+        if tenant_type not in valid_tenant_types:
+            valid_type_str = ", ".join(valid_tenant_types)
+            error_message = "{} is not a valid tenant type. Choices are {}.".format(
+                tenant_type, valid_type_str
             )
+            raise SchemaError(error_message)
 
-        # Wrap it in public schema context so schema consistency is maintained
-        # if any error occurs
-        with schema_context(get_public_schema_name()):
+        tenant_extra_data.update({get_multi_type_database_field_name(): tenant_type})
+
+    # Attempt to create the tenant and domain within the schema context
+    with schema_context(get_public_schema_name()):
+        # Create a new tenant instance with provided data
+        try:
             tenant = TenantModel.objects.create(
                 name=tenant_name,
                 slug=tenant_slug,
