@@ -102,21 +102,26 @@ def provision_tenant(
                 owner=user,
                 **tenant_extra_data,
             )
+        except Exception as error:
+            # Raise any error during tenant creation
+            raise error
 
-            # Add one or more domains for the tenant
-            domain = get_tenant_domain_model().objects.create(
-                domain=tenant_domain,
-                tenant=tenant,
-                is_primary=True,
+        # Create a domain associated with the tenant and mark as primary
+        domain_model = get_tenant_domain_model()
+        try:
+            domain_model.objects.create(
+                domain=tenant_domain, tenant=tenant, is_primary=True
             )
-            # Add user as a superuser inside the tenant
-            tenant.add_user(user, is_superuser=is_superuser, is_staff=is_staff)
-    except:
-        if domain is not None:
-            domain.delete()
-        if tenant is not None:
-            # Flag is set to auto-drop the schema for the tenant
-            tenant.delete(True)
-        raise
+        except Exception as error:
+            # Raise any error during domain creation
+            raise error
 
+        # Add the user to the tenant with provided roles
+        try:
+            tenant.add_user(user, is_superuser=is_superuser, is_staff=is_staff)
+        except Exception as error:
+            # Raise any error while adding the user
+            raise error
+
+    # Return the domain associated with the tenant
     return tenant_domain
