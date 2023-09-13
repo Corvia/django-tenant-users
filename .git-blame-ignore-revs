@@ -1,0 +1,7 @@
+# This keeps git blame clean.
+# See https://docs.github.com/en/repositories/working-with-files/using-files/viewing-a-file#ignore-commits-in-the-blame-view
+
+# Format code with Black
+8f60a51f8f7b04753808cc9dfb75822a1b954edb
+# Migrate string style to Black
+a844feab094c257d16c1ffe2e1fd46f59784903d
