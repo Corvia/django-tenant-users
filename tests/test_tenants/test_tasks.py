@@ -1,3 +1,4 @@
+from typing import List
 from unittest.mock import patch
 
 import pytest
@@ -14,7 +15,7 @@ TenantModel = get_tenant_model()
 TenantUser = get_user_model()
 
 
-def list_schemas() -> list[str]:
+def list_schemas() -> List[str]:
     """
     Retrieve a list of all schemas present in the PostgreSQL database.
 
