@@ -19,26 +19,18 @@ TEST_TENANT_NAME = 'pytest'
 TEST_USER_EMAIL = 'primary-user@test.com'
 
 
-@pytest.fixture(scope='session')
-def django_db_setup(django_db_setup, django_db_blocker):  # noqa: PT004
-    """Override the database setup to ensure proper setup."""
-    with django_db_blocker.unblock():
-        _provision_public_tenant()
+@pytest.fixture(autouse=True)
+def common_db_setup(db, request):
+    if request.node.get_closest_marker(name='no_db_setup'):
+        return  # Skip the rest of the fixture for tests marked with 'no_db_setup'
 
-        public_tenant = TenantModel.objects.get(
-            schema_name=get_public_schema_name(),
-        )
-        connection.set_tenant(public_tenant)
+    # Automatically stand up a public tenant for the majority of our tests
+    create_public_tenant('public.test.com', TEST_USER_EMAIL)
 
-
-def _provision_public_tenant():
-    """Handle public tenant schema."""
-    schema_name = get_public_schema_name()
-
-    try:
-        TenantModel.objects.get(schema_name=schema_name)
-    except TenantModel.DoesNotExist:
-        create_public_tenant('public.test.com', TEST_USER_EMAIL)
+    public_tenant = TenantModel.objects.get(
+        schema_name=get_public_schema_name(),
+    )
+    connection.set_tenant(public_tenant)
 
 
 @pytest.fixture()
