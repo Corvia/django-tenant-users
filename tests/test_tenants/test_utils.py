@@ -1,10 +1,13 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
+from django.conf import settings
 from django_tenants.utils import get_public_schema_name, schema_context
 
 from django_test_app.companies.models import Company, Domain
 from django_test_app.users.models import TenantUser
 from tenant_users.tenants import utils
-from tenant_users.tenants.models import ExistsError
+from tenant_users.tenants.models import ExistsError, SchemaError
 
 
 def test_get_current_tenant(public_tenant, test_tenants):
@@ -58,3 +61,40 @@ def test_create_public_tenant_with_specified_password():
 
     # Ensure the user is able to use the specified password
     assert user.check_password(secret)
+
+
+@patch("django_test_app.companies.models.Company.objects.create")
+@pytest.mark.usefixtures("tenant_type_settings")
+@pytest.mark.django_db()
+@pytest.mark.no_db_setup()
+def test_tenant_public_tenant_with_multitype(mock_create):
+    """Tests that multi-type information is used during the Public Tenant creation."""
+    # Since we're mocking, we expect an exception to be thrown after Tenant.create()
+    with pytest.raises(Exception):
+        utils.create_public_tenant('domain.test', 'user@domain.com')
+
+    # Check the mock was called
+    assert mock_create.called
+
+    # Get the arguments it was called with
+    _, kwargs = mock_create.call_args
+
+    # Ensure the multi-type database field was added during Tenant creation
+    assert kwargs.get(settings.MULTI_TYPE_DATABASE_FIELD) == get_public_schema_name()
+
+
+@pytest.mark.django_db()
+@pytest.mark.no_db_setup()
+def test_tenant_public_tenant_with_multitype_missing_public(settings):
+    """Tests that multi-type information is used during the Public Tenant creation."""
+    # Create invalid multitype configuration
+    settings.HAS_MULTI_TYPE_TENANTS = True
+    settings.TENANT_TYPES = {}
+
+    public_name = get_public_schema_name()
+    # Ensure we get a SchemaError back
+    with pytest.raises(
+        SchemaError,
+        match=f"Please define a '{public_name}' tenant type.",
+    ):
+        utils.create_public_tenant('domain.test', 'user@domain.com')
