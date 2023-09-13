@@ -25,16 +25,16 @@ def test_get_current_tenant(public_tenant, test_tenants):
 
 def test_duplicate_tenant_url(tenant_user):
     """Tests duplicate public tenant error."""
-    with pytest.raises(ExistsError, match='Public tenant already exists'):
-        utils.create_public_tenant('domain.com', tenant_user.email)
+    with pytest.raises(ExistsError, match="Public tenant already exists"):
+        utils.create_public_tenant("domain.com", tenant_user.email)
 
 
 @pytest.mark.django_db()
 @pytest.mark.no_db_setup()
 def test_create_public_tenant():
     """Ensures correctness of create_public_tenant() function."""
-    email = 'user@domain.com'
-    domain = 'domain.test'
+    email = "user@domain.com"
+    domain = "domain.test"
 
     # Create public tenant with basic params
     utils.create_public_tenant(domain, email)
@@ -52,12 +52,12 @@ def test_create_public_tenant():
 @pytest.mark.no_db_setup()
 def test_create_public_tenant_with_specified_password():
     """Ensure password is set correct when specified during public tenant creation."""
-    email = 'user@domain.com'
-    secret = 'super_secure_123'
-    utils.create_public_tenant('domain.test', email, password=secret)
+    email = "user@domain.com"
+    secret = "super_secure_123"
+    utils.create_public_tenant("domain.test", email, password=secret)
 
     user = TenantUser.objects.get(email=email)
-    assert user.tenants.filter(schema_name='public').exists()
+    assert user.tenants.filter(schema_name="public").exists()
 
     # Ensure the user is able to use the specified password
     assert user.check_password(secret)
@@ -71,7 +71,7 @@ def test_tenant_public_tenant_with_multitype(mock_create):
     """Tests that multi-type information is used during the Public Tenant creation."""
     # Since we're mocking, we expect an exception to be thrown after Tenant.create()
     with pytest.raises(Exception):
-        utils.create_public_tenant('domain.test', 'user@domain.com')
+        utils.create_public_tenant("domain.test", "user@domain.com")
 
     # Check the mock was called
     assert mock_create.called
@@ -97,4 +97,4 @@ def test_tenant_public_tenant_with_multitype_missing_public(settings):
         SchemaError,
         match=f"Please define a '{public_name}' tenant type.",
     ):
-        utils.create_public_tenant('domain.test', 'user@domain.com')
+        utils.create_public_tenant("domain.test", "user@domain.com")

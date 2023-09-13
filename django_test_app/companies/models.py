@@ -11,7 +11,7 @@ class Company(TenantBase):
 
     name = models.CharField(max_length=_NameFieldLength)
     description = models.TextField()
-    type = models.CharField(max_length=100, default='type1')
+    type = models.CharField(max_length=100, default="type1")
 
 
 class Domain(DomainMixin):

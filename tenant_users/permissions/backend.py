@@ -15,8 +15,8 @@ class UserBackend(ModelBackend):
     # We override this so that it looks for the 'groups' attribute on the
     # UserTenantPermissions rather than from get_user_model()
     def _get_group_permissions(self, user_obj):
-        user_groups_field = UserTenantPermissions._meta.get_field('groups')
-        user_groups_query = 'group__{0}'.format(
+        user_groups_field = UserTenantPermissions._meta.get_field("groups")
+        user_groups_query = "group__{0}".format(
             user_groups_field.related_query_name(),
         )
         return Permission.objects.filter(**{user_groups_query: user_obj})

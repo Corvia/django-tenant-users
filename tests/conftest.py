@@ -7,7 +7,7 @@ It may be also used for extending doctest's context:
 """
 
 pytest_plugins = [
-    'tests.fixtures.db',
-    'tests.fixtures.settings',
-    'tests.fixtures.tenant',
+    "tests.fixtures.db",
+    "tests.fixtures.settings",
+    "tests.fixtures.tenant",
 ]

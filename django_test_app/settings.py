@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'uv5(me+wl&bx5ag39_vimy2ie7mxdm&42a6$0t-+jfb+@6m(u2'
+SECRET_KEY = "uv5(me+wl&bx5ag39_vimy2ie7mxdm&42a6$0t-+jfb+@6m(u2"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -32,26 +32,26 @@ ALLOWED_HOSTS = []
 
 SHARED_APPS = [
     # django-tenants app
-    'django_tenants',
+    "django_tenants",
     # django apps
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
     # django-tenant-users apps
-    'tenant_users.permissions',
-    'tenant_users.tenants',
+    "tenant_users.permissions",
+    "tenant_users.tenants",
     # Test project apps
-    'django_test_app.companies',
-    'django_test_app.users',
+    "django_test_app.companies",
+    "django_test_app.users",
 ]
 
 TENANT_APPS = [
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'tenant_users.permissions',
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "tenant_users.permissions",
 ]
 
 INSTALLED_APPS = list(SHARED_APPS) + [
@@ -60,61 +60,61 @@ INSTALLED_APPS = list(SHARED_APPS) + [
 
 
 # django-tenant-users settings
-TENANT_USERS_DOMAIN = 'test.com'
-AUTHENTICATION_BACKENDS = ('tenant_users.permissions.backend.UserBackend',)
-AUTH_USER_MODEL = 'users.TenantUser'
+TENANT_USERS_DOMAIN = "test.com"
+AUTHENTICATION_BACKENDS = ("tenant_users.permissions.backend.UserBackend",)
+AUTH_USER_MODEL = "users.TenantUser"
 
 # django-tenants settings
-TENANT_MODEL = 'companies.Company'
-TENANT_DOMAIN_MODEL = 'companies.Domain'
+TENANT_MODEL = "companies.Company"
+TENANT_DOMAIN_MODEL = "companies.Domain"
 
 
 MIDDLEWARE = [
-    'django_tenants.middleware.main.TenantMainMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django_tenants.middleware.main.TenantMainMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'django_test_app.wsgi.application'
+WSGI_APPLICATION = "django_test_app.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django_tenants.postgresql_backend',
-        'USER': os.environ.get('DJANGO_DATABASE_USER', default=''),
-        'PASSWORD': os.environ.get('DJANGO_DATABASE_PASSWORD', default=''),
-        'NAME': os.environ.get('DJANGO_DATABASE_NAME', default=''),
-        'PORT': os.environ.get('DJANGO_DATABASE_PORT', default=''),
-        'HOST': os.environ.get('DJANGO_DATABASE_HOST', default=''),
+    "default": {
+        "ENGINE": "django_tenants.postgresql_backend",
+        "USER": os.environ.get("DJANGO_DATABASE_USER", default=""),
+        "PASSWORD": os.environ.get("DJANGO_DATABASE_PASSWORD", default=""),
+        "NAME": os.environ.get("DJANGO_DATABASE_NAME", default=""),
+        "PORT": os.environ.get("DJANGO_DATABASE_PORT", default=""),
+        "HOST": os.environ.get("DJANGO_DATABASE_HOST", default=""),
     },
 }
 
-DATABASE_ROUTERS = ('django_tenants.routers.TenantSyncRouter',)
+DATABASE_ROUTERS = ("django_tenants.routers.TenantSyncRouter",)
 
 
 # Password validation
@@ -126,9 +126,9 @@ AUTH_PASSWORD_VALIDATORS = []
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -140,9 +140,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

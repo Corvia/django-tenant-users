@@ -33,7 +33,7 @@ def test_user_delete(instance: TenantUser) -> None:
     # Test UserProfile.delete()
     with pytest.raises(
         DeleteError,
-        match=r'delete_user\(\) should be used',
+        match=r"delete_user\(\) should be used",
     ):
         instance.delete()
 

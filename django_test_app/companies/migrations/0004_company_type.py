@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('companies', '0003_alter_company_created_alter_company_modified'),
+        ("companies", "0003_alter_company_created_alter_company_modified"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='company',
-            name='type',
-            field=models.CharField(default='type1', max_length=100),
+            model_name="company",
+            name="type",
+            field=models.CharField(default="type1", max_length=100),
         ),
     ]

@@ -111,7 +111,7 @@ class UserTenantPermissions(PermissionsMixin, AbstractBaseUserFacade):
         auto_created=True,
         primary_key=True,
         serialize=False,
-        verbose_name='ID',
+        verbose_name="ID",
     )
 
     # The profile stores all of the common information between
@@ -122,10 +122,10 @@ class UserTenantPermissions(PermissionsMixin, AbstractBaseUserFacade):
     )
 
     is_staff = models.BooleanField(
-        _('staff status'),
+        _("staff status"),
         default=False,
         help_text=_(
-            'Designates whether the user can log into this tenants admin site.',
+            "Designates whether the user can log into this tenants admin site.",
         ),
     )
 

@@ -33,22 +33,22 @@ def list_schemas() -> List[str]:
 
 def test_provision_tenant(tenant_user_admin) -> None:
     """Tests provision_tenant() for correctness."""
-    slug = 'sample'
+    slug = "sample"
     tenant_domain = provision_tenant(
-        'Sample Tenant',
+        "Sample Tenant",
         slug,
         tenant_user_admin,
     )
 
-    assert tenant_domain == '{0}.{1}'.format(slug, settings.TENANT_USERS_DOMAIN)
+    assert tenant_domain == "{0}.{1}".format(slug, settings.TENANT_USERS_DOMAIN)
 
 
 def test_provision_tenant_with_subfolder(settings, tenant_user_admin) -> None:
     """Tests provision_tenant() for correctness when using subfolders."""
-    settings.TENANT_SUBFOLDER_PREFIX = 'clients'
-    slug = 'sample'
+    settings.TENANT_SUBFOLDER_PREFIX = "clients"
+    slug = "sample"
     tenant_domain = provision_tenant(
-        'Sample Tenant',
+        "Sample Tenant",
         slug,
         tenant_user_admin,
     )
@@ -61,10 +61,10 @@ def test_provision_tenant_inactive_user(tenant_user) -> None:
     tenant_user.is_active = False
     tenant_user.save()
 
-    with pytest.raises(InactiveError, match='Inactive user passed'):
+    with pytest.raises(InactiveError, match="Inactive user passed"):
         provision_tenant(
-            'inactive_test',
-            'inactive_test',
+            "inactive_test",
+            "inactive_test",
             tenant_user.email,
         )
 
@@ -74,7 +74,7 @@ def test_duplicate_tenant_url(test_tenants, tenant_user) -> None:
     # Get first non-public tenant to use
     slug = test_tenants.first().slug
 
-    with pytest.raises(ExistsError, match='URL already exists'):
+    with pytest.raises(ExistsError, match="URL already exists"):
         provision_tenant(slug, slug, tenant_user.email)
 
 
@@ -85,10 +85,10 @@ def test_provision_with_schema_name(tenant_user) -> None:
     This test verifies that the `provision_tenant` function correctly creates a tenant
     with a custom schema name and that the corresponding schema is created in the database.
     """
-    slug = 'sample'
-    custom_schema_name = 'my_custom_name'
+    slug = "sample"
+    custom_schema_name = "my_custom_name"
     provision_tenant(
-        'Sample Tenant',
+        "Sample Tenant",
         slug,
         tenant_user.email,
         schema_name=custom_schema_name,

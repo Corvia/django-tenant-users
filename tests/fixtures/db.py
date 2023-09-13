@@ -15,17 +15,17 @@ from tenant_users.tenants.utils import create_public_tenant
 #: Constants
 TenantModel = get_tenant_model()
 TenantUser = get_user_model()
-TEST_TENANT_NAME = 'pytest'
-TEST_USER_EMAIL = 'primary-user@test.com'
+TEST_TENANT_NAME = "pytest"
+TEST_USER_EMAIL = "primary-user@test.com"
 
 
 @pytest.fixture(autouse=True)
 def common_db_setup(db, request):
-    if request.node.get_closest_marker(name='no_db_setup'):
+    if request.node.get_closest_marker(name="no_db_setup"):
         return  # Skip the rest of the fixture for tests marked with 'no_db_setup'
 
     # Automatically stand up a public tenant for the majority of our tests
-    create_public_tenant('public.test.com', TEST_USER_EMAIL)
+    create_public_tenant("public.test.com", TEST_USER_EMAIL)
 
     public_tenant = TenantModel.objects.get(
         schema_name=get_public_schema_name(),
@@ -37,10 +37,10 @@ def common_db_setup(db, request):
 def test_tenants(db, create_tenant):  # noqa: PT004
     """Provision a few tenants for testing."""
     tenant_user = TenantUser.objects.get(email=TEST_USER_EMAIL)
-    for tenant_slug in ('one', 'two'):
+    for tenant_slug in ("one", "two"):
         create_tenant(tenant_user, tenant_slug)
 
-    return TenantModel.objects.exclude(schema_name='public')
+    return TenantModel.objects.exclude(schema_name="public")
 
 
 @pytest.fixture()

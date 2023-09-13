@@ -64,7 +64,7 @@ def schema_required(func):
 class TenantBase(TenantMixin):
     """Contains global data and settings for the tenant model."""
 
-    slug = models.SlugField(_('Tenant URL Name'), blank=True)
+    slug = models.SlugField(_("Tenant URL Name"), blank=True)
 
     # The owner of the tenant. Only they can delete it. This can be changed,
     # but it can't be blank. There should always be an owner.
@@ -86,7 +86,7 @@ class TenantBase(TenantMixin):
             super().delete(force_drop, *args, **kwargs)
         else:
             raise DeleteError(
-                'Not supported -- delete_tenant() should be used.',
+                "Not supported -- delete_tenant() should be used.",
             )
 
     @schema_required
@@ -95,7 +95,7 @@ class TenantBase(TenantMixin):
         # User already is linked here..
         if self.user_set.filter(id=user_obj.pk).exists():
             raise ExistsError(
-                'User already added to tenant: {0}'.format(
+                "User already added to tenant: {0}".format(
                     user_obj,
                 ),
             )
@@ -126,7 +126,7 @@ class TenantBase(TenantMixin):
         # Through delete tenant or transfer_ownership
         if user_obj.pk == self.owner.pk:
             raise DeleteError(
-                'Cannot remove owner from tenant: {0}'.format(
+                "Cannot remove owner from tenant: {0}".format(
                     self.owner,
                 ),
             )
@@ -158,7 +158,7 @@ class TenantBase(TenantMixin):
         """
         # Prevent public tenant schema from being deleted
         if self.schema_name == get_public_schema_name():
-            raise ValueError('Cannot delete public tenant schema')
+            raise ValueError("Cannot delete public tenant schema")
 
         for user_obj in self.user_set.all():
             # Don't delete owner at this point
@@ -169,7 +169,7 @@ class TenantBase(TenantMixin):
         # Seconds since epoch, time() returns a float, so we convert to
         # an int first to truncate the decimal portion
         time_string = str(int(time.time()))
-        new_url = '{0}-{1}-{2}'.format(
+        new_url = "{0}-{1}-{2}".format(
             time_string,
             str(self.owner.pk),
             self.domain_url,
@@ -242,17 +242,17 @@ class UserProfileManager(BaseUserManager):
 
         if connection.schema_name != get_public_schema_name():
             raise SchemaError(
-                'Schema must be public for UserProfileManager user creation',
+                "Schema must be public for UserProfileManager user creation",
             )
 
         if not email:
-            raise ValueError('Users must have an email address.')
+            raise ValueError("Users must have an email address.")
 
         email = self.normalize_email(email)
 
         profile = UserModel.objects.filter(email=email).first()
         if profile and profile.is_active:
-            raise ExistsError('User already exists!')
+            raise ExistsError("User already exists!")
 
         # Profile might exist but not be active. If a profile does exist
         # all previous history logs will still be associated with the user,
@@ -328,7 +328,7 @@ class UserProfileManager(BaseUserManager):
             schema_name=get_public_schema_name(),
         )
         if user_obj.pk == public_tenant.owner.pk:
-            raise DeleteError('Cannot delete the public tenant owner!')
+            raise DeleteError("Cannot delete the public tenant owner!")
 
         # This includes the linked public tenant 'tenant'. It will delete the
         # Tenant permissions and unlink when user is deleted
@@ -364,27 +364,27 @@ class UserProfile(AbstractBaseUser, PermissionsMixinFacade):
     Requires use of the ModelBackend
     """
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
     objects = UserProfileManager()
 
     tenants = models.ManyToManyField(
         settings.TENANT_MODEL,
-        verbose_name=_('tenants'),
+        verbose_name=_("tenants"),
         blank=True,
-        help_text=_('The tenants this user belongs to.'),
-        related_name='user_set',
+        help_text=_("The tenants this user belongs to."),
+        related_name="user_set",
     )
 
     email = models.EmailField(
-        _('Email Address'),
+        _("Email Address"),
         unique=True,
         db_index=True,
     )
 
-    is_active = models.BooleanField(_('active'), default=True)
+    is_active = models.BooleanField(_("active"), default=True)
 
     # Tracks whether the user's email has been verified
-    is_verified = models.BooleanField(_('verified'), default=False)
+    is_verified = models.BooleanField(_("verified"), default=False)
 
     class Meta(object):
         abstract = True
@@ -397,7 +397,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixinFacade):
             super().delete(*args, **kwargs)
         else:
             raise DeleteError(
-                'UserProfile.objects.delete_user() should be used.',
+                "UserProfile.objects.delete_user() should be used.",
             )
 
     def __str__(self):

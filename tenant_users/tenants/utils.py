@@ -92,8 +92,8 @@ def create_public_tenant(
     public_tenant.add_user(profile, is_superuser=is_superuser, is_staff=is_staff)
 
     # Handle setting the password for the user
-    if 'password' in owner_extra:
-        profile.set_password(owner_extra['password'])
+    if "password" in owner_extra:
+        profile.set_password(owner_extra["password"])
     else:
         profile.set_unusable_password()
     profile.save()

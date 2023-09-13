@@ -9,13 +9,13 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('companies', '0001_initial'),
+        ("companies", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='company',
-            name='owner',
+            model_name="company",
+            name="owner",
             field=models.ForeignKey(
                 on_delete=models.deletion.CASCADE,
                 to=settings.AUTH_USER_MODEL,

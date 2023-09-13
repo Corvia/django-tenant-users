@@ -13,19 +13,19 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Company',
+            name="Company",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
                         auto_created=True,
                         primary_key=True,
                         serialize=False,
-                        verbose_name='ID',
+                        verbose_name="ID",
                     ),
                 ),
                 (
-                    'schema_name',
+                    "schema_name",
                     models.CharField(
                         db_index=True,
                         max_length=63,
@@ -34,35 +34,35 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    'slug',
+                    "slug",
                     models.SlugField(
                         blank=True,
-                        verbose_name='Tenant URL Name',
+                        verbose_name="Tenant URL Name",
                     ),
                 ),
-                ('created', models.DateTimeField()),
-                ('modified', models.DateTimeField(blank=True)),
-                ('name', models.CharField(max_length=64)),
-                ('description', models.TextField()),
+                ("created", models.DateTimeField()),
+                ("modified", models.DateTimeField(blank=True)),
+                ("name", models.CharField(max_length=64)),
+                ("description", models.TextField()),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Domain',
+            name="Domain",
             fields=[
                 (
-                    'id',
+                    "id",
                     models.BigAutoField(
                         auto_created=True,
                         primary_key=True,
                         serialize=False,
-                        verbose_name='ID',
+                        verbose_name="ID",
                     ),
                 ),
                 (
-                    'domain',
+                    "domain",
                     models.CharField(
                         db_index=True,
                         max_length=253,
@@ -70,23 +70,23 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    'is_primary',
+                    "is_primary",
                     models.BooleanField(
                         db_index=True,
                         default=True,
                     ),
                 ),
                 (
-                    'tenant',
+                    "tenant",
                     models.ForeignKey(
                         on_delete=models.deletion.CASCADE,
-                        related_name='domains',
-                        to='companies.company',
+                        related_name="domains",
+                        to="companies.company",
                     ),
                 ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]
