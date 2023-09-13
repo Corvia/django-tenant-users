@@ -62,17 +62,17 @@ def create_public_tenant(
     # Create the public tenant
     if has_multi_type_tenants():
         valid_tenant_types = get_tenant_types()
-        tenant_type = public_schema_name
 
-        # Check if the specified tenant type is valid
-        if tenant_type not in valid_tenant_types:
-            valid_type_str = ', '.join(valid_tenant_types)
-            error_message = "{} is not a valid tenant type. Choices are {}.".format(
-                tenant_type, valid_type_str
+        # Check if the Public tenant type is defined
+        if public_schema_name not in valid_tenant_types:
+            error_message = "Please define a '{0}' tenant type.".format(
+                public_schema_name,
             )
             raise SchemaError(error_message)
 
-        tenant_extra_data.update({get_multi_type_database_field_name(): tenant_type})
+        tenant_extra_data.update(
+            {get_multi_type_database_field_name(): public_schema_name}
+        )
 
     public_tenant = TenantModel.objects.create(
         schema_name=public_schema_name,
