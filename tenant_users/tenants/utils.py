@@ -58,10 +58,6 @@ def create_public_tenant(
         is_active=True,
         **owner_extra,
     )
-    # Set the owner user's password as unusable if not provided
-    if 'password' not in owner_extra:
-        profile.set_unusable_password()
-        profile.save()
 
     # Create the public tenant
     if has_multi_type_tenants():
@@ -94,5 +90,12 @@ def create_public_tenant(
 
     # Add system user to public tenant (no permissions)
     public_tenant.add_user(profile, is_superuser=is_superuser, is_staff=is_staff)
+
+    # Handle setting the password for the user
+    if 'password' in owner_extra:
+        profile.set_password(owner_extra['password'])
+    else:
+        profile.set_unusable_password()
+    profile.save()
 
     return public_tenant, domain, profile
