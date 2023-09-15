@@ -52,12 +52,12 @@ essence, it's the bridge that sorts out the user stuff in a multi-tenant setup.
 Getting Started
 ---------------
 
-#. **Installation**: Dive into our `Installation Guide <https://django-tenant-users.rtfd.io/en/latest/installation.html>`_
+#. **Installation**: Dive into our `Installation Guide <https://django-tenant-users.rtfd.io/en/latest/pages/installation.html>`_
    to get ``django-tenant-users`` up and running.
-#. **Usage**: Check out the `Using Guide <https://django-tenant-users.rtfd.io/en/latest/using.html>`_ to see how
+#. **Usage**: Check out the `Using Guide <https://django-tenant-users.rtfd.io/en/latest/pages/using.html>`_ to see how
    to make the most of the package.
 #. **Core Concepts**: If you're curious about the ideas driving our design, the
-   `Core Concepts <https://django-tenant-users.rtfd.io/en/latest/concepts.html>`_ page is a great place to start.
+   `Core Concepts <https://django-tenant-users.rtfd.io/en/latest/pages/concepts.html>`_ page is a great place to start.
 
 
 Contribute
