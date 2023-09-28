@@ -30,7 +30,7 @@ jobs:
           POSTGRES_USER: ${{ env.DJANGO_DATABASE_USER }}
           POSTGRES_PASSWORD: ${{ env.DJANGO_DATABASE_PASSWORD }}
         ports:
-        - 5432/tcp
+          - 5432/tcp
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -74,6 +74,6 @@ jobs:
           DJANGO_DATABASE_PORT: ${{ job.services.postgres.ports[5432] }}
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v3
         with:
           file: ./coverage.xml
