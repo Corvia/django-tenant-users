@@ -2,7 +2,15 @@
 
 We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` release.
 
-## {{ Next Version }}
+## 1.3.0 (2023-11-14)
+
+### Features
+
+- Added support for multi-tenant types by @Wizely99 in [#475](https://github.com/Corvia/django-tenant-users/pull/475)
+
+### Misc
+
+- Major redesign of docs
 
 ## 1.2.0 (2023-08-08)
 
