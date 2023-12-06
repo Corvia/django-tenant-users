@@ -515,13 +515,13 @@ stevedore = "*"
 
 [[package]]
 name = "docutils"
-version = "0.18.1"
+version = "0.19"
 description = "Docutils -- Python Documentation Utilities"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+python-versions = ">=3.7"
 files = [
-    {file = "docutils-0.18.1-py2.py3-none-any.whl", hash = "sha256:23010f129180089fbcd3bc08cfefccb3b890b0050e1ca00c867036e9d161b98c"},
-    {file = "docutils-0.18.1.tar.gz", hash = "sha256:679987caf361a7539d76e584cbeddc311e3aee937877c87346f31debc63e9d06"},
+    {file = "docutils-0.19-py3-none-any.whl", hash = "sha256:5e1de4d849fee02c63b040a4a3fd567f4ab104defd8a5511fbbc24a8a017efbc"},
+    {file = "docutils-0.19.tar.gz", hash = "sha256:33995a6753c30b7f577febfc2c50411fec6aac7f7ffeb7c4cfe5991072dcf9e6"},
 ]
 
 [[package]]
@@ -1065,17 +1065,17 @@ dev = ["Sphinx (==7.2.5)", "colorama (==0.4.5)", "colorama (==0.4.6)", "exceptio
 
 [[package]]
 name = "m2r2"
-version = "0.3.2"
+version = "0.3.3.post2"
 description = "Markdown and reStructuredText in a single file."
 optional = false
-python-versions = "*"
+python-versions = ">=3.7"
 files = [
-    {file = "m2r2-0.3.2-py3-none-any.whl", hash = "sha256:d3684086b61b4bebe2307f15189495360f05a123c9bda2a66462649b7ca236aa"},
-    {file = "m2r2-0.3.2.tar.gz", hash = "sha256:ccd95b052dcd1ac7442ecb3111262b2001c10e4119b459c34c93ac7a5c2c7868"},
+    {file = "m2r2-0.3.3.post2-py3-none-any.whl", hash = "sha256:86157721eb6eabcd54d4eea7195890cc58fa6188b8d0abea633383cfbb5e11e3"},
+    {file = "m2r2-0.3.3.post2.tar.gz", hash = "sha256:e62bcb0e74b3ce19cda0737a0556b04cf4a43b785072fcef474558f2c1482ca8"},
 ]
 
 [package.dependencies]
-docutils = "*"
+docutils = ">=0.19"
 mistune = "0.8.4"
 
 [[package]]
