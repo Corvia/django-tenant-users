@@ -8,9 +8,8 @@ to get started.
 Provisioning a New Tenant
 -------------------------
 
-To set up a new tenant in your application, utilize the
-:func:`utils.create_public_tenant() <tenant_users.tenants.tasks.provision_tenant>`
-function:
+To set up a new tenant in your application, utilize
+:func:`tasks.create_public_tenant() <tenant_users.tenants.tasks.provision_tenant>`:
 
 .. code-block:: python
 
