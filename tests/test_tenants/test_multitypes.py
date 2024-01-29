@@ -5,10 +5,10 @@ from tenant_users.tenants import tasks
 from tenant_users.tenants.models import SchemaError
 
 
-@pytest.mark.usefixtures("tenant_type_settings")
+@pytest.mark.usefixtures("_tenant_type_settings")
 def test_provision_tenant_with_valid_tenant_type(tenant_user_admin):
     """Tests tasks.provision_tenant() with a valid tenant type."""
-    TenantModel = get_tenant_model()
+    TenantModel = get_tenant_model()  # noqa: N806
     slug = "type"
 
     # Create a tenant with a valid tenant type 'type2'
@@ -21,13 +21,13 @@ def test_provision_tenant_with_valid_tenant_type(tenant_user_admin):
     assert tenant.type == "type2"
 
 
-@pytest.mark.usefixtures("tenant_type_settings")
+@pytest.mark.usefixtures("_tenant_type_settings")
 def test_provision_tenant_with_invalid_tenant_type(tenant_user_admin):
     """Tests tasks.provision_tenant() with an invalid tenant type."""
     # Attempt to create a tenant with an invalid tenant type 'invalid_type'
+    valid_tenant_types = get_tenant_types()
+    invalid_tenant_type = "invalid_type"
     with pytest.raises(SchemaError) as excinfo:
-        valid_tenant_types = get_tenant_types()
-        invalid_tenant_type = "invalid_type"
         tasks.provision_tenant(
             "Invalid Tenant type",
             "invalid",
@@ -38,6 +38,6 @@ def test_provision_tenant_with_invalid_tenant_type(tenant_user_admin):
     # Check if the correct exception message is raised
     assert str(
         excinfo.value
-    ) == "{0} is not a valid tenant type. Choices are {1}.".format(
+    ) == "{} is not a valid tenant type. Choices are {}.".format(
         invalid_tenant_type, ", ".join(valid_tenant_types)
     )

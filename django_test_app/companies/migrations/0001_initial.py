@@ -1,5 +1,5 @@
 from django.db import migrations, models
-from django_tenants.postgresql_backend.base import (  # noqa: WPS433, WPS450
+from django_tenants.postgresql_backend.base import (
     _check_schema_name as check_schema_name,
 )
 

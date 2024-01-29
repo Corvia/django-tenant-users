@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from tenant_users.permissions.functional import tenant_cached_property
 
 
-class PermissionsMixinFacade(object):
+class PermissionsMixinFacade:
     """
     This class is designed to shim the PermissionMixin class functions and
     delegate them down to the correct linked (based on the current schema)
@@ -14,7 +14,7 @@ class PermissionsMixinFacade(object):
     django does. This is designed to be inherited from by the AUTH_USER_MODEL
     """
 
-    class Meta(object):
+    class Meta:
         abstract = True
 
     # This will throw a DoesNotExist exception if there is no tenant
@@ -27,12 +27,13 @@ class PermissionsMixinFacade(object):
             profile_id=self.pk,
         )
 
-    def has_tenant_permissions(self):
+    def has_tenant_permissions(self) -> bool:
         try:
-            self.tenant_perms
-            return True
+            _ = self.tenant_perms
         except UserTenantPermissions.DoesNotExist:
             return False
+
+        return True
 
     @tenant_cached_property
     def is_staff(self):
@@ -79,7 +80,7 @@ class PermissionsMixinFacade(object):
             return False
 
 
-class AbstractBaseUserFacade(object):
+class AbstractBaseUserFacade:
     """
     This class is designed to shim functions on the authorization model
     that are actually part of the authentication model. Auth backends
@@ -88,7 +89,7 @@ class AbstractBaseUserFacade(object):
     tenant permissions
     """
 
-    class Meta(object):
+    class Meta:
         abstract = True
 
     @property

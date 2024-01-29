@@ -14,7 +14,7 @@ from tenant_users.tenants.models import ExistsError, SchemaError
 
 def get_current_tenant():
     current_schema = connection.schema_name
-    TenantModel = get_tenant_model()
+    TenantModel = get_tenant_model()  # noqa: N806
     tenant = TenantModel.objects.get(schema_name=current_schema)
     return tenant
 
@@ -22,9 +22,10 @@ def get_current_tenant():
 def create_public_tenant(
     domain_url,
     owner_email,
-    is_superuser=False,
-    is_staff=False,
-    tenant_extra_data={},
+    *,
+    is_superuser: bool = False,
+    is_staff: bool = False,
+    tenant_extra_data=None,
     **owner_extra,
 ):
     """Create a public tenant with an owner user.
@@ -43,9 +44,11 @@ def create_public_tenant(
 
     * `Tuple[YourTenantModel, YourDomainModel, YourUserModel]`: A tuple containing the created public tenant, its domain, and the owner user.
     """
+    if tenant_extra_data is None:
+        tenant_extra_data = {}
 
-    UserModel = get_user_model()
-    TenantModel = get_tenant_model()
+    UserModel = get_user_model()  # noqa: N806
+    TenantModel = get_tenant_model()  # noqa: N806
     public_schema_name = get_public_schema_name()
 
     if TenantModel.objects.filter(schema_name=public_schema_name).first():
@@ -65,9 +68,7 @@ def create_public_tenant(
 
         # Check if the Public tenant type is defined
         if public_schema_name not in valid_tenant_types:
-            error_message = "Please define a '{0}' tenant type.".format(
-                public_schema_name,
-            )
+            error_message = f"Please define a '{public_schema_name}' tenant type."
             raise SchemaError(error_message)
 
         tenant_extra_data.update(

@@ -24,7 +24,7 @@ def _debug(settings) -> None:
 
 
 @pytest.fixture(autouse=False)
-def tenant_type_settings(settings):
+def _tenant_type_settings(settings):
     settings.HAS_MULTI_TYPE_TENANTS = True
     settings.MULTI_TYPE_DATABASE_FIELD = "type"
     delattr(settings, "SHARED_APPS")

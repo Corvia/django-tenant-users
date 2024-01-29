@@ -25,7 +25,7 @@ def _get_project_meta():
 
 pkg_meta = _get_project_meta()
 project = str(pkg_meta["name"])
-copyright = "Copyright (c) 2016 Viatrak"
+project_copyright = "Copyright (c) 2016 Viatrak"
 author = "corvia.tech"
 
 # The short X.Y version

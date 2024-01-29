@@ -2,7 +2,7 @@ from django.db import connection
 from django.utils.functional import cached_property
 
 
-class tenant_cached_property(cached_property):
+class tenant_cached_property(cached_property):  # noqa: N801
     """
     Tenant-aware version of the ``cached_property`` decorator
     from ``django.utils.functional``.
@@ -17,11 +17,9 @@ class tenant_cached_property(cached_property):
         if current_schema not in instance.__dict__:
             instance.__dict__[current_schema] = {}
             res = instance.__dict__[current_schema][self.name] = self.func(instance)
-            return res
-
         elif self.name not in instance.__dict__[current_schema]:
             res = instance.__dict__[current_schema][self.name] = self.func(instance)
-            return res
+        else:
+            res = instance.__dict__[current_schema][self.name]
 
-        res = instance.__dict__[current_schema][self.name]
         return res

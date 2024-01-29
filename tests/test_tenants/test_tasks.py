@@ -1,4 +1,5 @@
-from typing import List
+from __future__ import annotations
+
 from unittest.mock import patch
 
 import pytest
@@ -15,7 +16,7 @@ TenantModel = get_tenant_model()
 TenantUser = get_user_model()
 
 
-def list_schemas() -> List[str]:
+def list_schemas() -> list[str]:
     """
     Retrieve a list of all schemas present in the PostgreSQL database.
 
@@ -40,7 +41,7 @@ def test_provision_tenant(tenant_user_admin) -> None:
         tenant_user_admin,
     )
 
-    assert tenant_domain == "{0}.{1}".format(slug, settings.TENANT_USERS_DOMAIN)
+    assert tenant_domain == f"{slug}.{settings.TENANT_USERS_DOMAIN}"
 
 
 def test_provision_tenant_with_subfolder(settings, tenant_user_admin) -> None:
@@ -110,9 +111,8 @@ def test_provision_tenant_tenant_creation_exception(tenant_user) -> None:
     with patch(
         "django_test_app.companies.models.Company.objects.create",
         side_effect=DatabaseError("Database error"),
-    ):
-        with pytest.raises(Exception, match="Database error"):
-            provision_tenant("Test Tenant", "test-tenant", tenant_user.email)
+    ), pytest.raises(Exception, match="Database error"):
+        provision_tenant("Test Tenant", "test-tenant", tenant_user.email)
 
 
 def test_provision_tenant_domain_creation_exception(tenant_user) -> None:
@@ -130,9 +130,8 @@ def test_provision_tenant_domain_creation_exception(tenant_user) -> None:
     with patch(
         "django_test_app.companies.models.Domain.objects.create",
         side_effect=DatabaseError("Domain error"),
-    ):
-        with pytest.raises(Exception, match="Domain error"):
-            provision_tenant("Test Tenant", slug, tenant_user.email)
+    ), pytest.raises(Exception, match="Domain error"):
+        provision_tenant("Test Tenant", slug, tenant_user.email)
 
     # Ensure tenant was cleaned up
     assert not TenantModel.objects.filter(slug=slug).exists()
@@ -153,9 +152,8 @@ def test_provision_tenant_user_add_exception(tenant_user: TenantUser) -> None:
     with patch(
         "django_test_app.companies.models.Company.add_user",
         side_effect=InactiveError("Exception error"),
-    ):
-        with pytest.raises(Exception, match="Exception error"):
-            provision_tenant("Test Tenant", slug, tenant_user.email)
+    ), pytest.raises(Exception, match="Exception error"):
+        provision_tenant("Test Tenant", slug, tenant_user.email)
 
     # Ensure user wasn't added to a tenant
     assert tenant_user.tenants.count() == 1

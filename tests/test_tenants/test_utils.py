@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 from django.conf import settings
@@ -53,7 +53,7 @@ def test_create_public_tenant():
 def test_create_public_tenant_with_specified_password():
     """Ensure password is set correct when specified during public tenant creation."""
     email = "user@domain.com"
-    secret = "super_secure_123"
+    secret = "super_secure_123"  # noqa: S105
     utils.create_public_tenant("domain.test", email, password=secret)
 
     user = TenantUser.objects.get(email=email)
@@ -64,13 +64,13 @@ def test_create_public_tenant_with_specified_password():
 
 
 @patch("django_test_app.companies.models.Company.objects.create")
-@pytest.mark.usefixtures("tenant_type_settings")
+@pytest.mark.usefixtures("_tenant_type_settings")
 @pytest.mark.django_db()
 @pytest.mark.no_db_setup()
 def test_tenant_public_tenant_with_multitype(mock_create):
     """Tests that multi-type information is used during the Public Tenant creation."""
     # Since we're mocking, we expect an exception to be thrown after Tenant.create()
-    with pytest.raises(Exception):
+    with pytest.raises(ValueError, match='must be a "Company" instance'):
         utils.create_public_tenant("domain.test", "user@domain.com")
 
     # Check the mock was called
