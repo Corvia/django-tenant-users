@@ -1,5 +1,4 @@
-"""
-This module is used to modify SETTINGS during tests.
+"""This module is used to modify SETTINGS during tests.
 
 All defined fixtures should include settings()
 """

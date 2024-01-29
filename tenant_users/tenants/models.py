@@ -155,8 +155,7 @@ class TenantBase(TenantMixin):
         )
 
     def delete_tenant(self):
-        """
-        Mark tenant for deletion.
+        """Mark tenant for deletion.
 
         We don't actually delete the tenant out of the database, but we
         associate them with a the public schema user and change their url
@@ -359,14 +358,19 @@ class UserProfileManager(BaseUserManager):
 # both the public schema and all tenant schemas. We want profiles only
 # in the public schema alongside the TenantBase model
 class UserProfile(AbstractBaseUser, PermissionsMixinFacade):
-    """
-    An authentication-only model that is in the public tenant schema but
-    linked from the authorization model (UserTenantPermissions)
-    where as to allow for one global profile (public schema) for each user
-    but maintain permissions on a per tenant basis.
-    To access permissions for a user, the request must come through the
-    tenant that permissions are desired for.
-    Requires use of the ModelBackend
+    """Authentication model for django-tenant-users stored in the public tenant schema.
+
+    This class represents an authentication-only model that is centrally located in the public tenant schema,
+    yet maintains a link to the UserTenantPermissions model for authorization. It enables a singular global
+    user profile across all tenants while allowing permissions to be managed on a per-tenant basis. This design
+    ensures a unified user identity across different tenants with distinct permission sets in each tenant context.
+
+    Access to a user's permissions requires routing the request through the relevant tenant. The implementation
+    necessitates using the ModelBackend for proper integration.
+
+    Inherits:
+        AbstractBaseUser: Django's base class for user models, providing core user authentication features.
+        PermissionsMixinFacade: A facade to adapt Django's PermissionMixin for multi-tenant environments.
     """
 
     USERNAME_FIELD = "email"

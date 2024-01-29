@@ -1,5 +1,4 @@
-"""
-This module is used to interact with the Database during tests.
+"""This module is used to interact with the Database during tests.
 
 https://pytest-django.readthedocs.io/en/latest/database.html
 """

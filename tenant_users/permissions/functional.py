@@ -3,9 +3,17 @@ from django.utils.functional import cached_property
 
 
 class tenant_cached_property(cached_property):  # noqa: N801
-    """
-    Tenant-aware version of the ``cached_property`` decorator
-    from ``django.utils.functional``.
+    """A tenant-aware implementation of Django's cached_property decorator.
+
+    This class extends Django's `cached_property` decorator, adding tenant-awareness to
+    the property caching mechanism. It is particularly useful for properties that
+    should be cached on a per-tenant basis.
+
+    Methods:
+        __get__: Retrieves the value of the cached property, specific to the current tenant.
+                 If the instance is None, returns the property descriptor itself. Otherwise,
+                 it returns the property value, caching it under the current tenant's schema
+                 if not already cached.
     """
 
     def __get__(self, instance, cls=None):

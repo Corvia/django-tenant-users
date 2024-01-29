@@ -5,15 +5,20 @@ from tenant_users.permissions.models import UserTenantPermissions
 
 
 class UserBackend(ModelBackend):
-    """
-    Authenticates against UserProfile
-    Authorizes against the UserTenantPermissions.
-    The Facade classes handle the magic of passing
-    requests to the right spot.
+    """Custom authentication backend for UserProfile.
+
+    This backend authenticates users against the UserProfile and authorizes them
+    based on UserTenantPermissions. It utilizes Facade classes to direct requests
+    appropriately.
+
+    Overrides:
+        _get_group_permissions: Modified to refer to 'groups' attribute in
+        UserTenantPermissions instead of the default user model's groups.
+
+    Methods:
+        _get_group_permissions: Retrieves group permissions associated with a given user.
     """
 
-    # We override this so that it looks for the 'groups' attribute on the
-    # UserTenantPermissions rather than from get_user_model()
     def _get_group_permissions(self, user_obj):
         user_groups_field = UserTenantPermissions._meta.get_field(  # noqa: SLF001
             "groups"

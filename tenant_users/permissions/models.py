@@ -7,11 +7,15 @@ from tenant_users.permissions.functional import tenant_cached_property
 
 
 class PermissionsMixinFacade:
-    """
-    This class is designed to shim the PermissionMixin class functions and
-    delegate them down to the correct linked (based on the current schema)
-    tenant permissions since we don't handle them in the user like stock
-    django does. This is designed to be inherited from by the AUTH_USER_MODEL
+    """A facade for Django's PermissionMixin to handle multi-tenant permissions.
+
+    Adapts Django's PermissionMixin to work seamlessly with django-tenant-users, by
+    delegating permission-related functionalities to the tenant-specific permissions model.
+    It ensures that permissions are correctly managed according to the tenant context,
+    rather than using Django's default user-based permission system.
+
+    Note:
+        This class is abstract and should be inherited by AUTH_USER_MODEL.
     """
 
     class Meta:
@@ -81,12 +85,13 @@ class PermissionsMixinFacade:
 
 
 class AbstractBaseUserFacade:
-    """
-    This class is designed to shim functions on the authorization model
-    that are actually part of the authentication model. Auth backends
-    expect the models to be combined, but we separate them so we can
-    have single authentication across the system, but have per
-    tenant permissions
+    """A facade class bridging authorization and authentication models in a multi-tenant setup.
+
+    In django-tenant-users, authentication and authorization models are separated to enable
+    single authentication with per-tenant permissions. This class acts as a shim, aligning
+    functions typically found in the authentication model with those expected by Django's
+    auth backends. It ensures compatibility and functionality in scenarios where auth backends
+    expect a combined model structure.
     """
 
     class Meta:
@@ -102,10 +107,19 @@ class AbstractBaseUserFacade:
 
 
 class UserTenantPermissions(PermissionsMixin, AbstractBaseUserFacade):
-    """This class serves as the authorization model (permissions) per-tenant.
+    """Authorization model for managing per-tenant permissions in Django-tenant-users.
 
-    We keep all of the global user profile information in the public tenant
-    schema including authentication aspects. See UserProfile model.
+    This class is responsible for handling the authorization aspects (permissions) for each tenant.
+    It complements the UserProfile model, which stores global user profile information and authentication
+    details in the public tenant schema. By separating authorization on a per-tenant basis, this model
+    supports a flexible and scalable approach to permissions management in a multi-tenant environment.
+
+    Inherits:
+        PermissionsMixin: Provides Django's built-in permissions framework.
+        AbstractBaseUserFacade: Bridges authorization with authentication models.
+
+    See Also:
+        UserProfile: For the model handling global user profile and authentication aspects.
     """
 
     id = models.AutoField(

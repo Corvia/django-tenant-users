@@ -28,31 +28,26 @@ def provision_tenant(  # noqa: PLR0913
     schema_name=None,
     tenant_extra_data=None,
 ):
-    """Creates a tenant with default roles and permissions.
+    """Creates and initializes a new tenant with specified attributes and default roles.
 
-    This function creates a new tenant record, creates a user record for the tenant administrator, grants the user the default roles for the tenant, and provisions the tenant's infrastructure.
+    Args:
+        tenant_name (str): The name of the tenant.
+        tenant_slug (str): A unique slug for the tenant. It's used to create the schema_name.
+        user_email (str): Email address of the tenant's owner. The user must exist beforehand.
+        is_staff (bool, optional): If True, the user has staff access. Defaults to False.
+        is_superuser (bool, optional): If True, the user has all permissions. Defaults to True.
+        tenant_type (str, optional): Type of the tenant, used with `HAS_MULTI_TYPE_TENANTS = True`.
+        schema_name (str, optional): The schema name for the tenant. Defaults to a combination of the slug and a timestamp.
+        tenant_extra_data (dict, optional): Additional data for the tenant model.
 
-    **Args**
+    Returns:
+        str: The Fully Qualified Domain Name (FQDN) for the newly provisioned tenant.
 
-    * `tenant_name`: The name of the tenant.
-    * `tenant_slug`: A unique identifier (slug) for the tenant.Used to create schema_name
-    * `user_email`: The email address of the user who owns the tenant. Has to exist beforhand.
-    * `tenant_type`: The type or category of the tenant.Defaults to 'None'.Used only when `HAS_MULTI_TYPE_TENANTS = True`
-    * `schema_name`: Defaults to `f"{0}_{1}".format(tenant_slug, time_string)`
-    * `is_staff`: Whether the user is  allowed to enter the admin panel. Defaults to `False`.
-    * `is_superuser`:Whether the user has all permissions in the respective tenant. Defaults to `True`.
-    * `tenant_extra_data`: Additional attributes for the tenant model (e.g., paid_until, on_trial,location,vision e.t.c).
-
-    **Returns:**
-
-    * `str`: The Fully Qualified Domain Name (FQDN) for the newly provisioned tenant.
-
-    **Raises:**
-
-    * `InactiveError`: If the user passed to the function is inactive.
-    * `ExistsError`: If the tenant URL already exists.
-    * `SchemaError`: If the tenant type is not valid."""
-
+    Raises:
+        InactiveError: If the user is inactive.
+        ExistsError: If the tenant URL already exists.
+        SchemaError: If the tenant type is not valid.
+    """
     tenant = None
 
     if tenant_extra_data is None:
