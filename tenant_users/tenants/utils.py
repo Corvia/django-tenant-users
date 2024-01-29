@@ -14,7 +14,7 @@ from tenant_users.tenants.models import ExistsError, SchemaError
 
 def get_current_tenant():
     current_schema = connection.schema_name
-    TenantModel = get_tenant_model()
+    TenantModel = get_tenant_model()  # noqa: N806
     tenant = TenantModel.objects.get(schema_name=current_schema)
     return tenant
 
@@ -22,30 +22,33 @@ def get_current_tenant():
 def create_public_tenant(
     domain_url,
     owner_email,
-    is_superuser=False,
-    is_staff=False,
-    tenant_extra_data={},
+    *,
+    is_superuser: bool = False,
+    is_staff: bool = False,
+    tenant_extra_data=None,
     **owner_extra,
 ):
-    """Create a public tenant with an owner user.
+    """Creates a public tenant and assigns an owner user.
 
-    `**Creates**` a public tenant in a multi-tenant architecture, `**assigns**` an owner user to it, and `**sets**` the owner's password as unusable if not provided.
+    This function sets up a new public tenant in a multi-tenant Django application. It assigns an
+    owner user to the tenant, with the option to specify additional user and tenant attributes.
 
-    **Args**
-    * `domain_url (str)`: The domain URL for the public tenant.
-    * `owner_email (str)`: The email address of the owner user.
-    * `is_staff`: Whether the user is  allowed to enter the admin panel. Defaults to `False`.
-    * `is_superuser`:Whether the user has all permissions in the respective tenant. Defaults to `True`.
-    * `tenant_extra_data`: Additional attributes for the tenant model (e.g., paid_until, on_trial,location,vision e.t.c).
-    * `owner_extra`: Additional attributes for the owner user (e.g., first_name, last_name).
+    Args:
+        domain_url (str): The URL for the public tenant's domain.
+        owner_email (str): Email address of the owner user.
+        is_superuser (bool): If True, the owner has superuser privileges. Defaults to False.
+        is_staff (bool): If True, the owner has staff access. Defaults to False.
+        tenant_extra_data (dict, optional): Additional data for the tenant model.
+        **owner_extra: Arbitrary keyword arguments for additional owner user attributes.
 
-    **Returns:**
-
-    * `Tuple[YourTenantModel, YourDomainModel, YourUserModel]`: A tuple containing the created public tenant, its domain, and the owner user.
+    Returns:
+        tuple: A tuple containing the tenant object, domain object, and user object.
     """
+    if tenant_extra_data is None:
+        tenant_extra_data = {}
 
-    UserModel = get_user_model()
-    TenantModel = get_tenant_model()
+    UserModel = get_user_model()  # noqa: N806
+    TenantModel = get_tenant_model()  # noqa: N806
     public_schema_name = get_public_schema_name()
 
     if TenantModel.objects.filter(schema_name=public_schema_name).first():
@@ -65,9 +68,7 @@ def create_public_tenant(
 
         # Check if the Public tenant type is defined
         if public_schema_name not in valid_tenant_types:
-            error_message = "Please define a '{0}' tenant type.".format(
-                public_schema_name,
-            )
+            error_message = f"Please define a '{public_schema_name}' tenant type."
             raise SchemaError(error_message)
 
         tenant_extra_data.update(

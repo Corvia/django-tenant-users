@@ -5,8 +5,7 @@ import sys
 
 
 def main() -> None:
-    """
-    Main function.
+    """Main function.
 
     It does several things:
     1. Sets default settings module, if it is not set
@@ -19,13 +18,13 @@ def main() -> None:
     )
 
     try:
-        from django.core import management  # noqa: WPS433
+        from django.core import management
     except ImportError:
         raise ImportError(
             "Couldn't import Django. Are you sure it's installed and "
-            + "available on your PYTHONPATH environment variable? Did you "
-            + "forget to activate a virtual environment?",
-        )
+            "available on your PYTHONPATH environment variable? Did you "
+            "forget to activate a virtual environment?",
+        ) from None
 
     management.execute_from_command_line(sys.argv)
 

@@ -13,9 +13,11 @@ TenantUser = get_user_model()
 def test_create_user_in_tenant_schema(test_tenants):
     """Ensures error is raised when user creation isn't in public schema."""
     tenant = test_tenants.first()
-    with schema_context(tenant.schema_name):
-        with pytest.raises(models.SchemaError, match="Schema must be public"):
-            TenantUser.objects.create_user(email="user@schema.com")
+    with schema_context(tenant.schema_name), pytest.raises(
+        models.SchemaError,
+        match="Schema must be public",
+    ):
+        TenantUser.objects.create_user(email="user@schema.com")
 
 
 @pytest.mark.django_db()
@@ -28,7 +30,7 @@ def test_create_user_no_email():
 @pytest.mark.django_db()
 def test_create_user_with_password(client):
     """Ensures created user with password is valid."""
-    secret = "Secret#"
+    secret = "Secret#"  # noqa: S105
     email = "user@test.com"
     user = TenantUser.objects.create_user(email, password=secret)
 

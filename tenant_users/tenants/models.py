@@ -80,8 +80,14 @@ class TenantBase(TenantMixin):
     # Schema will be automatically deleted when related tenant is deleted
     auto_drop_schema = True
 
-    def delete(self, force_drop=False, *args, **kwargs):
-        """Override deleting of Tenant object."""
+    def delete(self, *args, force_drop: bool = False, **kwargs):
+        """Override deleting of Tenant object.
+
+        Args:
+            force_drop (bool): If True, forces the deletion of the object. Defaults to False.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+        """
         if force_drop:
             super().delete(force_drop, *args, **kwargs)
         else:
@@ -90,14 +96,18 @@ class TenantBase(TenantMixin):
             )
 
     @schema_required
-    def add_user(self, user_obj, is_superuser=False, is_staff=False):
-        """Add user to tenant."""
+    def add_user(self, user_obj, *, is_superuser: bool = False, is_staff: bool = False):
+        """Add user to tenant.
+
+        Args:
+            user_obj: The user object to be added to the tenant.
+            is_superuser (bool): If True, assigns superuser privileges to the user. Defaults to False.
+            is_staff (bool): If True, assigns staff status to the user. Defaults to False.
+        """
         # User already is linked here..
         if self.user_set.filter(id=user_obj.pk).exists():
             raise ExistsError(
-                "User already added to tenant: {0}".format(
-                    user_obj,
-                ),
+                f"User already added to tenant: {user_obj}",
             )
 
         # User not linked to this tenant, so we need to create
@@ -126,9 +136,7 @@ class TenantBase(TenantMixin):
         # Through delete tenant or transfer_ownership
         if user_obj.pk == self.owner.pk:
             raise DeleteError(
-                "Cannot remove owner from tenant: {0}".format(
-                    self.owner,
-                ),
+                f"Cannot remove owner from tenant: {self.owner}",
             )
 
         user_tenant_perms = user_obj.usertenantpermissions
@@ -147,8 +155,7 @@ class TenantBase(TenantMixin):
         )
 
     def delete_tenant(self):
-        """
-        Mark tenant for deletion.
+        """Mark tenant for deletion.
 
         We don't actually delete the tenant out of the database, but we
         associate them with a the public schema user and change their url
@@ -169,11 +176,7 @@ class TenantBase(TenantMixin):
         # Seconds since epoch, time() returns a float, so we convert to
         # an int first to truncate the decimal portion
         time_string = str(int(time.time()))
-        new_url = "{0}-{1}-{2}".format(
-            time_string,
-            str(self.owner.pk),
-            self.domain_url,
-        )
+        new_url = f"{time_string}-{self.owner.pk!s}-{self.domain_url}"
         self.domain_url = new_url
         # The schema generated each time (even with same url slug) will
         # be unique so we do not have to worry about a conflict with that
@@ -220,12 +223,12 @@ class TenantBase(TenantMixin):
 
         self.save()
 
-    class Meta(object):
+    class Meta:
         abstract = True
 
 
 class UserProfileManager(BaseUserManager):
-    def _create_user(
+    def _create_user(  # noqa: PLR0913
         self,
         email,
         password,
@@ -238,7 +241,7 @@ class UserProfileManager(BaseUserManager):
         # inside a tenant. Must create public tenant permissions during user
         # creation. This happens during assign role. This function cannot be
         # used until a public schema already exists
-        UserModel = get_user_model()
+        UserModel = get_user_model()  # noqa: N806
 
         if connection.schema_name != get_public_schema_name():
             raise SchemaError(
@@ -294,15 +297,16 @@ class UserProfileManager(BaseUserManager):
         self,
         email=None,
         password=None,
-        is_staff=False,
+        *,
+        is_staff: bool = False,
         **extra_fields,
     ):
         user = self._create_user(
             email,
             password,
             is_staff,
-            False,
-            False,
+            is_superuser=False,
+            is_verified=False,
             **extra_fields,
         )
 
@@ -315,9 +319,9 @@ class UserProfileManager(BaseUserManager):
         return self._create_user(
             email,
             password,
-            True,
-            True,
-            True,
+            is_staff=True,
+            is_superuser=True,
+            is_verified=True,
             **extra_fields,
         )
 
@@ -354,14 +358,19 @@ class UserProfileManager(BaseUserManager):
 # both the public schema and all tenant schemas. We want profiles only
 # in the public schema alongside the TenantBase model
 class UserProfile(AbstractBaseUser, PermissionsMixinFacade):
-    """
-    An authentication-only model that is in the public tenant schema but
-    linked from the authorization model (UserTenantPermissions)
-    where as to allow for one global profile (public schema) for each user
-    but maintain permissions on a per tenant basis.
-    To access permissions for a user, the request must come through the
-    tenant that permissions are desired for.
-    Requires use of the ModelBackend
+    """Authentication model for django-tenant-users stored in the public tenant schema.
+
+    This class represents an authentication-only model that is centrally located in the public tenant schema,
+    yet maintains a link to the UserTenantPermissions model for authorization. It enables a singular global
+    user profile across all tenants while allowing permissions to be managed on a per-tenant basis. This design
+    ensures a unified user identity across different tenants with distinct permission sets in each tenant context.
+
+    Access to a user's permissions requires routing the request through the relevant tenant. The implementation
+    necessitates using the ModelBackend for proper integration.
+
+    Inherits:
+        AbstractBaseUser: Django's base class for user models, providing core user authentication features.
+        PermissionsMixinFacade: A facade to adapt Django's PermissionMixin for multi-tenant environments.
     """
 
     USERNAME_FIELD = "email"
@@ -386,13 +395,13 @@ class UserProfile(AbstractBaseUser, PermissionsMixinFacade):
     # Tracks whether the user's email has been verified
     is_verified = models.BooleanField(_("verified"), default=False)
 
-    class Meta(object):
+    class Meta:
         abstract = True
 
     def has_verified_email(self):
         return self.is_verified
 
-    def delete(self, force_drop=False, *args, **kwargs):
+    def delete(self, *args, force_drop: bool = False, **kwargs):
         if force_drop:
             super().delete(*args, **kwargs)
         else:

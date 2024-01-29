@@ -1,4 +1,3 @@
-import re
 import time
 
 from django.conf import settings
@@ -18,45 +17,44 @@ from tenant_users.tenants.models import ExistsError, InactiveError, SchemaError
 
 
 @transaction.atomic()
-def provision_tenant(
+def provision_tenant(  # noqa: PLR0913
     tenant_name,
     tenant_slug,
     user_email,
-    is_staff=False,
-    is_superuser=True,
+    *,
+    is_staff: bool = False,
+    is_superuser: bool = True,
     tenant_type=None,
     schema_name=None,
-    tenant_extra_data={},
+    tenant_extra_data=None,
 ):
-    """Creates a tenant with default roles and permissions.
+    """Creates and initializes a new tenant with specified attributes and default roles.
 
-    This function creates a new tenant record, creates a user record for the tenant administrator, grants the user the default roles for the tenant, and provisions the tenant's infrastructure.
+    Args:
+        tenant_name (str): The name of the tenant.
+        tenant_slug (str): A unique slug for the tenant. It's used to create the schema_name.
+        user_email (str): Email address of the tenant's owner. The user must exist beforehand.
+        is_staff (bool, optional): If True, the user has staff access. Defaults to False.
+        is_superuser (bool, optional): If True, the user has all permissions. Defaults to True.
+        tenant_type (str, optional): Type of the tenant, used with `HAS_MULTI_TYPE_TENANTS = True`.
+        schema_name (str, optional): The schema name for the tenant. Defaults to a combination of the slug and a timestamp.
+        tenant_extra_data (dict, optional): Additional data for the tenant model.
 
-    **Args**
+    Returns:
+        str: The Fully Qualified Domain Name (FQDN) for the newly provisioned tenant.
 
-    * `tenant_name`: The name of the tenant.
-    * `tenant_slug`: A unique identifier (slug) for the tenant.Used to create schema_name
-    * `user_email`: The email address of the user who owns the tenant. Has to exist beforhand.
-    * `tenant_type`: The type or category of the tenant.Defaults to 'None'.Used only when `HAS_MULTI_TYPE_TENANTS = True`
-    * `schema_name`: Defaults to `f"{0}_{1}".format(tenant_slug, time_string)`
-    * `is_staff`: Whether the user is  allowed to enter the admin panel. Defaults to `False`.
-    * `is_superuser`:Whether the user has all permissions in the respective tenant. Defaults to `True`.
-    * `tenant_extra_data`: Additional attributes for the tenant model (e.g., paid_until, on_trial,location,vision e.t.c).
-
-    **Returns:**
-
-    * `str`: The Fully Qualified Domain Name (FQDN) for the newly provisioned tenant.
-
-    **Raises:**
-
-    * `InactiveError`: If the user passed to the function is inactive.
-    * `ExistsError`: If the tenant URL already exists.
-    * `SchemaError`: If the tenant type is not valid."""
-
+    Raises:
+        InactiveError: If the user is inactive.
+        ExistsError: If the tenant URL already exists.
+        SchemaError: If the tenant type is not valid.
+    """
     tenant = None
 
-    UserModel = get_user_model()
-    TenantModel = get_tenant_model()
+    if tenant_extra_data is None:
+        tenant_extra_data = {}
+
+    UserModel = get_user_model()  # noqa: N806
+    TenantModel = get_tenant_model()  # noqa: N806
 
     user = UserModel.objects.get(email=user_email)
     if not user.is_active:
@@ -65,9 +63,9 @@ def provision_tenant(
     if hasattr(settings, "TENANT_SUBFOLDER_PREFIX"):
         tenant_domain = tenant_slug
     else:
-        tenant_domain = "{0}.{1}".format(tenant_slug, settings.TENANT_USERS_DOMAIN)
+        tenant_domain = f"{tenant_slug}.{settings.TENANT_USERS_DOMAIN}"
 
-    DomainModel = get_tenant_domain_model()
+    DomainModel = get_tenant_domain_model()  # noqa: N806
     if DomainModel.objects.filter(domain=tenant_domain).exists():
         raise ExistsError("Tenant URL already exists.")
     if not schema_name:
@@ -76,7 +74,7 @@ def provision_tenant(
         # https://www.postgresql.org/docs/9.2/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS
         # We generate unique schema names each time so we can keep tenants around
         # without taking up url/schema namespace.
-        schema_name = "{0}_{1}".format(tenant_slug, time_string)
+        schema_name = f"{tenant_slug}_{time_string}"
 
     # Validate tenant type if multi-tenants are enabled
     if has_multi_type_tenants():
@@ -94,34 +92,22 @@ def provision_tenant(
     # Attempt to create the tenant and domain within the schema context
     with schema_context(get_public_schema_name()):
         # Create a new tenant instance with provided data
-        try:
-            tenant = TenantModel.objects.create(
-                name=tenant_name,
-                slug=tenant_slug,
-                schema_name=schema_name,
-                owner=user,
-                **tenant_extra_data,
-            )
-        except Exception as error:
-            # Raise any error during tenant creation
-            raise error
+        tenant = TenantModel.objects.create(
+            name=tenant_name,
+            slug=tenant_slug,
+            schema_name=schema_name,
+            owner=user,
+            **tenant_extra_data,
+        )
 
         # Create a domain associated with the tenant and mark as primary
         domain_model = get_tenant_domain_model()
-        try:
-            domain_model.objects.create(
-                domain=tenant_domain, tenant=tenant, is_primary=True
-            )
-        except Exception as error:
-            # Raise any error during domain creation
-            raise error
+        domain_model.objects.create(
+            domain=tenant_domain, tenant=tenant, is_primary=True
+        )
 
         # Add the user to the tenant with provided roles
-        try:
-            tenant.add_user(user, is_superuser=is_superuser, is_staff=is_staff)
-        except Exception as error:
-            # Raise any error while adding the user
-            raise error
+        tenant.add_user(user, is_superuser=is_superuser, is_staff=is_staff)
 
     # Return the domain associated with the tenant
     return tenant_domain
