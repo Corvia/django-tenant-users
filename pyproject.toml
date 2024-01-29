@@ -110,7 +110,7 @@ select = ["ALL"]
 ignore = [
     "ANN",      # Type hints related, let mypy handle these.
     "COM812",   # "Trailing comma missing". If black is happy, I'm happy.
-    "D",        # Docstrings related
+    "D1",        # Docstrings related
     "E501",     # "Line too long". If black is happy, I'm happy.
     "EM101",    # "Exception must not use a string literal, assign to variable first"
     "EM102",    # "Exception must not use an f-string literal, assign to variable first"
@@ -126,3 +126,7 @@ target-version = "py37"
 [tool.ruff.lint.per-file-ignores]
 "**/migrations/*" = ["RUF012"]
 "docs/conf.py" = ["INP001"]
+
+[tool.ruff.lint.pydocstyle]
+# Use Google-style docstrings.
+convention = "google"
