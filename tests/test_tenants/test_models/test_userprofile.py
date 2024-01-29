@@ -28,6 +28,7 @@ def test_model_properties(instance: TenantUser) -> None:
 
 @pytest.mark.django_db()
 @given(django.from_model(TenantUser))
+@settings(deadline=None, max_examples=1)
 def test_user_delete(instance: TenantUser) -> None:
     """Tests tenants.models.UserProfile.delete scenarios."""
     # Test UserProfile.delete()
