@@ -67,7 +67,7 @@ django-stubs = ">=1.12,<5.0"
 nitpick = ">=0.32,<0.34"
 safety = ">=2.2,<4.0"
 black = ">=22.8,<24.0"
-ruff = ">=0.1.14,<0.4.0"
+ruff = ">=0.1.14,<0.5.0"
 
 # Testing Utilities
 pytest = "^7.2.2"
