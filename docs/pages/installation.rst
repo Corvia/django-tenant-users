@@ -160,6 +160,13 @@ which takes care of this for you.
     create_public_tenant(domain_url="public.domain.com", owner_email="admin@domain.com")
 
 
+Or, alternatively, use the management command:
+
+.. code-block:: bash
+
+    manage.py create_public_tenant --domain_url public.domain.com --owner_email admin@domain.com
+
+
 Fin!
 ----
 
