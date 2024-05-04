@@ -9,13 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
-        django-version: ['3.2', '4.1', '4.2']
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        django-version: ['4.2', '5.0']
         exclude:
-          - python-version: '3.7'
-            django-version: '4.1'
-          - python-version: '3.7'
-            django-version: '4.2'
+          # Exclude Python 3.8 and 3.9 with Django 5.0
+          - python-version: '3.8'
+            django-version: '5.0'
+          - python-version: '3.9'
+            django-version: '5.0'
 
     env:
       DJANGO_DATABASE_USER: django
@@ -25,7 +26,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:13
+        image: postgres:16
         env:
           POSTGRES_USER: ${{ env.DJANGO_DATABASE_USER }}
           POSTGRES_PASSWORD: ${{ env.DJANGO_DATABASE_PASSWORD }}
@@ -48,7 +49,7 @@ jobs:
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
-          version: 1.5.1
+          version: 1.8.2
           virtualenvs-create: true
           virtualenvs-in-project: true
           installer-parallel: true

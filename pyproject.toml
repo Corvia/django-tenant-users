@@ -1,10 +1,10 @@
 [build-system]
-requires = ["poetry-core>=1.2.0"]
+requires = ["poetry-core>=1.9.0"]
 build-backend = "poetry.core.masonry.api"
 
 
 [tool.black]
-target-version = ['py37', 'py38', 'py39', 'py310', 'py311']
+target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
 include = '\.pyi?$'
 
 
@@ -34,34 +34,32 @@ keywords = [
 classifiers = [
   "Environment :: Web Environment",
   "Framework :: Django",
-  "Framework :: Django :: 3.2",
-  "Framework :: Django :: 4.0",
-  "Framework :: Django :: 4.1",
   "Framework :: Django :: 4.2",
+  "Framework :: Django :: 5.0",
   "Intended Audience :: Developers",
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.7",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
   "Topic :: Internet :: WWW/HTTP",
   "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7"
-Django = ">=3.2"
-django-tenants = "^3.4.5"
+python = "^3.8.1"
+Django = ">=4.2"
+django-tenants = "^3.6"
 
 
 [tool.poetry.group.test.dependencies]
 # Type Checking
-mypy = ">=0.981,<1.5"
-django-stubs = ">=1.12,<5.0"
+mypy = "1.10.0"
+django-stubs = { version = "5.0.0", extras = ["compatible-mypy"] }
 
 # Code Quality
 nitpick = ">=0.32,<0.34"
