@@ -750,7 +750,10 @@ files = [
 
 [package.dependencies]
 attrs = ">=19.2.0"
+django = {version = ">=3.2", optional = true, markers = "extra == \"django\""}
 exceptiongroup = {version = ">=1.0.0", markers = "python_version < \"3.11\""}
+pytest = {version = ">=4.6", optional = true, markers = "extra == \"pytest\""}
+pytz = {version = ">=2014.1", optional = true, markers = "extra == \"pytz\""}
 sortedcontainers = ">=2.1.0,<3.0.0"
 
 [package.extras]
@@ -2250,4 +2253,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "5d22cca15920303126babec2d42aee3e3b429dd27868a054698c8a6db10e0f27"
+content-hash = "d00e81e9d330661e907a584d2910d48f2205e81de7f600e31512cbd974871bd1"
