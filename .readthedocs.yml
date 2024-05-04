@@ -9,8 +9,8 @@ build:
     # See https://github.com/readthedocs/readthedocs.org/issues/4912
     pre_create_environment:
       - asdf plugin add poetry
-      - asdf install poetry latest
-      - asdf global poetry latest
+      - asdf install poetry 1.8.2
+      - asdf global poetry 1.8.2
       - poetry config virtualenvs.create false
     post_install:
       - . "$(pwd | rev | sed 's/stuokcehc/svne/' | rev)/bin/activate" && poetry install --only main --only docs
