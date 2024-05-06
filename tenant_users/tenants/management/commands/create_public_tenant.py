@@ -18,7 +18,7 @@ class Command(BaseCommand):
             create_public_tenant(domain_url=domain_url, owner_email=owner_email)
             self.stdout.write(
                 self.style.SUCCESS(
-                    f"Successfully created public tenant with {domain_url=} {owner_email=}"
+                    f"Successfully created public tenant with Domain URL ({domain_url}) and Owner ({owner_email})"
                 )
             )
         except (ExistsError, SchemaError) as e:
