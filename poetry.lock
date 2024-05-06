@@ -1531,18 +1531,18 @@ pytest = "*"
 
 [[package]]
 name = "pytest-testmon"
-version = "2.0.15"
+version = "2.1.1"
 description = "selects tests affected by changed files and methods"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "pytest-testmon-2.0.15.tar.gz", hash = "sha256:d08efd4fe46a267c146c84d5a27cbda0080387aeaf4007c309102cb581eedbf6"},
-    {file = "pytest_testmon-2.0.15-py3-none-any.whl", hash = "sha256:91c3b0cfb2f0f94cc9c429f2d279f8a97aaab91cc06eceaf7e33497666f52c94"},
+    {file = "pytest-testmon-2.1.1.tar.gz", hash = "sha256:8ebe2c3de42d99306ee54cd4536fed0fc48346a954420da904b18e8d59b5da98"},
+    {file = "pytest_testmon-2.1.1-py3-none-any.whl", hash = "sha256:8271ca47bc8c80760c4fc7fd7895ea786b111bbb31f13eeea879a6fd11fe2226"},
 ]
 
 [package.dependencies]
 coverage = ">=6,<8"
-pytest = ">=5,<8"
+pytest = ">=5,<9"
 
 [[package]]
 name = "pytest-timeout"
