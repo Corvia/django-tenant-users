@@ -735,6 +735,16 @@ orderedmultidict = ">=1.0.1"
 six = ">=1.8.0"
 
 [[package]]
+name = "gitignore-parser"
+version = "0.1.11"
+description = "A spec-compliant gitignore parser for Python 3.5+"
+optional = false
+python-versions = "*"
+files = [
+    {file = "gitignore_parser-0.1.11.tar.gz", hash = "sha256:fa10fde48b44888eeefac096f53bcdad9b87a4ffd7db788558dbdf71ff3bc9db"},
+]
+
+[[package]]
 name = "hypothesis"
 version = "6.79.4"
 description = "A library for property-based testing"
@@ -1144,13 +1154,13 @@ files = [
 
 [[package]]
 name = "nitpick"
-version = "0.33.2"
+version = "0.35.0"
 description = "Enforce the same settings across multiple language-independent projects"
 optional = false
-python-versions = ">=3.7,<4.0"
+python-versions = ">=3.8,<4.0"
 files = [
-    {file = "nitpick-0.33.2-py3-none-any.whl", hash = "sha256:8b77d5968c36384c7a4cc957dc45c22bb8024e8cab83fb58fa7fbef45d3aae98"},
-    {file = "nitpick-0.33.2.tar.gz", hash = "sha256:e0f9f96128f390f95409a3d27fa922484e900ac8b974646b50ea4b8a3458cad7"},
+    {file = "nitpick-0.35.0-py3-none-any.whl", hash = "sha256:9911d32c2d488b41914aa1a6d230531fa92bbe3d6610e4a468a5cb5e30fab907"},
+    {file = "nitpick-0.35.0.tar.gz", hash = "sha256:098167a4c65655aca52c0ea3876b1e71cf634a27d0e17b971bce9bfcc1f3febe"},
 ]
 
 [package.dependencies]
@@ -1163,13 +1173,15 @@ dpath = "*"
 flake8 = ">=3.0.0"
 flatten-dict = "*"
 furl = "*"
+gitignore_parser = "*"
 identify = "*"
-importlib-resources = {version = "*", markers = "python_version >= \"3.7\" and python_version < \"3.9\""}
+importlib-resources = {version = "*", markers = "python_version >= \"3.8\" and python_version < \"3.9\""}
 jmespath = "*"
 loguru = "*"
 marshmallow = ">=3.0.0b10"
 marshmallow-polyfield = ">=5.10,<6.0"
 more-itertools = "*"
+packaging = "*"
 pluggy = "*"
 python-slugify = "*"
 requests = "*"
@@ -2252,4 +2264,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "b4b4a0d9a1a12a30999610a9483a1b6c432184ec2f9d92fa313d364d1e0e8c33"
+content-hash = "c570a16978dd421e0a7953ac13a9edb46695718bc46dd303fff5cc4011471229"

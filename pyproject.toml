@@ -62,7 +62,7 @@ mypy = "1.10.0"
 django-stubs = { version = "5.0.0", extras = ["compatible-mypy"] }
 
 # Code Quality
-nitpick = ">=0.32,<0.34"
+nitpick = ">=0.32,<0.36"
 safety = ">=2.2,<4.0"
 black = ">=22.8,<25.0"
 ruff = ">=0.1.14,<0.5.0"
