@@ -746,17 +746,17 @@ files = [
 
 [[package]]
 name = "hypothesis"
-version = "6.79.4"
+version = "6.100.4"
 description = "A library for property-based testing"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "hypothesis-6.79.4-py3-none-any.whl", hash = "sha256:5ce05bc70aa4f20114effaf3375dc8b51d09a04026a0cf89d4514fc0b69f6304"},
-    {file = "hypothesis-6.79.4.tar.gz", hash = "sha256:e9a9ff3dc3f3eebbf214d6852882ac96ad72023f0e9770139fd3d3c1b87673e2"},
+    {file = "hypothesis-6.100.4-py3-none-any.whl", hash = "sha256:f1909d4702d21be55720bbbc58e0b42172e14bf712a8ecbab00ad6ae209a5ec9"},
+    {file = "hypothesis-6.100.4.tar.gz", hash = "sha256:f6858353a5fae943cae149cc618b9f2b261143df9d8d792cf1065a1b289bbb24"},
 ]
 
 [package.dependencies]
-attrs = ">=19.2.0"
+attrs = ">=22.2.0"
 django = {version = ">=3.2", optional = true, markers = "extra == \"django\""}
 exceptiongroup = {version = ">=1.0.0", markers = "python_version < \"3.11\""}
 pytest = {version = ">=4.6", optional = true, markers = "extra == \"pytest\""}
@@ -764,9 +764,10 @@ pytz = {version = ">=2014.1", optional = true, markers = "extra == \"pytz\""}
 sortedcontainers = ">=2.1.0,<3.0.0"
 
 [package.extras]
-all = ["backports.zoneinfo (>=0.2.1)", "black (>=19.10b0)", "click (>=7.0)", "django (>=3.2)", "dpcontracts (>=0.4)", "importlib-metadata (>=3.6)", "lark (>=0.10.1)", "libcst (>=0.3.16)", "numpy (>=1.17.3)", "pandas (>=1.1)", "pytest (>=4.6)", "python-dateutil (>=1.4)", "pytz (>=2014.1)", "redis (>=3.0.0)", "rich (>=9.0.0)", "tzdata (>=2023.3)"]
+all = ["backports.zoneinfo (>=0.2.1)", "black (>=19.10b0)", "click (>=7.0)", "crosshair-tool (>=0.0.54)", "django (>=3.2)", "dpcontracts (>=0.4)", "hypothesis-crosshair (>=0.0.2)", "lark (>=0.10.1)", "libcst (>=0.3.16)", "numpy (>=1.17.3)", "pandas (>=1.1)", "pytest (>=4.6)", "python-dateutil (>=1.4)", "pytz (>=2014.1)", "redis (>=3.0.0)", "rich (>=9.0.0)", "tzdata (>=2024.1)"]
 cli = ["black (>=19.10b0)", "click (>=7.0)", "rich (>=9.0.0)"]
 codemods = ["libcst (>=0.3.16)"]
+crosshair = ["crosshair-tool (>=0.0.54)", "hypothesis-crosshair (>=0.0.2)"]
 dateutil = ["python-dateutil (>=1.4)"]
 django = ["django (>=3.2)"]
 dpcontracts = ["dpcontracts (>=0.4)"]
@@ -777,7 +778,7 @@ pandas = ["pandas (>=1.1)"]
 pytest = ["pytest (>=4.6)"]
 pytz = ["pytz (>=2014.1)"]
 redis = ["redis (>=3.0.0)"]
-zoneinfo = ["backports.zoneinfo (>=0.2.1)", "tzdata (>=2023.3)"]
+zoneinfo = ["backports.zoneinfo (>=0.2.1)", "tzdata (>=2024.1)"]
 
 [[package]]
 name = "identify"
