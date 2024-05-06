@@ -2,6 +2,12 @@
 
 We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` release.
 
+## 1.3.1 (2024-05-01)
+
+### Features
+
+- Added management command for calling create_public_tenant during initial setup
+
 ## 1.3.0 (2023-11-14)
 
 ### Features
