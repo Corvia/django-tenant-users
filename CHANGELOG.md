@@ -2,11 +2,18 @@
 
 We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` release.
 
-## 1.3.1 (2024-05-01)
+## 1.4.0 (2024-05-06)
 
 ### Features
+* Added management command for simple use of create_public_tenant by @jgentil in [#565](https://github.com/Corvia/django-tenant-users/pull/565)
+* Adds support for Django 5.0 and Python 3.12
+* Drops support for Django 3.2 and Python 3.7
 
-- Added management command for calling create_public_tenant during initial setup
+### Misc
+
+* Correct function reference in 'using' page by @Dresdn in [#532](https://github.com/Corvia/django-tenant-users/pull/532)
+* Implement Ruff by @Dresdn in [#535](https://github.com/Corvia/django-tenant-users/pull/535)
+
 
 ## 1.3.0 (2023-11-14)
 
