@@ -60,7 +60,7 @@ reactivation in the future.
 Delete Tenants
 ~~~~~~~~~~~~~~
 
-The proper way to delete a user in ``django-tenant-users`` is to use the manager method:
+The proper way to delete a tenant is to use the manager method:
 
 .. code-block:: python
 
