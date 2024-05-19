@@ -128,7 +128,8 @@ inherting ``TenantUser``.
 Optional Settings
 ~~~~~~~~~~~~~~~~~
 
-**Setting up Cross Domain Cookies**:
+Setting up Cross Domain Cookies
+"""""""""""""""""""""""""""""""
 
 To allow single sign-on across tenants:
 
@@ -143,6 +144,37 @@ To allow single sign-on across tenants:
     If using Django admin, consider ``admin multisite``. You should ensure the
     configuration is correct to avoid unauthorized model access.
 
+Tenant Access Middleware
+""""""""""""""""""""""""
+
+To ensure users have access to the requested tenant, you can add the
+``TenantAccessMiddleware`` to your Django project. This middleware checks if the
+authenticated user has access to the tenant specified in the request. If the
+user does not have access, a 404 error is raised. Unauthenticated users are
+allowed to proceed.
+
+**Add the Middleware**
+
+1. Add the ``TenantAccessMiddleware`` to your ``MIDDLEWARE`` setting in ``settings.py``:
+
+.. code-block:: python
+
+    MIDDLEWARE = [
+        ...
+        'tenant_users.tenants.middleware.TenantAccessMiddleware',
+        ...
+    ]
+
+2. Optionally, customize the error message by setting ``TENANT_ACCESS_ERROR_MESSAGE``
+   in your ``settings.py```:
+
+.. code-block:: python
+
+    TENANT_ACCESS_ERROR_MESSAGE = "Custom access denied message."
+
+.. note::
+    To grant a user access to the tenant, use the :meth:`tenant.add_user() <tenant_users.tenants.models.TenantBase.add_user>`
+    method to add the user to the tenant.
 
 Provision Public Tenant
 -----------------------
