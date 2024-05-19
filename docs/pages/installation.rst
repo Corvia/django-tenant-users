@@ -153,13 +153,16 @@ authenticated user has access to the tenant specified in the request. If the
 user does not have access, a 404 error is raised. Unauthenticated users are
 allowed to proceed.
 
-1. Add the ``TenantAccessMiddleware`` to your ``MIDDLEWARE`` setting in ``settings.py``:
+1. Add the ``TenantAccessMiddleware`` to your ``MIDDLEWARE`` setting in ``settings.py`` after 
+Django's ``AuthenticationMiddleware``:
 
 .. code-block:: python
 
     MIDDLEWARE = [
         ...
-        'tenant_users.tenants.middleware.TenantAccessMiddleware',
+        "django.contrib.auth.middleware.AuthenticationMiddleware",
+        ...
+        "tenant_users.tenants.middleware.TenantAccessMiddleware",
         ...
     ]
 
