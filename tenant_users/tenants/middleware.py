@@ -25,7 +25,7 @@ class TenantAccessMiddleware:
         self.get_response = get_response
         self.error_message = getattr(
             settings,
-            "TENANT_ACCESS_ERROR_MESSAGE",
+            "TENANT_USERS_ACCESS_ERROR_MESSAGE",
             _("Access to this resource is denied."),
         )
 
