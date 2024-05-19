@@ -90,7 +90,7 @@ class TestTenantAccessMiddleware:
             tenant_user (User): The tenant user to be tested.
         """
         custom_message = "Custom access denied message."
-        settings.TENANT_ACCESS_ERROR_MESSAGE = custom_message
+        settings.TENANT_USERS_ACCESS_ERROR_MESSAGE = custom_message
 
         middleware = TenantAccessMiddleware(NoOpCallable())
 

@@ -153,8 +153,6 @@ authenticated user has access to the tenant specified in the request. If the
 user does not have access, a 404 error is raised. Unauthenticated users are
 allowed to proceed.
 
-**Add the Middleware**
-
 1. Add the ``TenantAccessMiddleware`` to your ``MIDDLEWARE`` setting in ``settings.py``:
 
 .. code-block:: python
@@ -165,12 +163,12 @@ allowed to proceed.
         ...
     ]
 
-2. Optionally, customize the error message by setting ``TENANT_ACCESS_ERROR_MESSAGE``
+2. Optionally, customize the error message by setting ``TENANT_USERS_ACCESS_ERROR_MESSAGE``
    in your ``settings.py```:
 
 .. code-block:: python
 
-    TENANT_ACCESS_ERROR_MESSAGE = "Custom access denied message."
+    TENANT_USERS_ACCESS_ERROR_MESSAGE = "Custom access denied message."
 
 .. note::
     To grant a user access to the tenant, use the :meth:`tenant.add_user() <tenant_users.tenants.models.TenantBase.add_user>`
