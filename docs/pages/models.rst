@@ -17,7 +17,6 @@ each individual tenant or client within your application.
    :members:
    :undoc-members:
    :show-inheritance:
-   :noindex:
 
 
 User Model
@@ -32,7 +31,6 @@ tenants.
    :members:
    :undoc-members:
    :show-inheritance:
-   :noindex:
 
 
 UserProfile Manager
@@ -45,4 +43,3 @@ provides additional methods and utilities for user-related operations.
    :members:
    :undoc-members:
    :show-inheritance:
-   :noindex:
