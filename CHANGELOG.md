@@ -2,6 +2,17 @@
 
 We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` release.
 
+## 1.5.0 (2024-05-22)
+
+### Features
+
+* Create TenantAccessMiddleware to limit TenantUsers accessing Tenants they don't belong to by @Dresdn in [#594](https://github.com/Corvia/django-tenant-users/pull/594)
+
+### Misc
+
+* Update using.rst by @jansalvador in [#590](https://github.com/Corvia/django-tenant-users/pull/590)
+
+
 ## 1.4.0 (2024-05-06)
 
 ### Features
