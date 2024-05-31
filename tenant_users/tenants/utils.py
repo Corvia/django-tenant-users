@@ -99,6 +99,6 @@ def create_public_tenant(
         profile.set_password(owner_extra["password"])
     else:
         profile.set_unusable_password()
-    profile.save()
+    profile.save(update_fields=["password"])
 
     return public_tenant, domain, profile
