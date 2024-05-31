@@ -15,10 +15,15 @@ ERROR_MSG = "Schema Exists"
 def test_create_public_tenant_command_success():
     out = StringIO()
 
-    with patch("tenant_users.tenants.management.commands.create_public_tenant.create_public_tenant"
-               ) as mocked_cpt:
-        call_command("create_public_tenant", stdout=out, domain_url=DOMAIN_URL,
-                     owner_email=OWNER_EMAIL)
+    with patch(
+        "tenant_users.tenants.management.commands.create_public_tenant.create_public_tenant"
+    ) as mocked_cpt:
+        call_command(
+            "create_public_tenant",
+            stdout=out,
+            domain_url=DOMAIN_URL,
+            owner_email=OWNER_EMAIL,
+        )
 
     mocked_cpt.assert_called_once_with(domain_url=DOMAIN_URL, owner_email=OWNER_EMAIL)
     out_value = out.getvalue()
@@ -30,10 +35,16 @@ def test_create_public_tenant_command_success():
 def test_create_public_tenant_command_failure():
     out = StringIO()
 
-    with patch("tenant_users.tenants.management.commands.create_public_tenant.create_public_tenant",
-               side_effect=ExistsError(ERROR_MSG)) as mocked_cpt:
-        call_command("create_public_tenant", stdout=out, domain_url=DOMAIN_URL,
-                     owner_email=OWNER_EMAIL)
+    with patch(
+        "tenant_users.tenants.management.commands.create_public_tenant.create_public_tenant",
+        side_effect=ExistsError(ERROR_MSG),
+    ) as mocked_cpt:
+        call_command(
+            "create_public_tenant",
+            stdout=out,
+            domain_url=DOMAIN_URL,
+            owner_email=OWNER_EMAIL,
+        )
 
     mocked_cpt.assert_called_once_with(domain_url=DOMAIN_URL, owner_email=OWNER_EMAIL)
     out_value = out.getvalue()
