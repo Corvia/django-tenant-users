@@ -8,6 +8,8 @@ from django_tenants.utils import (
     get_tenant_types,
     has_multi_type_tenants,
 )
+from typing import Tuple, Optional
+
 
 from tenant_users.tenants.models import ExistsError, SchemaError
 
@@ -25,7 +27,7 @@ def create_public_tenant(
     *,
     is_superuser: bool = False,
     is_staff: bool = False,
-    tenant_extra_data=None,
+    tenant_extra_data: Optional[dict] = None,
     **owner_extra,
 ):
     """Creates a public tenant and assigns an owner user.
