@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django.contrib.auth import get_user_model
 from django.db import connection
 from django_tenants.utils import (
@@ -8,8 +10,6 @@ from django_tenants.utils import (
     get_tenant_types,
     has_multi_type_tenants,
 )
-from typing import Tuple, Optional
-
 
 from tenant_users.tenants.models import ExistsError, SchemaError
 
