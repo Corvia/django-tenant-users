@@ -1,26 +1,28 @@
-Permissions Reference
-=====================
+#######################
+ Permissions Reference
+#######################
 
+**********************
+ Permission Utilities
+**********************
 
-Permission Utilities
---------------------
-
-``django-tenant-users`` offers utility functions to manage permissions across tenants.
-These functions provide fine-grained control over user roles and access within each
-tenant.
+``django-tenant-users`` offers utility functions to manage permissions
+across tenants. These functions provide fine-grained control over user
+roles and access within each tenant.
 
 .. autoclass:: tenant_users.permissions.models.PermissionsMixinFacade
    :members:
    :undoc-members:
    :show-inheritance:
 
+*******************
+ Permission Models
+*******************
 
-Permission Models
------------------
-
-The permission models in ``django-tenant-users`` extend Django's built-in permissions
-framework. This extension allows for the definition of tenant-specific roles and
-permissions, ensuring that each tenant has its own set of access controls.
+The permission models in ``django-tenant-users`` extend Django's
+built-in permissions framework. This extension allows for the definition
+of tenant-specific roles and permissions, ensuring that each tenant has
+its own set of access controls.
 
 .. autoclass:: tenant_users.permissions.models.UserTenantPermissions
    :members:
