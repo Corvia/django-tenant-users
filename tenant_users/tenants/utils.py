@@ -10,6 +10,7 @@ from django_tenants.utils import (
     get_tenant_types,
     has_multi_type_tenants,
 )
+
 from tenant_users.tenants.models import ExistsError, SchemaError
 
 
