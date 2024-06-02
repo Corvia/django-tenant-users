@@ -10,11 +10,21 @@ from django_tenants.utils import (
     get_tenant_types,
     has_multi_type_tenants,
 )
-
 from tenant_users.tenants.models import ExistsError, SchemaError
 
 
 def get_current_tenant():
+    """
+    Retrieves the current tenant based on the current database schema.
+
+    This function gets the current schema name from the database connection,
+    retrieves the tenant model, and then fetches the tenant instance that
+    matches the current schema name.
+
+    Returns:
+        tenant: The tenant instance corresponding to the current database schema.
+
+    """
     current_schema = connection.schema_name
     TenantModel = get_tenant_model()  # noqa: N806
     tenant = TenantModel.objects.get(schema_name=current_schema)

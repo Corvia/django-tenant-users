@@ -14,8 +14,11 @@ To set up a new tenant in your application, utilize
 .. code-block:: python
 
    from tenant_users.tenants.tasks import provision_tenant
+   from users.models import TenantUser
+   provision_tenant_owner=CustomUserModel.objects.get(email="admin@evilcorp.com")
 
-   fqdn = provision_tenant("EvilCorp", "evilcorp", "admin@evilcorp.com")
+
+   tenant,domain = provision_tenant("EvilCorp", "evilcorp",provision_tenant_owner)
 
 
 Using Multi-Type Tenants
@@ -29,8 +32,13 @@ function:
 .. code-block:: python
 
    from tenant_users.tenants.tasks import provision_tenant
+   from users.models import TenantUser
 
-   fqdn = provision_tenant("EvilCorp", "evilcorp", "admin@evilcorp.com", tenant_type="tenant_type")
+   provision_tenant_owner = TenantUser.objects.get(email="admin@evilcorp.com")
+
+   tenant, domain = provision_tenant(
+      "EvilCorp", "evilcorp", provision_tenant_owner, tenant_type="tenant_type"
+   )
 
 .. note::
    Provisioning creates a new schema. Handle this asynchronously, e.g., with Celery.

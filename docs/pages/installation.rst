@@ -83,6 +83,37 @@ Add the ``tenant_users`` apps to ``SHARED_APPS`` and ``TENANT_APPS``.
         "tenant_users.permissions",
         ...
     ]
+Using Multi-Type Tenants
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you're leveraging the `Multi-type Tenants feature <https://django-tenants.readthedocs.io/en/latest/use.html#multi-types-tenants>`_
+.. code-block:: python
+
+  TENANT_TYPES = {
+      "public": {  # this is the name of the public schema from get_public_schema_name
+          "APPS": [
+                 ...
+              "django.contrib.auth",
+              "django.contrib.contenttypes",
+              "tenant_users.permissions",
+              "tenant_users.tenants",
+              "companies",
+              "users",
+                ...
+          ],
+          "URLCONF": "myproject.urls.public",
+      },
+      "type1": {
+          "APPS": [
+               ...
+              "django.contrib.auth",
+              "django.contrib.contenttypes",
+              "tenant_users.permissions",
+               ...
+          ],
+      },
+      "URLCONF": "myproject.urls.type1",
+  }
 
 .. important::
     Ensure the app containing your ``TenantBase`` (``companies``) and ``TenantUser``

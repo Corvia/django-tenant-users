@@ -47,8 +47,9 @@ def provision_tenant(  # noqa: PLR0913
         tenant_extra_data (dict, optional): Additional data for the tenant model.
 
     Returns:
-        tenant:The provision tenant instance created.
-        domain:The Fully Qualified Domain Name (FQDN) instance for the newly provisioned tenant.
+        tuple: A tuple containing:
+            - tenant object: The provisioned tenant instance created.
+            - domain object: The Fully Qualified Domain Name (FQDN) instance for the newly provisioned tenant.
 
     Raises:
         InactiveError: If the user is inactive.
