@@ -9,7 +9,7 @@ from django.db import DatabaseError, connection
 from django_tenants.utils import get_tenant_model
 
 from tenant_users.tenants.models import ExistsError, InactiveError
-from tenant_users.tenants.tasks import provision_tenant
+from tenant_users.tenants.tasks import INACTIVE_USER_ERROR_MESSAGE, provision_tenant
 
 #: Constants
 TenantModel = get_tenant_model()
@@ -34,38 +34,43 @@ def list_schemas() -> list[str]:
 def test_provision_tenant(tenant_user_admin) -> None:
     """Tests provision_tenant() for correctness."""
     slug = "sample"
-    tenant_domain = provision_tenant(
-        "Sample Tenant",
+    tenant_name = "Sample Tenant"
+    tenant, domain = provision_tenant(
+        tenant_name,
         slug,
         tenant_user_admin,
     )
-
-    assert tenant_domain == f"{slug}.{settings.TENANT_USERS_DOMAIN}"
+    assert tenant.name == tenant_name
+    assert tenant.owner == tenant_user_admin
+    assert domain.domain == f"{slug}.{settings.TENANT_USERS_DOMAIN}"
 
 
 def test_provision_tenant_with_subfolder(settings, tenant_user_admin) -> None:
     """Tests provision_tenant() for correctness when using subfolders."""
     settings.TENANT_SUBFOLDER_PREFIX = "clients"
     slug = "sample"
-    tenant_domain = provision_tenant(
-        "Sample Tenant",
+    tenant_name = "Sample Tenant"
+    tenant, domain = provision_tenant(
+        tenant_name,
         slug,
         tenant_user_admin,
     )
+    assert tenant.name == tenant_name
+    assert tenant.owner == tenant_user_admin
 
-    assert tenant_domain == slug
+    assert domain.domain == slug
 
 
 def test_provision_tenant_inactive_user(tenant_user) -> None:
     """Test tenant creation with inactive user."""
     tenant_user.is_active = False
-    tenant_user.save()
+    tenant_user.save(update_fields=["is_active"])
 
-    with pytest.raises(InactiveError, match="Inactive user passed"):
+    with pytest.raises(InactiveError, match=INACTIVE_USER_ERROR_MESSAGE):
         provision_tenant(
             "inactive_test",
             "inactive_test",
-            tenant_user.email,
+            tenant_user,
         )
 
 
@@ -75,28 +80,7 @@ def test_duplicate_tenant_url(test_tenants, tenant_user) -> None:
     slug = test_tenants.first().slug
 
     with pytest.raises(ExistsError, match="URL already exists"):
-        provision_tenant(slug, slug, tenant_user.email)
-
-
-def test_provision_with_schema_name(tenant_user) -> None:
-    """Test tenant provisioning with a custom schema name.
-
-    This test verifies that the `provision_tenant` function correctly creates a tenant
-    with a custom schema name and that the corresponding schema is created in the database.
-    """
-    slug = "sample"
-    custom_schema_name = "my_custom_name"
-    provision_tenant(
-        "Sample Tenant",
-        slug,
-        tenant_user.email,
-        schema_name=custom_schema_name,
-    )
-
-    assert TenantModel.objects.get(schema_name=custom_schema_name)
-
-    # Ensure the actual schema created in PostgreSQL is correct
-    assert custom_schema_name in list_schemas()
+        provision_tenant(slug, slug, tenant_user)
 
 
 def test_provision_tenant_tenant_creation_exception(tenant_user) -> None:
@@ -109,7 +93,7 @@ def test_provision_tenant_tenant_creation_exception(tenant_user) -> None:
         "django_test_app.companies.models.Company.objects.create",
         side_effect=DatabaseError("Database error"),
     ), pytest.raises(Exception, match="Database error"):
-        provision_tenant("Test Tenant", "test-tenant", tenant_user.email)
+        provision_tenant("Test Tenant", "test-tenant", tenant_user)
 
 
 def test_provision_tenant_domain_creation_exception(tenant_user) -> None:
@@ -127,7 +111,7 @@ def test_provision_tenant_domain_creation_exception(tenant_user) -> None:
         "django_test_app.companies.models.Domain.objects.create",
         side_effect=DatabaseError("Domain error"),
     ), pytest.raises(Exception, match="Domain error"):
-        provision_tenant("Test Tenant", slug, tenant_user.email)
+        provision_tenant("Test Tenant", slug, tenant_user)
 
     # Ensure tenant was cleaned up
     assert not TenantModel.objects.filter(slug=slug).exists()
@@ -136,7 +120,7 @@ def test_provision_tenant_domain_creation_exception(tenant_user) -> None:
     assert len(schemas) == len(list_schemas())
 
 
-def test_provision_tenant_user_add_exception(tenant_user: TenantUser) -> None:
+def test_provision_tenant_user_add_exception(tenant_user: TenantUser) -> None:  # type: ignore
     """Test exception handling when adding a user to a tenant.
 
     This test ensures that the `provision_tenant` function raises the appropriate
@@ -148,7 +132,27 @@ def test_provision_tenant_user_add_exception(tenant_user: TenantUser) -> None:
         "django_test_app.companies.models.Company.add_user",
         side_effect=InactiveError("Exception error"),
     ), pytest.raises(Exception, match="Exception error"):
-        provision_tenant("Test Tenant", slug, tenant_user.email)
+        provision_tenant("Test Tenant", slug, tenant_user)
 
     # Ensure user wasn't added to a tenant
     assert tenant_user.tenants.count() == 1
+
+
+def test_provision_tenant_with_tenant_extras(tenant_user) -> None:
+    """Test tenant provisioning with a custom schema name.
+
+    This test verifies that the `provision_tenant` function correctly creates a tenant
+    with a custom schema name and that the corresponding schema is created in the database.
+    """
+    slug = "sample"
+    custom_schema_name = "my_custom_name"
+    extra_data = "extra data added"
+    tenant, _ = provision_tenant(
+        tenant_name="Sample Tenant",
+        tenant_slug=slug,
+        owner=tenant_user,
+        schema_name=custom_schema_name,
+        tenant_extra_data={"type": extra_data},
+    )
+
+    assert tenant.type == extra_data

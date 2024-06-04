@@ -1,13 +1,14 @@
-Utility Reference
-=================
+###################
+ Utility Reference
+###################
 
-This section provides an overview of the tasks, utilities, model functions, and object
-managers available in django-tenant-users. Use them to enhance and streamline your
-project.
+This section provides an overview of the tasks, utilities, model
+functions, and object managers available in django-tenant-users. Use
+them to enhance and streamline your project.
 
-
-Tasks
------
+*******
+ Tasks
+*******
 
 ``tenant_users.tenants.tasks``
 
@@ -16,9 +17,9 @@ Tasks
    :undoc-members:
    :show-inheritance:
 
-
-Utilities
----------
+***********
+ Utilities
+***********
 
 ``tenant_users.tenants.utils``
 

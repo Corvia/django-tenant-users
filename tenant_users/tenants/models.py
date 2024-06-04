@@ -26,6 +26,10 @@ tenant_user_created = Signal()
 # An existing user is deleted
 tenant_user_deleted = Signal()
 
+TENANT_DELETE_ERROR_MESSAGE = (
+    "calling delete on tenant instance is not supported, call delete_tenant instead"
+)
+
 
 class InactiveError(Exception):
     pass
@@ -91,9 +95,7 @@ class TenantBase(TenantMixin):
         if force_drop:
             super().delete(force_drop, *args, **kwargs)
         else:
-            raise DeleteError(
-                "Not supported -- delete_tenant() should be used.",
-            )
+            raise DeleteError(TENANT_DELETE_ERROR_MESSAGE)
 
     @schema_required
     def add_user(self, user_obj, *, is_superuser: bool = False, is_staff: bool = False):
@@ -147,6 +149,9 @@ class TenantBase(TenantMixin):
         # Unlink from tenant
         UserTenantPermissions.objects.filter(pk=user_tenant_perms.pk).delete()
         user_obj.tenants.remove(self)
+        # Remove tenant specific cached attributes
+        if self.schema_name in user_obj.__dict__:
+            del user_obj.__dict__[self.schema_name]
 
         tenant_user_removed.send(
             sender=self.__class__,
@@ -201,14 +206,15 @@ class TenantBase(TenantMixin):
         old_owner = self.owner
 
         # Remove current owner superuser status but retain any assigned role(s)
-        old_owner_tenant = old_owner.usertenantpermissions
-        old_owner_tenant.is_superuser = False
-        old_owner_tenant.save()
+
+        old_owner_tenant_permissions = old_owner.usertenantpermissions
+        old_owner_tenant_permissions.is_superuser = False
+        old_owner_tenant_permissions.save(update_fields=["is_superuser"])
 
         self.owner = new_owner
 
         # If original has no permissions left, remove user from tenant
-        if not old_owner_tenant.groups.exists():
+        if not old_owner_tenant_permissions.groups.exists():
             self.remove_user(old_owner)
 
         try:
@@ -216,12 +222,12 @@ class TenantBase(TenantMixin):
             user = self.user_set.get(pk=new_owner.pk)
             user_tenant = user.usertenantpermissions
             user_tenant.is_superuser = True
-            user_tenant.save()
+            user_tenant.save(update_fields=["is_superuser"])
         except get_user_model().DoesNotExist:
             # New user is not a part of the system, add them as a user..
             self.add_user(new_owner, is_superuser=True)
 
-        self.save()
+        self.save(update_fields=["owner"])
 
     class Meta:
         abstract = True
@@ -264,10 +270,9 @@ class UserProfileManager(BaseUserManager):
         # exceptions to this. 1) The user gets re-invited to a tenant it
         # previously had access to (this is good thing IMO). 2) The public
         # schema if they had previous activity associated would be available
-        if not profile:
-            profile = UserModel()
-
+        profile = profile if profile else UserModel()
         profile.email = email
+
         profile.is_active = True
         profile.is_verified = is_verified
         profile.set_password(password)
@@ -349,7 +354,7 @@ class UserProfileManager(BaseUserManager):
 
         # Set is_active, don't actually delete the object
         user_obj.is_active = False
-        user_obj.save()
+        user_obj.save(update_fields=["is_active"])
 
         tenant_user_deleted.send(sender=self.__class__, user=user_obj)
 

@@ -15,7 +15,8 @@ from tenant_users.tenants.utils import create_public_tenant
 TenantModel = get_tenant_model()
 TenantUser = get_user_model()
 TEST_TENANT_NAME = "pytest"
-TEST_USER_EMAIL = "primary-user@test.com"
+PUBLIC_TENANT_OWNER_EMAIL = "owner@public.com"
+PROVISION_TENANT_OWNER_EMAIL = "owner@provision.com"
 
 
 @pytest.fixture(autouse=True)
@@ -24,7 +25,7 @@ def _common_db_setup(db, request):  # noqa: ARG001
         return  # Skip the rest of the fixture for tests marked with 'no_db_setup'
 
     # Automatically stand up a public tenant for the majority of our tests
-    create_public_tenant("public.test.com", TEST_USER_EMAIL)
+    create_public_tenant("public.test.com", PUBLIC_TENANT_OWNER_EMAIL)
 
     public_tenant = TenantModel.objects.get(
         schema_name=get_public_schema_name(),
@@ -35,7 +36,9 @@ def _common_db_setup(db, request):  # noqa: ARG001
 @pytest.fixture()
 def test_tenants(db, create_tenant):  # noqa: ARG001
     """Provision a few tenants for testing."""
-    tenant_user = TenantUser.objects.get(email=TEST_USER_EMAIL)
+    tenant_user = TenantUser.objects.create_user(
+        email=PROVISION_TENANT_OWNER_EMAIL, password="123456"
+    )
     for tenant_slug in ("one", "two"):
         create_tenant(tenant_user, tenant_slug)
 
@@ -53,8 +56,9 @@ def create_tenant():
         is_staff=False,
     ):
         """Handle provisioning of a new tenant."""
-        provision_tenant(tenant_slug, tenant_slug, tenant_user.email, is_staff=is_staff)
-        tenant = TenantModel.objects.get(slug=tenant_slug)
+        tenant, _ = provision_tenant(
+            tenant_slug, tenant_slug, tenant_user, is_staff=is_staff
+        )
         return tenant
 
     return create_tenant_function

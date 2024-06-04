@@ -14,8 +14,6 @@ TenantUser = get_user_model()
 @settings(deadline=None)
 def test_model_properties(instance: TenantUser) -> None:
     """Tests that instance can be saved and has correct representation."""
-    instance.save()
-
     # Test UserProfile.has_verified_email()
     assert instance.has_verified_email() == instance.is_verified
 

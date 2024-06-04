@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django.contrib.auth import get_user_model
 from django.db import connection
 from django_tenants.utils import (
@@ -13,6 +15,17 @@ from tenant_users.tenants.models import ExistsError, SchemaError
 
 
 def get_current_tenant():
+    """
+    Retrieves the current tenant based on the current database schema.
+
+    This function gets the current schema name from the database connection,
+    retrieves the tenant model, and then fetches the tenant instance that
+    matches the current schema name.
+
+    Returns:
+        tenant: The tenant instance corresponding to the current database schema.
+
+    """
     current_schema = connection.schema_name
     TenantModel = get_tenant_model()  # noqa: N806
     tenant = TenantModel.objects.get(schema_name=current_schema)
@@ -25,7 +38,7 @@ def create_public_tenant(
     *,
     is_superuser: bool = False,
     is_staff: bool = False,
-    tenant_extra_data=None,
+    tenant_extra_data: Optional[dict] = None,
     **owner_extra,
 ):
     """Creates a public tenant and assigns an owner user.
@@ -97,6 +110,6 @@ def create_public_tenant(
         profile.set_password(owner_extra["password"])
     else:
         profile.set_unusable_password()
-    profile.save()
+    profile.save(update_fields=["password"])
 
     return public_tenant, domain, profile

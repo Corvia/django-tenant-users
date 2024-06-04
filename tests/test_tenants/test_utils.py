@@ -98,3 +98,21 @@ def test_tenant_public_tenant_with_multitype_missing_public(settings):
         match=f"Please define a '{public_name}' tenant type.",
     ):
         utils.create_public_tenant("domain.test", "user@domain.com")
+
+
+@pytest.mark.django_db()
+@pytest.mark.no_db_setup()
+def test_create_public_tenant_with_tenant_extras():
+    """Ensures correctness of create_public_tenant() function."""
+    email = "user@domain.com"
+    domain = "domain.test"
+    extra_data = "extra data added"
+
+    # Create public tenant with tenant_extra_data
+    public_tenant, _, _ = utils.create_public_tenant(
+        domain, email, tenant_extra_data={"type": extra_data}
+    )
+    assert public_tenant.type == extra_data
+    # Test deleting tenant
+    with pytest.raises(ValueError, match="Cannot delete public tenant schema"):
+        public_tenant.delete_tenant()
