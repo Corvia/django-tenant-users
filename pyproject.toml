@@ -59,7 +59,7 @@ django-tenants = "^3.6"
 [tool.poetry.group.test.dependencies]
 # Type Checking
 mypy = "1.10.0"
-django-stubs = { version = "5.0.0", extras = ["compatible-mypy"] }
+django-stubs = { version = "5.0.2", extras = ["compatible-mypy"] }
 
 # Code Quality
 nitpick = ">=0.32,<0.36"
