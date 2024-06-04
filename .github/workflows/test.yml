@@ -71,6 +71,7 @@ jobs:
           poetry run pytest
           poetry check
           poetry run pip check
+          rstfmt --check .
         env:
           DJANGO_DATABASE_PORT: ${{ job.services.postgres.ports[5432] }}
 
