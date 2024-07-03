@@ -58,7 +58,7 @@ django-tenants = "^3.6"
 
 [tool.poetry.group.test.dependencies]
 # Type Checking
-mypy = "1.10.0"
+mypy = "1.10.1"
 django-stubs = { version = "5.0.2", extras = ["compatible-mypy"] }
 
 # Code Quality
