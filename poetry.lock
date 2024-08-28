@@ -604,16 +604,16 @@ typing-extensions = "*"
 
 [[package]]
 name = "django-tenants"
-version = "3.6.1"
+version = "3.7.0"
 description = "Tenant support for Django using PostgreSQL schemas."
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-tenants-3.6.1.tar.gz", hash = "sha256:36052d5bfce8240afab062e2d33ffeb25e38fa57b2a2b003eacd7e8d60334d97"},
+    {file = "django-tenants-3.7.0.tar.gz", hash = "sha256:3836a2bae2c88504889a3226525930dfac8d3621f577cefdfde03db8115e88ac"},
 ]
 
 [package.dependencies]
-Django = ">=2.1,<5.1"
+Django = ">=2.1,<5.2"
 
 [[package]]
 name = "doc8"
