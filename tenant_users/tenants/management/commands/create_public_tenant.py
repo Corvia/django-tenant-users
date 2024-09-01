@@ -10,14 +10,12 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             "--domain_url",
-            nargs=1,
             required=True,
             type=str,
             help="The URL for the public tenant's domain.",
         )
         parser.add_argument(
             "--owner_email",
-            nargs=1,
             required=True,
             type=str,
             help="Email address of the owner user.",
