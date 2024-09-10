@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import pytest
 from django.conf import settings
@@ -63,21 +63,25 @@ def test_create_public_tenant_with_specified_password():
     assert user.check_password(secret)
 
 
-@patch("django_test_app.companies.models.Company.objects.create")
+@patch("tenant_users.tenants.utils.get_tenant_model")
 @pytest.mark.usefixtures("_tenant_type_settings")
 @pytest.mark.django_db()
 @pytest.mark.no_db_setup()
-def test_tenant_public_tenant_with_multitype(mock_create):
+def test_tenant_public_tenant_with_multitype(mock_get_tenant_model):
     """Tests that multi-type information is used during the Public Tenant creation."""
+    mock_tenant_model = Mock()
+    mock_tenant_model.objects.filter.return_value.first.return_value = None
+    mock_get_tenant_model.return_value = mock_tenant_model
+
     # Since we're mocking, we expect an exception to be thrown after Tenant.create()
     with pytest.raises(ValueError, match='must be a "Company" instance'):
         utils.create_public_tenant("domain.test", "user@domain.com")
 
     # Check the mock was called
-    assert mock_create.called
+    assert mock_tenant_model.called
 
     # Get the arguments it was called with
-    _, kwargs = mock_create.call_args
+    _, kwargs = mock_tenant_model.call_args
 
     # Ensure the multi-type database field was added during Tenant creation
     assert kwargs.get(settings.MULTI_TYPE_DATABASE_FIELD) == get_public_schema_name()
@@ -116,3 +120,24 @@ def test_create_public_tenant_with_tenant_extras():
     # Test deleting tenant
     with pytest.raises(ValueError, match="Cannot delete public tenant schema"):
         public_tenant.delete_tenant()
+
+
+@patch("tenant_users.tenants.utils.get_tenant_model")
+@pytest.mark.django_db()
+@pytest.mark.no_db_setup()
+def test_tenant_public_tenant_save_verbosity(mock_get_tenant_model):
+    """Tests that the verbosity parameter is correctly passed to save()."""
+    mock_tenant_model = Mock()
+    mock_tenant_model.objects.filter.return_value.first.return_value = None
+    mock_get_tenant_model.return_value = mock_tenant_model
+
+    # Since we're mocking, we expect an exception to be thrown after Tenant.create()
+    with pytest.raises(ValueError, match='must be a "Company" instance'):
+        utils.create_public_tenant("domain.test", "user@domain.com", verbosity=3)
+
+    # Check the mock was called
+    assert mock_tenant_model.called
+
+    # Check that save() was called with the correct verbosity
+    mock_tenant_instance = mock_tenant_model.return_value
+    mock_tenant_instance.save.assert_called_once_with(verbosity=3)
