@@ -39,6 +39,7 @@ def create_public_tenant(
     is_superuser: bool = False,
     is_staff: bool = False,
     tenant_extra_data: Optional[dict] = None,
+    verbosity=1,
     **owner_extra,
 ):
     """Creates a public tenant and assigns an owner user.
@@ -88,12 +89,14 @@ def create_public_tenant(
             {get_multi_type_database_field_name(): public_schema_name}
         )
 
-    public_tenant = TenantModel.objects.create(
+    public_tenant = TenantModel(
         schema_name=public_schema_name,
         name="Public Tenant",
         owner=profile,
         **tenant_extra_data,
     )
+
+    public_tenant.save(verbosity=verbosity)
 
     # Add one or more domains for the tenant
     domain = get_tenant_domain_model().objects.create(
