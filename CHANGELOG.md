@@ -2,6 +2,15 @@
 
 We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` release.
 
+## 2.0.0 (2024-09-09) Breaking changes
+
+## What's Changed
+
+* Now returning created tenant from provision_tenant utility function by @Wizely99 in https://github.com/Corvia/django-tenant-users/pull/607
+* Remove nargs by @ihfazhillah in https://github.com/Corvia/django-tenant-users/pull/669
+* Allow verbosity to be set when creating public tenant by @Dresdn in https://github.com/Corvia/django-tenant-users/pull/677
+
+
 ## 1.5.0 (2024-05-22)
 
 ### Features
