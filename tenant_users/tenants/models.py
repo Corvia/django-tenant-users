@@ -9,10 +9,8 @@ from django.utils.translation import gettext_lazy as _
 from django_tenants.models import TenantMixin
 from django_tenants.utils import get_public_schema_name, get_tenant_model
 
-from tenant_users.permissions.models import (
-    PermissionsMixinFacade,
-    UserTenantPermissions,
-)
+from tenant_users.permissions.models import (PermissionsMixinFacade,
+                                             UserTenantPermissions)
 
 # An existing user removed from a tenant
 tenant_user_removed = Signal()

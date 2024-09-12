@@ -9,7 +9,8 @@ from django.db import DatabaseError, connection
 from django_tenants.utils import get_tenant_model
 
 from tenant_users.tenants.models import ExistsError, InactiveError
-from tenant_users.tenants.tasks import INACTIVE_USER_ERROR_MESSAGE, provision_tenant
+from tenant_users.tenants.tasks import (INACTIVE_USER_ERROR_MESSAGE,
+                                        provision_tenant)
 
 #: Constants
 TenantModel = get_tenant_model()
