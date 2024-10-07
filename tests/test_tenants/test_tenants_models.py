@@ -1,18 +1,12 @@
 import pytest
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
-from django_tenants.utils import (
-    get_public_schema_name,
-    get_tenant_model,
-    tenant_context,
-)
+from django_tenants.utils import (get_public_schema_name, get_tenant_model,
+                                  tenant_context)
 
 from tenant_users.permissions.models import UserTenantPermissions
-from tenant_users.tenants.models import (
-    TENANT_DELETE_ERROR_MESSAGE,
-    DeleteError,
-    ExistsError,
-)
+from tenant_users.tenants.models import (TENANT_DELETE_ERROR_MESSAGE,
+                                         DeleteError, ExistsError)
 from tenant_users.tenants.tasks import provision_tenant
 
 #: Constants

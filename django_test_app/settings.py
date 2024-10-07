@@ -8,7 +8,9 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+
 import os
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -39,6 +41,10 @@ SHARED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # DRF apps
+    "rest_framework",
+    "rest_framework.authtoken",
+    "rest_framework_simplejwt",
     # django-tenant-users apps
     "tenant_users.permissions",
     "tenant_users.tenants",
@@ -51,6 +57,8 @@ TENANT_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "tenant_users.permissions",
+    # Test project apps - tenant specific apps
+    "django_test_app.bookings",
 ]
 
 INSTALLED_APPS = list(SHARED_APPS) + [
@@ -66,6 +74,28 @@ AUTH_USER_MODEL = "users.TenantUser"
 # django-tenants settings
 TENANT_MODEL = "companies.Company"
 TENANT_DOMAIN_MODEL = "companies.Domain"
+
+# DRF Configuration
+REST_FRAMEWORK = {
+    "NON_FIELD_ERRORS_KEY": "errors",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+}
+
+# Simple JWT Configuration
+SIMPLE_JWT = {
+    "AUTH_HEADER_TYPES": ("JWT",),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=20),
+}
+
+# Djoser Configuration
+# In the event you are using Djoser with DRF for authentication, you easily set it up by following the Djoser documentation - https://djoser.readthedocs.io/en/latest/
 
 
 MIDDLEWARE = [

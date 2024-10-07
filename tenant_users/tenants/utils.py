@@ -2,14 +2,10 @@ from typing import Optional
 
 from django.contrib.auth import get_user_model
 from django.db import connection
-from django_tenants.utils import (
-    get_multi_type_database_field_name,
-    get_public_schema_name,
-    get_tenant_domain_model,
-    get_tenant_model,
-    get_tenant_types,
-    has_multi_type_tenants,
-)
+from django_tenants.utils import (get_multi_type_database_field_name,
+                                  get_public_schema_name,
+                                  get_tenant_domain_model, get_tenant_model,
+                                  get_tenant_types, has_multi_type_tenants)
 
 from tenant_users.tenants.models import ExistsError, SchemaError
 

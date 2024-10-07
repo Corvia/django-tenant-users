@@ -1,5 +1,4 @@
 from django.db import models
-
 from tenant_users.tenants.models import UserProfile
 
 _NameFieldLength = 64

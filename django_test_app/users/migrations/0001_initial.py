@@ -1,5 +1,4 @@
 from django.db import migrations, models
-
 from tenant_users.permissions.models import PermissionsMixinFacade
 
 
