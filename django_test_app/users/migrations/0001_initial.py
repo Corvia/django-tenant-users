@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import migrations, models
 
 from tenant_users.permissions.models import PermissionsMixinFacade
@@ -67,6 +69,68 @@ class Migration(migrations.Migration):
                         blank=True,
                         help_text="The tenants this user belongs to.",
                         related_name="user_set",
+                        to="companies.Company",
+                        verbose_name="tenants",
+                    ),
+                ),
+            ],
+            options={
+                "abstract": False,
+            },
+            bases=(
+                models.Model,
+                PermissionsMixinFacade,
+            ),
+        ),
+        migrations.CreateModel(
+            name="GuidUser",
+            fields=[
+                (
+                    "guid",
+                    models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False)
+                ),
+                (
+                    "password",
+                    models.CharField(
+                        max_length=128,
+                        verbose_name="password",
+                    ),
+                ),
+                (
+                    "last_login",
+                    models.DateTimeField(
+                        blank=True,
+                        null=True,
+                        verbose_name="last login",
+                    ),
+                ),
+                (
+                    "email",
+                    models.EmailField(
+                        db_index=True,
+                        max_length=254,
+                        unique=True,
+                        verbose_name="Email Address",
+                    ),
+                ),
+                (
+                    "is_active",
+                    models.BooleanField(
+                        default=True,
+                        verbose_name="active",
+                    ),
+                ),
+                (
+                    "is_verified",
+                    models.BooleanField(default=False, verbose_name="verified"),
+                ),
+                ("name", models.CharField(blank=True, max_length=64)),
+                (
+                    "tenants",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="The tenants this user belongs to.",
+                        related_name="guid_users_set",
                         to="companies.Company",
                         verbose_name="tenants",
                     ),
