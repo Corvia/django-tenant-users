@@ -107,7 +107,7 @@ class TenantBase(TenantMixin):
             is_staff (bool): If True, assigns staff status to the user. Defaults to False.
         """
         # User already is linked here..
-        if self.user_set.filter(id=user_obj.pk).exists():
+        if self.user_set.filter(pk=user_obj.pk).exists():
             raise ExistsError(
                 f"User already added to tenant: {user_obj}",
             )
