@@ -20,19 +20,14 @@ TenantModel = get_tenant_model()
 UserModel = get_user_model()
 
 
-def test_add_guid_based_user_to_tenant(guid_tenant_user) -> None:
+def test_add_guid_based_user_to_tenant(test_tenants, guid_tenant_user) -> None:
     """Test tenant user management with guid based user"""
-    slug = "sample"
-    custom_schema_name = "guid_schema"
-    tenant, _ = provision_tenant(
-        tenant_name="GUID Tenant",
-        tenant_slug=slug,
-        owner=guid_tenant_user,
-        schema_name=custom_schema_name
-    )
-    owner = tenant.owner
-    tenant.add_user(owner)
+    tenant = test_tenants.first()
+    # Just the owner
     assert tenant.user_set.count() == 1
+    tenant.add_user(guid_tenant_user)
+    # Owner + My test user
+    assert tenant.user_set.count() == 2
 
 
 def test_provision_with_schema_name(tenant_user) -> None:

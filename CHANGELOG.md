@@ -1,6 +1,11 @@
 # Version history
 
 We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` release.
+## 2.0.1 (2024-11-19)
+
+### Features
+* Added support for UserModels where the primary key field isnt `id`
+
 
 ## 2.0.0 (2024-09-09) Breaking changes
 
