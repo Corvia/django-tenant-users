@@ -20,6 +20,21 @@ TenantModel = get_tenant_model()
 UserModel = get_user_model()
 
 
+def test_add_guid_based_user_to_tenant(guid_tenant_user) -> None:
+    """Test tenant user management with guid based user"""
+    slug = "sample"
+    custom_schema_name = "guid_schema"
+    tenant, _ = provision_tenant(
+        tenant_name="GUID Tenant",
+        tenant_slug=slug,
+        owner=guid_tenant_user,
+        schema_name=custom_schema_name
+    )
+    owner = tenant.owner
+    tenant.add_user(owner)
+    assert tenant.user_set.count() == 1
+
+
 def test_provision_with_schema_name(tenant_user) -> None:
     """Test tenant provisioning with a custom schema name.
 
@@ -37,7 +52,7 @@ def test_provision_with_schema_name(tenant_user) -> None:
     owner = tenant.owner
 
     with pytest.raises(
-        ExistsError, match="User already added to tenant: tenant-user@test.com"
+            ExistsError, match="User already added to tenant: tenant-user@test.com"
     ):
         tenant.add_user(owner)
     error_message = f"Cannot remove owner from tenant: {owner}"
@@ -77,7 +92,6 @@ def test_deleting_a_provision_tenant(tenant_user) -> None:
     assert public_tenant.owner == tenant.owner
     assert tenant.user_set.count() == 1
     with tenant_context(tenant):
-
         # Verify that the public owner retains permission to the provisioned tenant after deletion
         public_owner_has_permission = UserTenantPermissions.objects.filter(
             profile=tenant.owner
@@ -91,7 +105,7 @@ def test_deleting_a_provision_tenant(tenant_user) -> None:
             profile=another_user
         ).exists()
         assert (
-            previous_owner_has_permission == False
+                previous_owner_has_permission == False
         ), "The previous owner should not retain permission to the provisioned tenant after deletion."
 
 
@@ -134,11 +148,9 @@ def test_delete_provisioned_tenant_with_assigned_user_roles(tenant_user):
 
 
 def test_transfer_ownership_to_existing_user(test_tenants, public_tenant):
-
     tenant = test_tenants.first()
     assert tenant.owner != public_tenant.owner, "Can't transfer ownership to same owner"
     with tenant_context(tenant):
-
         tenant.add_user(public_tenant.owner)
         # Assign group or role to user through UserTenantPermissions
         tenant.transfer_ownership(public_tenant.owner)
@@ -148,6 +160,6 @@ def test_transfer_ownership_to_existing_user(test_tenants, public_tenant):
             profile=public_tenant.owner
         ).exists()
         assert (
-            UserTenantPermissions.objects.get(profile=public_tenant.owner).is_superuser
-            == True
+                UserTenantPermissions.objects.get(profile=public_tenant.owner).is_superuser
+                == True
         )
