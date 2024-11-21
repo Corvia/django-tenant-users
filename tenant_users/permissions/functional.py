@@ -20,14 +20,17 @@ class tenant_cached_property(cached_property):  # noqa: N801
         if instance is None:
             return self
 
+        if "_tenant_cache" not in instance.__dict__:
+            instance.__dict__["_tenant_cache"] = {}
+
+        tenant_cache = instance.__dict__["_tenant_cache"]
         current_schema = connection.schema_name
 
-        if current_schema not in instance.__dict__:
-            instance.__dict__[current_schema] = {}
-            res = instance.__dict__[current_schema][self.name] = self.func(instance)
-        elif self.name not in instance.__dict__[current_schema]:
-            res = instance.__dict__[current_schema][self.name] = self.func(instance)
-        else:
-            res = instance.__dict__[current_schema][self.name]
+        if current_schema not in tenant_cache:
+            tenant_cache[current_schema] = {}
+            tenant_cache[current_schema][self.name] = self.func(instance)
+        elif self.name not in tenant_cache[current_schema]:
+            tenant_cache[current_schema][self.name] = self.func(instance)
 
-        return res
+        return tenant_cache[current_schema][self.name]
+
