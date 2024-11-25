@@ -152,8 +152,10 @@ class TenantBase(TenantMixin):
         UserTenantPermissions.objects.filter(pk=user_tenant_perms.pk).delete()
         user_obj.tenants.remove(self)
         # Remove tenant specific cached attributes
-        if self.schema_name in user_obj.__dict__:
-            del user_obj.__dict__[self.schema_name]
+        if TENANT_CACHE_NAME in user_obj.__dict__:
+            cache = user_obj.__dict__[TENANT_CACHE_NAME]
+            if self.schema_name in cache:
+                del cache[self.schema_name]
 
         tenant_user_removed.send(
             sender=self.__class__,
