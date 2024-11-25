@@ -1,6 +1,8 @@
 from django.db import connection
 from django.utils.functional import cached_property
 
+from tenant_users.tenants.models import TENANT_CACHE_NAME
+
 
 class tenant_cached_property(cached_property):  # noqa: N801
     """A tenant-aware implementation of Django's cached_property decorator.
@@ -20,10 +22,10 @@ class tenant_cached_property(cached_property):  # noqa: N801
         if instance is None:
             return self
 
-        if "_tenant_cache" not in instance.__dict__:
-            instance.__dict__["_tenant_cache"] = {}
+        if TENANT_CACHE_NAME not in instance.__dict__:
+            instance.__dict__[TENANT_CACHE_NAME] = {}
 
-        tenant_cache = instance.__dict__["_tenant_cache"]
+        tenant_cache = instance.__dict__[TENANT_CACHE_NAME]
         current_schema = connection.schema_name
 
         if current_schema not in tenant_cache:
@@ -33,4 +35,3 @@ class tenant_cached_property(cached_property):  # noqa: N801
             tenant_cache[current_schema][self.name] = self.func(instance)
 
         return tenant_cache[current_schema][self.name]
-
