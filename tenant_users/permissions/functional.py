@@ -1,7 +1,7 @@
 from django.db import connection
 from django.utils.functional import cached_property
 
-from tenant_users.tenants.models import TENANT_CACHE_NAME
+from tenant_users.constants import TENANT_CACHE_NAME
 
 
 class tenant_cached_property(cached_property):  # noqa: N801

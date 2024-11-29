@@ -14,9 +14,9 @@ from django_tenants.utils import (
     schema_context,
 )
 
+from tenant_users.constants import INACTIVE_USER_ERROR_MESSAGE
 from tenant_users.tenants.models import ExistsError, InactiveError, SchemaError
 
-INACTIVE_USER_ERROR_MESSAGE = "Inactive user can't be used to provision a tenant."
 UserModel = get_user_model()
 TenantModel = get_tenant_model()
 DomainModel = get_tenant_domain_model()
