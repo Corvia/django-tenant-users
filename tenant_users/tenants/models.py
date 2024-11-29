@@ -13,6 +13,10 @@ from tenant_users.permissions.models import (
     PermissionsMixinFacade,
     UserTenantPermissions,
 )
+from tenant_users.constants import (
+    TENANT_CACHE_NAME,
+    TENANT_DELETE_ERROR_MESSAGE,
+)
 
 # An existing user removed from a tenant
 tenant_user_removed = Signal()
@@ -25,12 +29,6 @@ tenant_user_created = Signal()
 
 # An existing user is deleted
 tenant_user_deleted = Signal()
-
-TENANT_DELETE_ERROR_MESSAGE = (
-    "calling delete on tenant instance is not supported, call delete_tenant instead"
-)
-
-TENANT_CACHE_NAME = "_tenant_cache"
 
 
 class InactiveError(Exception):
@@ -238,7 +236,7 @@ class TenantBase(TenantMixin):
 
 
 class UserProfileManager(BaseUserManager):
-    def _create_user(  # noqa: PLR0913
+    def _create_user(
         self,
         email,
         password,
