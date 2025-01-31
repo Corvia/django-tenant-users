@@ -22,7 +22,7 @@ TenantModel = get_tenant_model()
 DomainModel = get_tenant_domain_model()
 
 
-@transaction.atomic()
+@transaction.atomic
 def provision_tenant(  # noqa: PLR0913
     tenant_name: str,
     tenant_slug: str,
