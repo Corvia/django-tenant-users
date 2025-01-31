@@ -1,7 +1,7 @@
 from typing import Optional
 
 from django.contrib.auth import get_user_model
-from django.db import connection
+from django.db import connection, transaction
 from django_tenants.utils import (
     get_multi_type_database_field_name,
     get_public_schema_name,
@@ -32,6 +32,7 @@ def get_current_tenant():
     return tenant
 
 
+@transaction.atomic
 def create_public_tenant(
     domain_url,
     owner_email,

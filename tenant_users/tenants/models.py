@@ -3,7 +3,7 @@ import time
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.db import connection, models
+from django.db import connection, models, transaction
 from django.dispatch import Signal
 from django.utils.translation import gettext_lazy as _
 from django_tenants.models import TenantMixin
@@ -98,6 +98,7 @@ class TenantBase(TenantMixin):
             raise DeleteError(TENANT_DELETE_ERROR_MESSAGE)
 
     @schema_required
+    @transaction.atomic
     def add_user(self, user_obj, *, is_superuser: bool = False, is_staff: bool = False):
         """Add user to tenant.
 
@@ -129,6 +130,7 @@ class TenantBase(TenantMixin):
         )
 
     @schema_required
+    @transaction.atomic
     def remove_user(self, user_obj):
         """Remove user from tenant."""
         # Test that user is already in the tenant
@@ -161,6 +163,7 @@ class TenantBase(TenantMixin):
             tenant=self,
         )
 
+    @transaction.atomic
     def delete_tenant(self):
         """Mark tenant for deletion.
 
@@ -204,6 +207,7 @@ class TenantBase(TenantMixin):
             self.remove_user(old_owner)
 
     @schema_required
+    @transaction.atomic
     def transfer_ownership(self, new_owner):
         old_owner = self.owner
 
@@ -236,6 +240,7 @@ class TenantBase(TenantMixin):
 
 
 class UserProfileManager(BaseUserManager):
+    @transaction.atomic
     def _create_user(
         self,
         email,
@@ -332,6 +337,7 @@ class UserProfileManager(BaseUserManager):
             **extra_fields,
         )
 
+    @transaction.atomic
     def delete_user(self, user_obj):
         # Check to make sure we don't try to delete the public tenant owner
         # that would be bad....
