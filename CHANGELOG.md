@@ -1,10 +1,14 @@
 # Version history
 
 We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` release.
-## 2.0.1 (2024-11-19)
 
-### Features
-* Added support for UserModels where the primary key field isnt `id`
+## 2.1.0 (2025-02-01)
+
+## What's Changed
+* added support for primary keys where the field id is missing in [#707](https://github.com/Corvia/django-tenant-users/issues/707) by @Jed-Giblin in [#708](https://github.com/Corvia/django-tenant-users/pull/708)
+* Fix: security risk in `tenant_cached_property` with malicious schema names by @scur-iolus in [#709](https://github.com/Corvia/django-tenant-users/pull/709)
+* Improve data consistency and prevent orphaned records in user/tenant management by @scur-iolus in [#732](https://github.com/Corvia/django-tenant-users/pull/732)
+
 
 
 ## 2.0.0 (2024-09-09) Breaking changes
