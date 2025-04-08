@@ -14,6 +14,9 @@ def test_permissions_mixin_facade(public_tenant, tenant_user):
     ), "The tenant_user should not be equal to the owner of the tenant because he cannot be removed."
 
     user_tenant_perms: UserTenantPermissions = tenant_user.tenant_perms
+    assert user_tenant_perms.is_active is True
+    assert user_tenant_perms.is_anonymous is False
+    assert user_tenant_perms.is_authenticated is True
     user_tenant_perms.is_superuser = True
     user_tenant_perms.is_staff = True
     user_tenant_perms.save(update_fields=["is_superuser", "is_staff"])
