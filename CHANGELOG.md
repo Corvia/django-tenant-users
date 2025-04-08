@@ -2,6 +2,11 @@
 
 We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` release.
 
+## 2.1.1 (2025-04-08)
+
+## What's Changed
+* adds `is_authenticated` proxy property to `AbstractBaseUserFacade` by @nikatlas in [#755](https://github.com/Corvia/django-tenant-users/pull/755)
+
 ## 2.1.0 (2025-02-01)
 
 ## What's Changed
