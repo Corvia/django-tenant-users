@@ -105,6 +105,10 @@ class AbstractBaseUserFacade:
     def is_anonymous(self):
         return False
 
+    @property
+    def is_authenticated(self):
+        return self.profile.is_authenticated
+
 
 class UserTenantPermissions(PermissionsMixin, AbstractBaseUserFacade):
     """Authorization model for managing per-tenant permissions in Django-tenant-users.
