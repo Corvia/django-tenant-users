@@ -5,7 +5,6 @@ from django.utils.translation import gettext_lazy as _
 
 from tenant_users.permissions.functional import tenant_cached_property
 
-
 class PermissionsMixinFacade:
     """A facade for Django's PermissionMixin to handle multi-tenant permissions.
 
@@ -26,7 +25,7 @@ class PermissionsMixinFacade:
     # user has no authorization, so we catch this exception and return
     # the appropriate False or empty set
     @tenant_cached_property
-    def tenant_perms(self):
+    def tenant_perms(self) -> 'UserTenantPermissions':
         return UserTenantPermissions.objects.get(
             profile_id=self.pk,
         )
