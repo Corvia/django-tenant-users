@@ -2,6 +2,13 @@
 
 We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` release.
 
+## 2.1.2 (2025-06-19)
+
+## What's Changed
+
+* adds `apps.py` file to `permissions`, so permissions migrations will be applied by django.
+
+
 ## 2.1.1 (2025-04-08)
 
 ## What's Changed
