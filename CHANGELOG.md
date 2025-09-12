@@ -2,6 +2,11 @@
 
 We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` release.
 
+## 2.1.2 (2025-09-12)
+
+## What's Changed
+* Fix: resolve UserTenantPermissions caching bug in remove_user in [#848](https://github.com/Corvia/django-tenant-users/pull/848)
+
 ## 2.1.1 (2025-04-08)
 
 ## What's Changed
