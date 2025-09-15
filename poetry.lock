@@ -1485,14 +1485,14 @@ files = [
 
 [[package]]
 name = "nitpick"
-version = "0.35.0"
+version = "0.36.0"
 description = "Enforce the same settings across multiple language-independent projects"
 optional = false
-python-versions = ">=3.8,<4.0"
+python-versions = "<4.0,>=3.8"
 groups = ["test"]
 files = [
-    {file = "nitpick-0.35.0-py3-none-any.whl", hash = "sha256:9911d32c2d488b41914aa1a6d230531fa92bbe3d6610e4a468a5cb5e30fab907"},
-    {file = "nitpick-0.35.0.tar.gz", hash = "sha256:098167a4c65655aca52c0ea3876b1e71cf634a27d0e17b971bce9bfcc1f3febe"},
+    {file = "nitpick-0.36.0-py3-none-any.whl", hash = "sha256:764933cbf8dedabe259d461872492970293216c74e4a7cf8f9994995d428c8bf"},
+    {file = "nitpick-0.36.0.tar.gz", hash = "sha256:47e923ce352b732fdf1db9b718f3115082bd4cd202363ab573cce237c197b05d"},
 ]
 
 [package.dependencies]
@@ -3039,4 +3039,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "e67818463e88d7e3f76d010985b94d79e7feb2fcda46845deafb51d1782d6d47"
+content-hash = "0a9a4c070be3497d2c93a9f97ae0ae8193fc1f7f935ee08aac4a9712a2d7a935"
