@@ -11,7 +11,7 @@ include = '\.pyi?$'
 [tool.poetry]
 name = "django-tenant-users"
 description = "A Django app to extend django-tenants to incorporate global multi-tenant users"
-version = "2.1.2"
+version = "2.1.3"
 license = "MIT License"
 
 packages = [

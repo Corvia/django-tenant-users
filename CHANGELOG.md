@@ -2,6 +2,11 @@
 
 We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` release.
 
+## 2.1.3 (2025-09-23)
+
+## What's Changed
+* Fix: schema_required decorator connection state restoration in [#860](https://github.com/Corvia/django-tenant-users/pull/860)
+
 ## 2.1.2 (2025-09-12)
 
 ## What's Changed
