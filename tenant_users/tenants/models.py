@@ -1,4 +1,5 @@
 import time
+from typing import Any, Callable
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -7,7 +8,11 @@ from django.db import connection, models, transaction
 from django.dispatch import Signal
 from django.utils.translation import gettext_lazy as _
 from django_tenants.models import TenantMixin
-from django_tenants.utils import get_public_schema_name, get_tenant_model
+from django_tenants.utils import (
+    get_public_schema_name,
+    get_tenant_model,
+    tenant_context,
+)
 
 from tenant_users.constants import TENANT_CACHE_NAME, TENANT_DELETE_ERROR_MESSAGE
 from tenant_users.permissions.models import (
@@ -44,20 +49,32 @@ class SchemaError(Exception):
     pass
 
 
-def schema_required(func):
-    def inner(self, *args, **options):
-        tenant_schema = self.schema_name
-        # Save current schema and restore it when we're done
-        saved_schema = connection.schema_name
-        # Set schema to this tenants schema to start building permissions
-        # in that tenant
-        connection.set_schema(tenant_schema)
-        try:
-            result = func(self, *args, **options)
-        finally:
-            # Even if an exception is raised we need to reset our schema state
-            connection.set_schema(saved_schema)
-        return result
+def schema_required(func: Callable[..., Any]) -> Callable[..., Any]:
+    """Decorator to ensure a tenant method executes within its own schema context.
+
+    This decorator automatically manages tenant schema switching for methods that
+    need to operate on tenant-specific data. It temporarily switches the database
+    connection to the tenant's schema, executes the decorated method, and properly
+    restores the original connection state.
+
+    Why this exists:
+    - TenantBase methods like add_user(), remove_user() must create and access
+      UserTenantPermissions instances within the tenant's schema
+    - Without this decorator, callers would need to manually manage tenant context
+      before calling these methods, risking data corruption or missing records
+    - Uses django-tenants' tenant_context to properly manage both
+      connection.schema_name and connection.tenant state
+
+    Args:
+        func: The tenant method to decorate. Should be a method on a tenant instance.
+
+    Returns:
+        The decorated function that executes within the tenant's schema context.
+    """
+
+    def inner(self, *args, **kwargs):
+        with tenant_context(self):
+            return func(self, *args, **kwargs)
 
     return inner
 
