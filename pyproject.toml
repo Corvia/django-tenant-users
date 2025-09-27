@@ -3,11 +3,6 @@ requires = ["poetry-core>=1.9.0"]
 build-backend = "poetry.core.masonry.api"
 
 
-[tool.black]
-target-version = ['py39', 'py310', 'py311', 'py312', 'py313']
-include = '\.pyi?$'
-
-
 [tool.poetry]
 name = "django-tenant-users"
 description = "A Django app to extend django-tenants to incorporate global multi-tenant users"
@@ -65,7 +60,6 @@ django-stubs = { version = "5.0.2", extras = ["compatible-mypy"] }
 # Code Quality
 nitpick = ">=0.32,<0.37"
 safety = ">=2.2,<4.0"
-black = ">=22.8,<26.0"
 ruff = ">=0.5.0,<0.14.0"
 rstfmt = "0.0.14"
 
@@ -106,27 +100,60 @@ max-line-length = 88
 
 
 [tool.ruff]
+# Ruff config: https://docs.astral.sh/ruff/settings
 line-length = 88
-target-version = "py37"
+target-version = "py39"
+preview = false
+
+[tool.ruff.format]
+quote-style = "double"
+docstring-code-format = true
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
 
 [tool.ruff.lint]
-select = ["ALL"]
+select = [ "ALL" ]
+
+# Project-wide relaxations (formatter & pragmatism)
 ignore = [
-    "ANN",      # Type hints related, let mypy handle these.
-    "COM812",   # "Trailing comma missing". If black is happy, I'm happy.
-    "D1",        # Docstrings related
-    "E501",     # "Line too long". If black is happy, I'm happy.
-    "EM101",    # "Exception must not use a string literal, assign to variable first"
-    "EM102",    # "Exception must not use an f-string literal, assign to variable first"
-    "PTH",      # User Pathlib stuff over os.*. Should migrate to Pathlib at some point.
-    "RET504",   # "Unnecessary variable assignment before `return` statement"
-    "S101",     # "Use of `assert` detected"
-    "SIM108",   # "Use ternary operator ...". Ternary is harmful for readability in some cases.
-    "TRY003",   # "Avoid specifying long messages outside the exception class"
-    ]
+  "ANN",            # mypy handles types
+  "D1",             # Docstrings related
+  "E501",           # line length; formatter governs wrapping
+  "COM812",         # trailing comma; formatter decides
+  "TRY003",         # long exception messages; not worth churn
+  "EM101", "EM102", # exception message style; noise
+  "PTH",            # pathlib nags
+]
+
+[tool.ruff.lint.flake8-self]
+ignore-names = ["_meta"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["tenant_users"]
+known-third-party = ["django", "django_tenants"]
+
+[tool.ruff.lint.pep8-naming]
+ignore-names = [
+  "tenant_cached_property",
+  "UserModel",
+  "TenantModel",
+]
 
 [tool.ruff.lint.per-file-ignores]
-"**/migrations/*" = ["RUF012"]
+# Django scripts / entry points often import inside main()
+"manage.py" = ["PLC0415"]
+
+# Generated-ish: keep super lax.
+"**/migrations/*" = ["RUF012", "UP", "B", "S", "I", "C90", "PERF"]
+
+# Tests: allow asserts, magic numbers, relaxed docs/types.
+"tests/**" = ["S101", "S106", "PLR2004", "D", "PYI", "UP", "N806", "ARG"]
+
+# Re-exports: allow unused imports in package inits.
+"**/__init__.py" = ["F401"]
+
+# Sphinx build script sometimes looks “script-y”.
 "docs/conf.py" = ["INP001"]
 
 [tool.ruff.lint.pydocstyle]
