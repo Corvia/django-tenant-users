@@ -8,7 +8,7 @@ from tenant_users.tenants.models import SchemaError
 @pytest.mark.usefixtures("_tenant_type_settings")
 def test_provision_tenant_with_valid_tenant_type(tenant_user_admin):
     """Tests tasks.provision_tenant() with a valid tenant type."""
-    TenantModel = get_tenant_model()  # noqa: N806
+    TenantModel = get_tenant_model()
     slug = "type"
 
     # Create a tenant with a valid tenant type 'type2'

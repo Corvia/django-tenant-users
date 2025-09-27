@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 import time
-from typing import Optional, Tuple
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -26,14 +27,14 @@ DomainModel = get_tenant_domain_model()
 def provision_tenant(  # noqa: PLR0913
     tenant_name: str,
     tenant_slug: str,
-    owner: UserModel,  # type: ignore
+    owner,
     *,
     is_staff: bool = False,
     is_superuser: bool = True,
-    tenant_type: Optional[str] = None,
-    schema_name: Optional[str] = None,
-    tenant_extra_data: Optional[dict] = None,
-) -> Tuple[TenantModel, DomainModel]:  # type: ignore
+    tenant_type: str | None = None,
+    schema_name: str | None = None,
+    tenant_extra_data: dict | None = None,
+):
     """Creates and initializes a new tenant with specified attributes and default roles.
 
     Args:

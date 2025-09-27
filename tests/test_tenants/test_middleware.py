@@ -11,11 +11,11 @@ from tenant_users.tenants.middleware import TenantAccessMiddleware
 class NoOpCallable:
     """A no-operation callable class."""
 
-    def __call__(self, request):  # noqa: ARG002
+    def __call__(self, request):
         return HttpResponse(status=HTTPStatus.ACCEPTED)
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 class TestTenantAccessMiddleware:
     """Tests for the TenantAccessMiddleware class."""
 

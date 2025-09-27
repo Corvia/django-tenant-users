@@ -87,7 +87,9 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "guid",
-                    models.UUIDField(default=uuid.uuid4, primary_key=True, serialize=False)
+                    models.UUIDField(
+                        default=uuid.uuid4, primary_key=True, serialize=False
+                    ),
                 ),
                 (
                     "password",

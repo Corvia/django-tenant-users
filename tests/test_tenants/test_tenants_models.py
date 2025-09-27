@@ -47,7 +47,7 @@ def test_provision_with_schema_name(tenant_user) -> None:
     owner = tenant.owner
 
     with pytest.raises(
-            ExistsError, match="User already added to tenant: tenant-user@test.com"
+        ExistsError, match=r"User already added to tenant: tenant-user@test.com"
     ):
         tenant.add_user(owner)
     error_message = f"Cannot remove owner from tenant: {owner}"
@@ -91,17 +91,17 @@ def test_deleting_a_provision_tenant(tenant_user) -> None:
         public_owner_has_permission = UserTenantPermissions.objects.filter(
             profile=tenant.owner
         ).exists()
-        assert (
-            public_owner_has_permission
-        ), "The public owner should retain permission to the provisioned tenant after deletion."
+        assert public_owner_has_permission, (
+            "The public owner should retain permission to the provisioned tenant after deletion."
+        )
 
         # Verify that the previous owner does not retain permission to the provisioned tenant after deletion
         previous_owner_has_permission = UserTenantPermissions.objects.filter(
             profile=another_user
         ).exists()
-        assert (
-                previous_owner_has_permission == False
-        ), "The previous owner should not retain permission to the provisioned tenant after deletion."
+        assert not previous_owner_has_permission, (
+            "The previous owner should not retain permission to the provisioned tenant after deletion."
+        )
 
 
 def test_delete_provisioned_tenant_with_assigned_user_roles(tenant_user):
@@ -137,7 +137,7 @@ def test_delete_provisioned_tenant_with_assigned_user_roles(tenant_user):
             schema_name=get_public_schema_name(),
         )
         ##Ensure user is removed inspite of having any role in the tenant
-        assert UserTenantPermissions.objects.filter(profile=owner).exists() == False
+        assert not UserTenantPermissions.objects.filter(profile=owner).exists()
     assert public_tenant.owner == tenant.owner
     assert UserTenantPermissions.objects.filter(profile=public_tenant.owner).exists()
 
@@ -154,7 +154,6 @@ def test_transfer_ownership_to_existing_user(test_tenants, public_tenant):
         assert UserTenantPermissions.objects.filter(
             profile=public_tenant.owner
         ).exists()
-        assert (
-                UserTenantPermissions.objects.get(profile=public_tenant.owner).is_superuser
-                == True
-        )
+        assert UserTenantPermissions.objects.get(
+            profile=public_tenant.owner
+        ).is_superuser

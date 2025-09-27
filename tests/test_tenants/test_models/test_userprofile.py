@@ -9,7 +9,7 @@ from tenant_users.tenants.models import DeleteError
 TenantUser = get_user_model()
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 @given(django.from_model(TenantUser))
 @settings(deadline=None)
 def test_model_properties(instance: TenantUser) -> None:
@@ -24,7 +24,7 @@ def test_model_properties(instance: TenantUser) -> None:
     assert instance.get_short_name() == instance.email
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 @given(django.from_model(TenantUser))
 @settings(deadline=None, max_examples=1)
 def test_user_delete(instance: TenantUser) -> None:
