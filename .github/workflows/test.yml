@@ -69,12 +69,17 @@ jobs:
           poetry run pip install -U pip
           poetry run pip install -U "django==${{ matrix.django-version }}.*"
 
-      - name: Run tests
+      - name: Run code quality checks
         run: |
-          poetry run pytest
           poetry check
           poetry run pip check
           poetry run rstfmt --check .
+          poetry run ruff check --output-format=github .
+          poetry run ruff format --check .
+
+      - name: Run tests
+        run: |
+          poetry run pytest
         env:
           DJANGO_DATABASE_PORT: ${{ job.services.postgres.ports[5432] }}
 
