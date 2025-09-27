@@ -91,7 +91,7 @@ version = "1.6.4"
 description = "The ultimate Python library in building OAuth and OpenID Connect servers and clients."
 optional = false
 python-versions = ">=3.9"
-groups = ["dev", "test"]
+groups = ["test"]
 files = [
     {file = "authlib-1.6.4-py2.py3-none-any.whl", hash = "sha256:39313d2a2caac3ecf6d8f95fbebdfd30ae6ea6ae6a6db794d976405fdd9aa796"},
     {file = "authlib-1.6.4.tar.gz", hash = "sha256:104b0442a43061dc8bc23b133d1d06a2b0a9c2e3e33f34c4338929e816287649"},
@@ -279,7 +279,7 @@ version = "1.17.1"
 description = "Foreign Function Interface for Python calling C code."
 optional = false
 python-versions = ">=3.8"
-groups = ["dev", "test"]
+groups = ["test"]
 markers = "platform_python_implementation != \"PyPy\""
 files = [
     {file = "cffi-1.17.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:df8b1c11f177bc2313ec4b2d46baec87a5f3e71fc8b45dab2ee7cae86d9aba14"},
@@ -609,7 +609,7 @@ version = "43.0.3"
 description = "cryptography is a package which provides cryptographic recipes and primitives to Python developers."
 optional = false
 python-versions = ">=3.7"
-groups = ["dev", "test"]
+groups = ["test"]
 markers = "python_version < \"3.13\""
 files = [
     {file = "cryptography-43.0.3-cp37-abi3-macosx_10_9_universal2.whl", hash = "sha256:bf7a1932ac4176486eab36a19ed4c0492da5d97123f1406cf15e41b05e787d2e"},
@@ -660,7 +660,7 @@ version = "45.0.3"
 description = "cryptography is a package which provides cryptographic recipes and primitives to Python developers."
 optional = false
 python-versions = "!=3.9.0,!=3.9.1,>=3.7"
-groups = ["dev", "test"]
+groups = ["test"]
 markers = "python_version >= \"3.13\""
 files = [
     {file = "cryptography-45.0.3-cp311-abi3-macosx_10_9_universal2.whl", hash = "sha256:7573d9eebaeceeb55285205dbbb8753ac1e962af3d9640791d12b36864065e71"},
@@ -1769,7 +1769,7 @@ version = "2.22"
 description = "C parser in Python"
 optional = false
 python-versions = ">=3.8"
-groups = ["dev", "test"]
+groups = ["test"]
 markers = "platform_python_implementation != \"PyPy\""
 files = [
     {file = "pycparser-2.22-py3-none-any.whl", hash = "sha256:c3702b6d3dd8c7abc1afa565d7e63d53a1d0bd86cdc24edd75470f4de499cfcc"},
@@ -3055,4 +3055,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "4f551f7efa066b8b67a2cc0b235b08e7584ecc6658b9a7416cc187af003fb470"
+content-hash = "6f3879ebf77265908e91ba9cc750f4e4c4de37db1f6f4c5f9bed753e46175209"
