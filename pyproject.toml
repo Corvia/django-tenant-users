@@ -1,39 +1,44 @@
 [build-system]
-requires = ["poetry-core>=1.9.0"]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 
-[tool.poetry]
+[project]
 name = "django-tenant-users"
 description = "A Django app to extend django-tenants to incorporate global multi-tenant users"
 version = "2.1.3"
-license = "MIT License"
-
-packages = [
-  { include = 'tenant_users' },
-]
-
-authors = [
-  "Corvia Technologies, LLC <support@corvia.tech>",
-]
-
 readme = "README.rst"
-
-repository = "https://www.github.com/Corvia/django-tenant-users"
-
+license = { text = "MIT" }
+requires-python = ">=3.9"
+authors = [
+  { name = "Corvia Technologies, LLC", email = "support@corvia.tech" },
+]
 keywords = [
   "django",
   "django-tenant-users",
+  "multi-tenant",
+  "saas",
+  "tenant",
+  "users",
 ]
-
 classifiers = [
+  # Development Status
+  "Development Status :: 5 - Production/Stable",
+  
+  # Environment
   "Environment :: Web Environment",
+  
+  # Framework
   "Framework :: Django",
   "Framework :: Django :: 4.2",
-  "Framework :: Django :: 5.1",
+  "Framework :: Django :: 5.1", 
   "Framework :: Django :: 5.2",
+  
+  # Audience & License
   "Intended Audience :: Developers",
   "License :: OSI Approved :: MIT License",
+  
+  # OS & Language
   "Operating System :: OS Independent",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
@@ -42,15 +47,32 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  
+  # Topics
   "Topic :: Internet :: WWW/HTTP",
   "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: Content Management System",
+]
+dependencies = [
+  "django>=4.2",
+  "django-tenants>=3.6,<4.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/Corvia/django-tenant-users"
+Repository = "https://github.com/Corvia/django-tenant-users"
+Documentation = "https://django-tenant-users.readthedocs.io/"
+Changelog = "https://github.com/Corvia/django-tenant-users/blob/main/CHANGELOG.md"
+"Bug Tracker" = "https://github.com/Corvia/django-tenant-users/issues"
+
+[tool.poetry]
+packages = [
+  { include = 'tenant_users' },
 ]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-Django = ">=4.2"
-django-tenants = "^3.6"
-
 
 [tool.poetry.group.test.dependencies]
 # Type Checking
