@@ -20,7 +20,7 @@ PROVISION_TENANT_OWNER_EMAIL = "owner@provision.com"
 
 
 @pytest.fixture(autouse=True)
-def _common_db_setup(db, request):  # noqa: ARG001
+def _common_db_setup(db, request):
     if request.node.get_closest_marker(name="no_db_setup"):
         return  # Skip the rest of the fixture for tests marked with 'no_db_setup'
 
@@ -33,8 +33,8 @@ def _common_db_setup(db, request):  # noqa: ARG001
     connection.set_tenant(public_tenant)
 
 
-@pytest.fixture()
-def test_tenants(db, create_tenant):  # noqa: ARG001
+@pytest.fixture
+def test_tenants(db, create_tenant):
     """Provision a few tenants for testing."""
     tenant_user = TenantUser.objects.create_user(
         email=PROVISION_TENANT_OWNER_EMAIL, password="123456"
@@ -45,7 +45,7 @@ def test_tenants(db, create_tenant):  # noqa: ARG001
     return TenantModel.objects.exclude(schema_name="public")
 
 
-@pytest.fixture()
+@pytest.fixture
 def create_tenant():
     """Create tenant helper fixture."""
 

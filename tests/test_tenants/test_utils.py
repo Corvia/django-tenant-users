@@ -29,8 +29,8 @@ def test_duplicate_tenant_url(tenant_user):
         utils.create_public_tenant("domain.com", tenant_user.email)
 
 
-@pytest.mark.django_db()
-@pytest.mark.no_db_setup()
+@pytest.mark.django_db
+@pytest.mark.no_db_setup
 def test_create_public_tenant():
     """Ensures correctness of create_public_tenant() function."""
     email = "user@domain.com"
@@ -48,8 +48,8 @@ def test_create_public_tenant():
     assert not user.has_usable_password()
 
 
-@pytest.mark.django_db()
-@pytest.mark.no_db_setup()
+@pytest.mark.django_db
+@pytest.mark.no_db_setup
 def test_create_public_tenant_with_specified_password():
     """Ensure password is set correct when specified during public tenant creation."""
     email = "user@domain.com"
@@ -65,8 +65,8 @@ def test_create_public_tenant_with_specified_password():
 
 @patch("tenant_users.tenants.utils.get_tenant_model")
 @pytest.mark.usefixtures("_tenant_type_settings")
-@pytest.mark.django_db()
-@pytest.mark.no_db_setup()
+@pytest.mark.django_db
+@pytest.mark.no_db_setup
 def test_tenant_public_tenant_with_multitype(mock_get_tenant_model):
     """Tests that multi-type information is used during the Public Tenant creation."""
     mock_tenant_model = Mock()
@@ -87,8 +87,8 @@ def test_tenant_public_tenant_with_multitype(mock_get_tenant_model):
     assert kwargs.get(settings.MULTI_TYPE_DATABASE_FIELD) == get_public_schema_name()
 
 
-@pytest.mark.django_db()
-@pytest.mark.no_db_setup()
+@pytest.mark.django_db
+@pytest.mark.no_db_setup
 def test_tenant_public_tenant_with_multitype_missing_public(settings):
     """Tests that multi-type information is used during the Public Tenant creation."""
     # Create invalid multitype configuration
@@ -104,8 +104,8 @@ def test_tenant_public_tenant_with_multitype_missing_public(settings):
         utils.create_public_tenant("domain.test", "user@domain.com")
 
 
-@pytest.mark.django_db()
-@pytest.mark.no_db_setup()
+@pytest.mark.django_db
+@pytest.mark.no_db_setup
 def test_create_public_tenant_with_tenant_extras():
     """Ensures correctness of create_public_tenant() function."""
     email = "user@domain.com"
@@ -123,8 +123,8 @@ def test_create_public_tenant_with_tenant_extras():
 
 
 @patch("tenant_users.tenants.utils.get_tenant_model")
-@pytest.mark.django_db()
-@pytest.mark.no_db_setup()
+@pytest.mark.django_db
+@pytest.mark.no_db_setup
 def test_tenant_public_tenant_save_verbosity(mock_get_tenant_model):
     """Tests that the verbosity parameter is correctly passed to save()."""
     mock_tenant_model = Mock()

@@ -1,4 +1,4 @@
-from typing import Optional
+from __future__ import annotations
 
 from django.contrib.auth import get_user_model
 from django.db import connection, transaction
@@ -15,8 +15,7 @@ from tenant_users.tenants.models import ExistsError, SchemaError
 
 
 def get_current_tenant():
-    """
-    Retrieves the current tenant based on the current database schema.
+    """Retrieves the current tenant based on the current database schema.
 
     This function gets the current schema name from the database connection,
     retrieves the tenant model, and then fetches the tenant instance that
@@ -27,19 +26,18 @@ def get_current_tenant():
 
     """
     current_schema = connection.schema_name
-    TenantModel = get_tenant_model()  # noqa: N806
-    tenant = TenantModel.objects.get(schema_name=current_schema)
-    return tenant
+    TenantModel = get_tenant_model()
+    return TenantModel.objects.get(schema_name=current_schema)
 
 
 @transaction.atomic
-def create_public_tenant(
+def create_public_tenant(  # noqa: PLR0913
     domain_url,
     owner_email,
     *,
     is_superuser: bool = False,
     is_staff: bool = False,
-    tenant_extra_data: Optional[dict] = None,
+    tenant_extra_data: dict | None = None,
     verbosity=1,
     **owner_extra,
 ):
@@ -54,6 +52,7 @@ def create_public_tenant(
         is_superuser (bool): If True, the owner has superuser privileges. Defaults to False.
         is_staff (bool): If True, the owner has staff access. Defaults to False.
         tenant_extra_data (dict, optional): Additional data for the tenant model.
+        verbosity (int, optional): Verbosity level for saving the tenant. Defaults to 1.
         **owner_extra: Arbitrary keyword arguments for additional owner user attributes.
 
     Returns:
@@ -62,8 +61,8 @@ def create_public_tenant(
     if tenant_extra_data is None:
         tenant_extra_data = {}
 
-    UserModel = get_user_model()  # noqa: N806
-    TenantModel = get_tenant_model()  # noqa: N806
+    UserModel = get_user_model()
+    TenantModel = get_tenant_model()
     public_schema_name = get_public_schema_name()
 
     if TenantModel.objects.filter(schema_name=public_schema_name).first():

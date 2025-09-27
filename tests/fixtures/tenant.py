@@ -1,6 +1,7 @@
 import pytest
 from django.contrib.auth import get_user_model
 from django_tenants.utils import get_tenant_model, schema_context
+
 from django_test_app.users.models import GuidUser
 
 #: Constants
@@ -9,20 +10,20 @@ TenantUser = get_user_model()
 _USER_PASS = "test1234"  # noqa: S105
 
 
-@pytest.fixture()
+@pytest.fixture
 def guid_tenant_user(db) -> GuidUser:
     with schema_context("public"):
         return TenantUser.objects.create_user(email="guid-user@test.com")
 
 
-@pytest.fixture()
-def public_tenant(db) -> TenantModel:  # noqa: ARG001
+@pytest.fixture
+def public_tenant(db) -> TenantModel:
     """Returns Public Tenant instance."""
     return TenantModel.objects.get(schema_name="public")
 
 
-@pytest.fixture()
-def tenant_user_admin(db) -> TenantUser:  # noqa: ARG001
+@pytest.fixture
+def tenant_user_admin(db) -> TenantUser:
     """Returns Admin User instance."""
     with schema_context("public"):
         return TenantUser.objects.create_superuser(
@@ -31,8 +32,8 @@ def tenant_user_admin(db) -> TenantUser:  # noqa: ARG001
         )
 
 
-@pytest.fixture()
-def tenant_user(db) -> TenantUser:  # noqa: ARG001
+@pytest.fixture
+def tenant_user(db) -> TenantUser:
     """Returns Admin User instance."""
     with schema_context("public"):
         return TenantUser.objects.create_user(email="tenant-user@test.com")

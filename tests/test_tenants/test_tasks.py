@@ -1,19 +1,18 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from unittest.mock import patch
 
 import pytest
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.db import DatabaseError, connection
-from django_tenants.utils import get_tenant_model
 
+from django_test_app.companies.models import Company
 from tenant_users.tenants.models import ExistsError, InactiveError
 from tenant_users.tenants.tasks import INACTIVE_USER_ERROR_MESSAGE, provision_tenant
 
-#: Constants
-TenantModel = get_tenant_model()
-TenantUser = get_user_model()
+if TYPE_CHECKING:
+    from django_test_app.users.models import TenantUser
 
 
 def list_schemas() -> list[str]:
@@ -27,8 +26,7 @@ def list_schemas() -> list[str]:
     """
     with connection.cursor() as cursor:
         cursor.execute("SELECT schema_name FROM information_schema.schemata;")
-        schemas = [row[0] for row in cursor.fetchall()]
-    return schemas
+        return [row[0] for row in cursor.fetchall()]
 
 
 def test_provision_tenant(tenant_user_admin) -> None:
@@ -89,10 +87,13 @@ def test_provision_tenant_tenant_creation_exception(tenant_user) -> None:
     This test ensures that the `provision_tenant` function raises the appropriate
     exception when there's a database error during tenant creation.
     """
-    with patch(
-        "django_test_app.companies.models.Company.objects.create",
-        side_effect=DatabaseError("Database error"),
-    ), pytest.raises(Exception, match="Database error"):
+    with (
+        patch(
+            "django_test_app.companies.models.Company.objects.create",
+            side_effect=DatabaseError("Database error"),
+        ),
+        pytest.raises(Exception, match="Database error"),
+    ):
         provision_tenant("Test Tenant", "test-tenant", tenant_user)
 
 
@@ -107,20 +108,23 @@ def test_provision_tenant_domain_creation_exception(tenant_user) -> None:
 
     schemas = list_schemas()
 
-    with patch(
-        "django_test_app.companies.models.Domain.objects.create",
-        side_effect=DatabaseError("Domain error"),
-    ), pytest.raises(Exception, match="Domain error"):
+    with (
+        patch(
+            "django_test_app.companies.models.Domain.objects.create",
+            side_effect=DatabaseError("Domain error"),
+        ),
+        pytest.raises(Exception, match="Domain error"),
+    ):
         provision_tenant("Test Tenant", slug, tenant_user)
 
     # Ensure tenant was cleaned up
-    assert not TenantModel.objects.filter(slug=slug).exists()
+    assert not Company.objects.filter(slug=slug).exists()
 
     # Double ensure no schema was left behind
     assert len(schemas) == len(list_schemas())
 
 
-def test_provision_tenant_user_add_exception(tenant_user: TenantUser) -> None:  # type: ignore
+def test_provision_tenant_user_add_exception(tenant_user: TenantUser) -> None:
     """Test exception handling when adding a user to a tenant.
 
     This test ensures that the `provision_tenant` function raises the appropriate
@@ -128,10 +132,13 @@ def test_provision_tenant_user_add_exception(tenant_user: TenantUser) -> None:  
     """
     slug = "test-tenant"
 
-    with patch(
-        "django_test_app.companies.models.Company.add_user",
-        side_effect=InactiveError("Exception error"),
-    ), pytest.raises(Exception, match="Exception error"):
+    with (
+        patch(
+            "django_test_app.companies.models.Company.add_user",
+            side_effect=InactiveError("Exception error"),
+        ),
+        pytest.raises(Exception, match="Exception error"),
+    ):
         provision_tenant("Test Tenant", slug, tenant_user)
 
     # Ensure user wasn't added to a tenant

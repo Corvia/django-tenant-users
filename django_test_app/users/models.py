@@ -1,8 +1,11 @@
 import uuid
-from django.db import models
-from tenant_users.tenants.models import UserProfile
+
 from django.conf import settings
+from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+from tenant_users.tenants.models import UserProfile
+
 _NameFieldLength = 64
 
 

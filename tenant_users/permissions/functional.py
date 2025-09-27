@@ -4,7 +4,7 @@ from django.utils.functional import cached_property
 from tenant_users.constants import TENANT_CACHE_NAME
 
 
-class tenant_cached_property(cached_property):  # noqa: N801
+class tenant_cached_property(cached_property):
     """A tenant-aware implementation of Django's cached_property decorator.
 
     This class extends Django's `cached_property` decorator, adding tenant-awareness to

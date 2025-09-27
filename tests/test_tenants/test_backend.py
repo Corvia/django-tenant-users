@@ -7,7 +7,7 @@ from tenant_users.permissions.models import UserTenantPermissions
 TenantUser = get_user_model()
 
 
-@pytest.mark.django_db()
+@pytest.mark.django_db
 def test_get_group_permissions(tenant_user):
     # Create user
 

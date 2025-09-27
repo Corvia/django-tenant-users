@@ -21,9 +21,7 @@ class Command(BaseCommand):
             help="Email address of the owner user.",
         )
 
-    def handle(
-        self, domain_url: str, owner_email: str, **kwargs
-    ):  # noqa: ARG002, kwargs must be here.
+    def handle(self, domain_url: str, owner_email: str, **kwargs):  # noqa: ARG002
         try:
             create_public_tenant(domain_url=domain_url, owner_email=owner_email)
             self.stdout.write(
