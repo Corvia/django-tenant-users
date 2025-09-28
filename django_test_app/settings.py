@@ -25,8 +25,6 @@ SECRET_KEY = "uv5(me+wl&bx5ag39_vimy2ie7mxdm&42a6$0t-+jfb+@6m(u2"  # noqa: S105
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -115,12 +113,6 @@ DATABASES = {
 }
 
 DATABASE_ROUTERS = ("django_tenants.routers.TenantSyncRouter",)
-
-
-# Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
-
-AUTH_PASSWORD_VALIDATORS = []
 
 
 # Internationalization
