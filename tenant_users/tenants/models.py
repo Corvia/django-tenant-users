@@ -265,7 +265,7 @@ class UserProfileManager(BaseUserManager[UserProfileT], Generic[UserProfileT]):
     def _create_user(
         self,
         email: str,
-        password: str,
+        password: str | None,
         *,
         is_staff: bool = False,
         is_superuser: bool = False,
@@ -339,7 +339,7 @@ class UserProfileManager(BaseUserManager[UserProfileT], Generic[UserProfileT]):
         if not email:
             raise ValueError("Users must have an email address.")
 
-        user = self._create_user(
+        return self._create_user(
             email=email,
             password=password,
             is_staff=is_staff,
@@ -347,11 +347,6 @@ class UserProfileManager(BaseUserManager[UserProfileT], Generic[UserProfileT]):
             is_verified=False,
             **extra_fields,
         )
-
-        if not password:
-            user.set_unusable_password()
-
-        return user
 
     def create_superuser(
         self, password: str, email: str, **extra_fields
