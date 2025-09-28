@@ -1,17 +1,15 @@
 from unittest.mock import patch
 
 import pytest
-from django.contrib.auth import get_user_model
 
-#: Constants
-TenantUser = get_user_model()
+from django_test_app.users.models import TenantUser
 
 
 @pytest.mark.django_db
 @patch("tenant_users.tenants.models.tenant_user_created.send")
 def test_user_created_signal(mock):
     """Ensure signal is sent for delete_user()."""
-    TenantUser.objects.create_user("created@signal.com")
+    TenantUser.objects.create_user("created@signal.com", "secret123")
     assert mock.called is True
     assert mock.call_count == 1
 

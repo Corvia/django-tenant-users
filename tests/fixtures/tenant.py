@@ -1,25 +1,23 @@
 import pytest
-from django.contrib.auth import get_user_model
-from django_tenants.utils import get_tenant_model, schema_context
+from django_tenants.utils import schema_context
 
-from django_test_app.users.models import GuidUser
+from django_test_app.companies.models import Company
+from django_test_app.users.models import GuidUser, TenantUser
 
 #: Constants
-TenantModel = get_tenant_model()
-TenantUser = get_user_model()
 _USER_PASS = "test1234"  # noqa: S105
 
 
 @pytest.fixture
 def guid_tenant_user(db) -> GuidUser:
     with schema_context("public"):
-        return TenantUser.objects.create_user(email="guid-user@test.com")
+        return GuidUser.objects.create_user(email="guid-user@test.com")
 
 
 @pytest.fixture
-def public_tenant(db) -> TenantModel:
+def public_tenant(db) -> Company:
     """Returns Public Tenant instance."""
-    return TenantModel.objects.get(schema_name="public")
+    return Company.objects.get(schema_name="public")
 
 
 @pytest.fixture

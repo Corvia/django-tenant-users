@@ -26,8 +26,8 @@ def test_schema_required_restores_connection_state(
     public_tenant.activate()
 
     # Verify we're starting in the public schema
-    assert connection.schema_name == get_public_schema_name()
-    initial_schema_name = connection.schema_name
+    assert connection.schema_name == get_public_schema_name()  # type: ignore[attr-defined]
+    initial_schema_name = connection.schema_name  # type: ignore[attr-defined]
     initial_tenant = getattr(connection, "tenant", None)
 
     # Create a test tenant
@@ -41,8 +41,8 @@ def test_schema_required_restores_connection_state(
     )
 
     # Verify connection state is fully restored
-    assert connection.schema_name == initial_schema_name, (
-        f"Expected: {initial_schema_name}, got: {connection.schema_name}"
+    assert connection.schema_name == initial_schema_name, (  # type: ignore[attr-defined]
+        f"Expected: {initial_schema_name}, got: {connection.schema_name}"  # type: ignore[attr-defined]
     )
 
     current_tenant = getattr(connection, "tenant", None)

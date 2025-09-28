@@ -2,6 +2,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 from django.conf import settings
+from django.db.models.query import QuerySet
 from django_tenants.utils import get_public_schema_name, schema_context
 
 from django_test_app.companies.models import Company, Domain
@@ -10,17 +11,21 @@ from tenant_users.tenants import utils
 from tenant_users.tenants.models import ExistsError, SchemaError
 
 
-def test_get_current_tenant(public_tenant, test_tenants):
+def test_get_current_tenant(
+    public_tenant: Company,
+    test_tenants: QuerySet[Company],
+) -> None:
     """Tests utils.get_current_tenant() for correctness."""
     with schema_context(get_public_schema_name()):
         tenant = utils.get_current_tenant()
         assert tenant == public_tenant
 
-    tenant = test_tenants.first()
+    other_tenant = test_tenants.first()
+    assert other_tenant
 
-    with schema_context(tenant.schema_name):
+    with schema_context(other_tenant.schema_name):
         current_tenant = utils.get_current_tenant()
-        assert current_tenant == tenant
+        assert current_tenant == other_tenant
 
 
 def test_duplicate_tenant_url(tenant_user):
@@ -84,7 +89,7 @@ def test_tenant_public_tenant_with_multitype(mock_get_tenant_model):
     _, kwargs = mock_tenant_model.call_args
 
     # Ensure the multi-type database field was added during Tenant creation
-    assert kwargs.get(settings.MULTI_TYPE_DATABASE_FIELD) == get_public_schema_name()
+    assert kwargs.get(settings.MULTI_TYPE_DATABASE_FIELD) == get_public_schema_name()  # type: ignore[misc]
 
 
 @pytest.mark.django_db
