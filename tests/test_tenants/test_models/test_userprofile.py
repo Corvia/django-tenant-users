@@ -1,12 +1,9 @@
 import pytest
-from django.contrib.auth import get_user_model
 from hypothesis import given, settings
 from hypothesis.extra import django
 
+from django_test_app.users.models import TenantUser
 from tenant_users.tenants.models import DeleteError
-
-#: Constants
-TenantUser = get_user_model()
 
 
 @pytest.mark.django_db

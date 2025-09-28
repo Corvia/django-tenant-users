@@ -8,8 +8,9 @@ from django.conf import settings
 from django.db import DatabaseError, connection
 
 from django_test_app.companies.models import Company
+from tenant_users.constants import INACTIVE_USER_ERROR_MESSAGE
 from tenant_users.tenants.models import ExistsError, InactiveError
-from tenant_users.tenants.tasks import INACTIVE_USER_ERROR_MESSAGE, provision_tenant
+from tenant_users.tenants.tasks import provision_tenant
 
 if TYPE_CHECKING:
     from django_test_app.users.models import TenantUser

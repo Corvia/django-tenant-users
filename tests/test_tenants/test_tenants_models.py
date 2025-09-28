@@ -1,5 +1,4 @@
 import pytest
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django_tenants.utils import (
     get_public_schema_name,
@@ -7,17 +6,14 @@ from django_tenants.utils import (
     tenant_context,
 )
 
+from django_test_app.users.models import TenantUser
+from tenant_users.constants import TENANT_DELETE_ERROR_MESSAGE
 from tenant_users.permissions.models import UserTenantPermissions
 from tenant_users.tenants.models import (
-    TENANT_DELETE_ERROR_MESSAGE,
     DeleteError,
     ExistsError,
 )
 from tenant_users.tenants.tasks import provision_tenant
-
-#: Constants
-TenantModel = get_tenant_model()
-UserModel = get_user_model()
 
 
 def test_add_guid_based_user_to_tenant(test_tenants, guid_tenant_user) -> None:
@@ -74,7 +70,7 @@ def test_deleting_a_provision_tenant(tenant_user) -> None:
         tenant.delete()
     # create another user to test deleteting a tenant with multiple users
 
-    another_user = UserModel.objects.create_user(
+    another_user = TenantUser.objects.create_user(
         email="testing2@test.com", name="testing user"
     )
     tenant.add_user(another_user)

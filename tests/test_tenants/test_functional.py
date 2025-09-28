@@ -9,18 +9,18 @@ from tenant_users.permissions.functional import tenant_cached_property
 
 
 class MockTenant:
-    def __init__(self):
+    def __init__(self) -> None:
         self.call_count = 0
 
     @tenant_cached_property
-    def tenant_aware_cached_property(self):
+    def tenant_aware_cached_property(self) -> str:
         self.call_count += 1
-        current_schema = connection.schema_name
+        current_schema = connection.schema_name  # type: ignore[attr-defined]
         return f"aware {current_schema}"
 
     @cached_property
-    def tenant_unaware_cached_property(self):
-        current_schema = connection.schema_name
+    def tenant_unaware_cached_property(self) -> str:
+        current_schema = connection.schema_name  # type: ignore[attr-defined]
         return f"unaware {current_schema}"
 
 

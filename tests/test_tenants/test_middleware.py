@@ -33,7 +33,7 @@ class TestTenantAccessMiddleware:
 
         # Setup test request
         self.request = RequestFactory().get("/fake-url/")
-        self.request.tenant = self.tenant
+        self.request.tenant = self.tenant  # type: ignore[attr-defined]
         self.request.user = tenant_user
 
         # Setup Middeware

@@ -30,7 +30,7 @@ def _common_db_setup(db, request):
     public_tenant = TenantModel.objects.get(
         schema_name=get_public_schema_name(),
     )
-    connection.set_tenant(public_tenant)
+    connection.set_tenant(public_tenant)  # type: ignore[attr-defined]
 
 
 @pytest.fixture
