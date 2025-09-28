@@ -58,4 +58,4 @@ class TenantAccessMiddleware:
         if not request.user.is_authenticated:
             return True
 
-        return request.user.tenants.filter(pk=request.tenant.pk).exists()
+        return request.user.tenants.filter(pk=request.tenant.pk).exists()  # type: ignore[attr-defined]

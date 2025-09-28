@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Any
+
 from django.conf import settings
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
@@ -18,6 +22,8 @@ class PermissionsMixinFacade:
         This class is abstract and should be inherited by AUTH_USER_MODEL.
     """
 
+    pk: Any
+
     class Meta:
         abstract = True
 
@@ -26,7 +32,7 @@ class PermissionsMixinFacade:
     # user has no authorization, so we catch this exception and return
     # the appropriate False or empty set
     @tenant_cached_property
-    def tenant_perms(self):
+    def tenant_perms(self) -> UserTenantPermissions:
         return UserTenantPermissions.objects.get(
             profile_id=self.pk,
         )
@@ -40,44 +46,44 @@ class PermissionsMixinFacade:
         return True
 
     @tenant_cached_property
-    def is_staff(self):
+    def is_staff(self) -> bool:
         try:
             return self.tenant_perms.is_staff
         except UserTenantPermissions.DoesNotExist:
             return False
 
     @tenant_cached_property
-    def is_superuser(self):
+    def is_superuser(self) -> bool:
         try:
             return self.tenant_perms.is_superuser
         except UserTenantPermissions.DoesNotExist:
             return False
 
-    def get_group_permissions(self, obj=None):
+    def get_group_permissions(self, obj=None) -> set[str]:
         try:
             return self.tenant_perms.get_group_permissions(obj)
         except UserTenantPermissions.DoesNotExist:
             return set()
 
-    def get_all_permissions(self, obj=None):
+    def get_all_permissions(self, obj=None) -> set[str]:
         try:
             return self.tenant_perms.get_all_permissions(obj)
         except UserTenantPermissions.DoesNotExist:
             return set()
 
-    def has_perm(self, perm, obj=None):
+    def has_perm(self, perm: str, obj=None) -> bool:
         try:
             return self.tenant_perms.has_perm(perm, obj)
         except UserTenantPermissions.DoesNotExist:
             return False
 
-    def has_perms(self, perm_list, obj=None):
+    def has_perms(self, perm_list: list[str], obj=None) -> bool:
         try:
             return self.tenant_perms.has_perms(perm_list, obj)
         except UserTenantPermissions.DoesNotExist:
             return False
 
-    def has_module_perms(self, app_label):
+    def has_module_perms(self, app_label: str) -> bool:
         try:
             return self.tenant_perms.has_module_perms(app_label)
         except UserTenantPermissions.DoesNotExist:
@@ -94,19 +100,18 @@ class AbstractBaseUserFacade:
     expect a combined model structure.
     """
 
-    class Meta:
-        abstract = True
+    profile: Any
 
     @property
-    def is_active(self):
+    def is_active(self) -> bool:
         return self.profile.is_active
 
     @property
-    def is_anonymous(self):
+    def is_anonymous(self) -> bool:
         return False
 
     @property
-    def is_authenticated(self):
+    def is_authenticated(self) -> bool:
         return self.profile.is_authenticated
 
 
@@ -148,6 +153,6 @@ class UserTenantPermissions(PermissionsMixin, AbstractBaseUserFacade):
         ),
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return string representation."""
         return str(self.profile)

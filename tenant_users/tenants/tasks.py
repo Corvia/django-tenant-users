@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import time
+from typing import Any
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -33,7 +34,7 @@ def provision_tenant(  # noqa: PLR0913
     is_superuser: bool = True,
     tenant_type: str | None = None,
     schema_name: str | None = None,
-    tenant_extra_data: dict | None = None,
+    tenant_extra_data: dict[str, Any] | None = None,
 ):
     """Creates and initializes a new tenant with specified attributes and default roles.
 
