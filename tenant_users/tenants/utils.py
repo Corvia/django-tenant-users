@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from django.contrib.auth import get_user_model
 from django.db import connection, transaction
 from django_tenants.utils import (
@@ -11,10 +13,12 @@ from django_tenants.utils import (
     has_multi_type_tenants,
 )
 
-from tenant_users.tenants.models import ExistsError, SchemaError
+from tenant_users.tenants.models import ExistsError, SchemaError, TenantBase
+
+AnyTenant = TenantBase[Any]
 
 
-def get_current_tenant():
+def get_current_tenant() -> AnyTenant:
     """Retrieves the current tenant based on the current database schema.
 
     This function gets the current schema name from the database connection,
@@ -25,7 +29,7 @@ def get_current_tenant():
         tenant: The tenant instance corresponding to the current database schema.
 
     """
-    current_schema = connection.schema_name
+    current_schema = connection.schema_name  # type: ignore[attr-defined]
     TenantModel = get_tenant_model()
     return TenantModel.objects.get(schema_name=current_schema)
 
@@ -37,7 +41,7 @@ def create_public_tenant(  # noqa: PLR0913
     *,
     is_superuser: bool = False,
     is_staff: bool = False,
-    tenant_extra_data: dict | None = None,
+    tenant_extra_data: dict[str, Any] | None = None,
     verbosity=1,
     **owner_extra,
 ):

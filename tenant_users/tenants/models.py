@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import time
-from typing import Any, Callable
+from typing import Any, Callable, ClassVar, Generic, TypeVar, cast
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -31,6 +33,9 @@ tenant_user_created = Signal()
 
 # An existing user is deleted
 tenant_user_deleted = Signal()
+
+# TypeVar for user profile models
+UserProfileT = TypeVar("UserProfileT", bound="UserProfile")
 
 
 class InactiveError(Exception):
@@ -79,7 +84,7 @@ def schema_required(func: Callable[..., Any]) -> Callable[..., Any]:
     return inner
 
 
-class TenantBase(TenantMixin):
+class TenantBase(TenantMixin, Generic[UserProfileT]):
     """Contains global data and settings for the tenant model."""
 
     slug = models.SlugField(_("Tenant URL Name"), blank=True)
@@ -98,7 +103,7 @@ class TenantBase(TenantMixin):
     # Schema will be automatically deleted when related tenant is deleted
     auto_drop_schema = True
 
-    def delete(self, *args, force_drop: bool = False, **kwargs):
+    def delete(self, *args, force_drop: bool = False, **kwargs) -> None:
         """Override deleting of Tenant object.
 
         Args:
@@ -113,7 +118,9 @@ class TenantBase(TenantMixin):
 
     @schema_required
     @transaction.atomic
-    def add_user(self, user_obj, *, is_superuser: bool = False, is_staff: bool = False):
+    def add_user(
+        self, user_obj, *, is_superuser: bool = False, is_staff: bool = False
+    ) -> None:
         """Add user to tenant.
 
         Args:
@@ -145,7 +152,7 @@ class TenantBase(TenantMixin):
 
     @schema_required
     @transaction.atomic
-    def remove_user(self, user_obj):
+    def remove_user(self, user_obj) -> None:
         """Remove user from tenant."""
         # Test that user is already in the tenant
         self.user_set.get(pk=user_obj.pk)
@@ -178,7 +185,7 @@ class TenantBase(TenantMixin):
         )
 
     @transaction.atomic
-    def delete_tenant(self):
+    def delete_tenant(self) -> None:
         """Mark tenant for deletion.
 
         We don't actually delete the tenant out of the database, but we
@@ -200,7 +207,7 @@ class TenantBase(TenantMixin):
         # Seconds since epoch, time() returns a float, so we convert to
         # an int first to truncate the decimal portion
         time_string = str(int(time.time()))
-        new_url = f"{time_string}-{self.owner.pk!s}-{self.domain_url}"
+        new_url = f"{time_string}-{self.owner.pk!s}-{self.domain_url}"  # type: ignore[has-type]
         self.domain_url = new_url
         # The schema generated each time (even with same url slug) will
         # be unique so we do not have to worry about a conflict with that
@@ -222,12 +229,12 @@ class TenantBase(TenantMixin):
 
     @schema_required
     @transaction.atomic
-    def transfer_ownership(self, new_owner):
+    def transfer_ownership(self, new_owner) -> None:
         old_owner = self.owner
 
         # Remove current owner superuser status but retain any assigned role(s)
 
-        old_owner_tenant_permissions = old_owner.usertenantpermissions
+        old_owner_tenant_permissions = old_owner.tenant_perms
         old_owner_tenant_permissions.is_superuser = False
         old_owner_tenant_permissions.save(update_fields=["is_superuser"])
 
@@ -253,24 +260,24 @@ class TenantBase(TenantMixin):
         abstract = True
 
 
-class UserProfileManager(BaseUserManager):
+class UserProfileManager(BaseUserManager[UserProfileT], Generic[UserProfileT]):
     @transaction.atomic
     def _create_user(
         self,
-        email,
-        password,
-        is_staff,
-        is_superuser,
-        is_verified,
+        email: str,
+        password: str,
+        *,
+        is_staff: bool = False,
+        is_superuser: bool = False,
+        is_verified: bool = False,
         **extra_fields,
-    ):
+    ) -> UserProfileT:
         # Do some schema validation to protect against calling create user from
         # inside a tenant. Must create public tenant permissions during user
         # creation. This happens during assign role. This function cannot be
         # used until a public schema already exists
-        UserModel = get_user_model()
 
-        if connection.schema_name != get_public_schema_name():
+        if connection.schema_name != get_public_schema_name():  # type: ignore[attr-defined]
             raise SchemaError(
                 "Schema must be public for UserProfileManager user creation",
             )
@@ -279,6 +286,7 @@ class UserProfileManager(BaseUserManager):
             raise ValueError("Users must have an email address.")
 
         email = self.normalize_email(email)
+        UserModel = get_user_model()
 
         profile = UserModel.objects.filter(email=email).first()
         if profile and profile.is_active:
@@ -317,20 +325,24 @@ class UserProfileManager(BaseUserManager):
 
         tenant_user_created.send(sender=self.__class__, user=profile)
 
-        return profile
+        # Cast the return value - at runtime this IS the correct UserProfileT type
+        return cast("UserProfileT", profile)
 
     def create_user(
         self,
-        email=None,
-        password=None,
+        email: str | None = None,
+        password: str | None = None,
         *,
         is_staff: bool = False,
         **extra_fields,
-    ):
+    ) -> UserProfileT:
+        if not email:
+            raise ValueError("Users must have an email address.")
+
         user = self._create_user(
-            email,
-            password,
-            is_staff,
+            email=email,
+            password=password,
+            is_staff=is_staff,
             is_superuser=False,
             is_verified=False,
             **extra_fields,
@@ -341,10 +353,15 @@ class UserProfileManager(BaseUserManager):
 
         return user
 
-    def create_superuser(self, password, email=None, **extra_fields):
+    def create_superuser(
+        self, password: str, email: str, **extra_fields
+    ) -> UserProfileT:
+        if not email:
+            raise ValueError("Users must have an email address.")
+
         return self._create_user(
-            email,
-            password,
+            email=email,
+            password=password,
             is_staff=True,
             is_superuser=True,
             is_verified=True,
@@ -352,7 +369,7 @@ class UserProfileManager(BaseUserManager):
         )
 
     @transaction.atomic
-    def delete_user(self, user_obj):
+    def delete_user(self, user_obj: UserProfileT) -> None:
         # Check to make sure we don't try to delete the public tenant owner
         # that would be bad....
         public_tenant = get_tenant_model().objects.get(
@@ -401,9 +418,9 @@ class UserProfile(AbstractBaseUser, PermissionsMixinFacade):
     """
 
     USERNAME_FIELD = "email"
-    objects = UserProfileManager()
+    objects: ClassVar[UserProfileManager[Any]] = UserProfileManager()
 
-    tenants = models.ManyToManyField(
+    tenants: models.ManyToManyField[Any, Any] = models.ManyToManyField(
         settings.TENANT_MODEL,
         verbose_name=_("tenants"),
         blank=True,
@@ -425,23 +442,24 @@ class UserProfile(AbstractBaseUser, PermissionsMixinFacade):
     class Meta:
         abstract = True
 
-    def has_verified_email(self):
+    def has_verified_email(self) -> bool:
         return self.is_verified
 
-    def delete(self, *args, force_drop: bool = False, **kwargs):
+    def delete(
+        self, *args, force_drop: bool = False, **kwargs
+    ) -> tuple[int, dict[str, int]]:
         if force_drop:
-            super().delete(*args, **kwargs)
-        else:
-            raise DeleteError(
-                "UserProfile.objects.delete_user() should be used.",
-            )
+            return super().delete(*args, **kwargs)
+        raise DeleteError(
+            "UserProfile.objects.delete_user() should be used.",
+        )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.email
 
-    def get_short_name(self):
+    def get_short_name(self) -> str:
         return self.email
 
-    def get_full_name(self):
+    def get_full_name(self) -> str:
         """Return string representation."""
         return str(self)

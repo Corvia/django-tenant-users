@@ -4,7 +4,7 @@ from django.utils.functional import cached_property
 from tenant_users.constants import TENANT_CACHE_NAME
 
 
-class tenant_cached_property(cached_property):
+class tenant_cached_property(cached_property):  # type: ignore[type-arg]
     """A tenant-aware implementation of Django's cached_property decorator.
 
     This class extends Django's `cached_property` decorator, adding tenant-awareness to
@@ -26,12 +26,12 @@ class tenant_cached_property(cached_property):
             instance.__dict__[TENANT_CACHE_NAME] = {}
 
         tenant_cache = instance.__dict__[TENANT_CACHE_NAME]
-        current_schema = connection.schema_name
+        current_schema = connection.schema_name  # type: ignore[attr-defined]
 
         if current_schema not in tenant_cache:
             tenant_cache[current_schema] = {}
-            tenant_cache[current_schema][self.name] = self.func(instance)
-        elif self.name not in tenant_cache[current_schema]:
-            tenant_cache[current_schema][self.name] = self.func(instance)
+            tenant_cache[current_schema][self.name] = self.func(instance)  # type: ignore[attr-defined]
+        elif self.name not in tenant_cache[current_schema]:  # type: ignore[attr-defined]
+            tenant_cache[current_schema][self.name] = self.func(instance)  # type: ignore[attr-defined]
 
-        return tenant_cache[current_schema][self.name]
+        return tenant_cache[current_schema][self.name]  # type: ignore[attr-defined]
