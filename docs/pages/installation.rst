@@ -157,6 +157,79 @@ point to the model inherting ``TenantUser``.
 Optional Settings
 =================
 
+Optimizing Tenant Permissions Queries
+-------------------------------------
+
+By default, ``django-tenant-users`` uses a simple query to fetch tenant
+permissions. However, in scenarios where you need to access related data
+(such as ``profile`` or ``groups``), this can result in additional
+database queries (N+1 query problem).
+
+To optimize these queries, you can configure a custom queryset function
+using the ``TENANT_USERS_PERMS_QUERYSET`` setting. This allows you to
+use Django's ``select_related()`` or ``prefetch_related()`` to eagerly
+load related data.
+
+Using the Built-in Optimizer
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``django-tenant-users`` provides a built-in optimizer that covers most
+common use cases:
+
+.. code:: python
+
+   # settings.py
+   TENANT_USERS_PERMS_QUERYSET = (
+       "tenant_users.permissions.utils.get_optimized_tenant_perms_queryset"
+   )
+
+This built-in optimizer uses ``select_related("profile")`` and
+``prefetch_related("groups")`` to efficiently load related data.
+
+Creating a Custom Optimizer
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you have specific optimization requirements, you can create your own
+custom optimizer function:
+
+.. code:: python
+
+   # myapp/utils.py
+   from tenant_users.permissions.models import UserTenantPermissions
+
+   def get_optimized_perms_queryset():
+       """Return a custom optimized queryset for UserTenantPermissions.
+
+       Customize this to match your specific needs.
+       """
+       return UserTenantPermissions.objects.select_related(
+           "profile"
+       ).prefetch_related(
+           "groups",
+           "user_permissions"
+       )
+
+Then configure it in your settings:
+
+.. code:: python
+
+   # settings.py
+   TENANT_USERS_PERMS_QUERYSET = "myapp.utils.get_optimized_perms_queryset"
+
+.. note::
+
+   The function should return a ``QuerySet`` instance, not a model
+   instance. The framework will call ``.get(profile_id=...)`` on the
+   returned queryset.
+
+.. warning::
+
+   While this optimization reduces the number of queries when accessing
+   related data, it does add overhead to the initial permission lookup.
+   Only use this setting if you regularly need to access related data
+   (like ``profile`` or ``groups``) when working with tenant
+   permissions.
+
 Setting up Cross Domain Cookies
 -------------------------------
 
