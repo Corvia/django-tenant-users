@@ -5,6 +5,7 @@ from typing import Any
 from django.conf import settings
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
+from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
 
 from tenant_users.permissions.functional import tenant_cached_property
@@ -33,9 +34,17 @@ class PermissionsMixinFacade:
     # the appropriate False or empty set
     @tenant_cached_property
     def tenant_perms(self) -> UserTenantPermissions:
-        return UserTenantPermissions.objects.get(
-            profile_id=self.pk,
-        )
+        queryset_fn = getattr(settings, "TENANT_USERS_PERMS_QUERYSET", None)
+
+        if queryset_fn:
+            # Import and call the custom queryset function
+            get_queryset = import_string(queryset_fn)
+            queryset = get_queryset()
+        else:
+            # Use the default queryset
+            queryset = UserTenantPermissions.objects
+
+        return queryset.get(profile_id=self.pk)
 
     def has_tenant_permissions(self) -> bool:
         try:
