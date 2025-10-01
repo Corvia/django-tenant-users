@@ -162,6 +162,23 @@ class UserTenantPermissions(PermissionsMixin, AbstractBaseUserFacade):
         ),
     )
 
+    # Timestamp tracking
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        null=True,
+        blank=True,
+        help_text=_("The date and time when the user was added to this tenant."),
+    )
+
+    modified_at = models.DateTimeField(
+        auto_now=True,
+        null=True,
+        blank=True,
+        help_text=_(
+            "The date and time when the user's permissions were last modified."
+        ),
+    )
+
     def __str__(self) -> str:
         """Return string representation."""
         return str(self.profile)
