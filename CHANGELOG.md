@@ -8,6 +8,7 @@ We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` relea
 
 * Add configurable queryset optimization for tenant permissions via `TENANT_USERS_PERMS_QUERYSET` setting to reduce N+1 queries when accessing related data (profile, groups, etc.)
 * Add built-in `get_optimized_tenant_perms_queryset()` utility function in `tenant_users.permissions.utils` for common optimization use cases
+* Add `created_at` and `modified_at` timestamp fields to `UserTenantPermissions` for tracking when users join tenants and when their permissions change
 
 ## 2.1.3 (2025-09-23)
 

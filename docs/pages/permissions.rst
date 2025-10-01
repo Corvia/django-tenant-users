@@ -28,3 +28,9 @@ its own set of access controls.
    :members:
    :undoc-members:
    :show-inheritance:
+
+.. note::
+
+   The ``UserTenantPermissions`` model includes ``created_at`` and
+   ``modified_at`` timestamp fields for tracking when users join tenants
+   and when their permissions change.
