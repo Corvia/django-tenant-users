@@ -60,3 +60,45 @@ def test_user_tenant_permissions_string_representation(public_tenant: Company) -
     owner = public_tenant.owner
     user_tenant_permissions = UserTenantPermissions.objects.get(profile=owner)
     assert str(user_tenant_permissions) == str(owner)
+
+
+def test_tenant_perms_default_queryset(
+    tenant_user: TenantUser, django_assert_num_queries
+) -> None:
+    """Test that tenant_perms uses default queryset when setting is not configured.
+
+    Without optimization, accessing profile after getting perms requires an extra query.
+    Expected queries (4 total):
+    1. SET search_path (django-tenants)
+    2. SELECT UserTenantPermissions
+    3. SET search_path (django-tenants, for related model)
+    4. SELECT TenantUser (profile) - the N+1 query we want to avoid
+    """
+    with django_assert_num_queries(4):
+        perms = tenant_user.tenant_perms
+        assert perms.profile.email
+
+
+def test_tenant_perms_custom_queryset(
+    tenant_user: TenantUser, django_assert_num_queries, settings
+) -> None:
+    """Test that built-in optimizer reduces queries with select_related and prefetch_related.
+
+    The built-in optimizer uses select_related('profile') and prefetch_related('groups'),
+    which efficiently loads related data.
+    Expected queries (4 total):
+    1. SET search_path (django-tenants)
+    2. SELECT UserTenantPermissions with INNER JOIN on TenantUser (profile)
+    3. SET search_path (django-tenants, for groups)
+    4. SELECT groups (prefetch_related)
+
+    Note: Without optimization, accessing profile.email would require 4+ queries.
+    With optimization, we get everything upfront even though we don't access groups.
+    """
+    settings.TENANT_USERS_PERMS_QUERYSET = (
+        "tenant_users.permissions.utils.get_optimized_tenant_perms_queryset"
+    )
+
+    with django_assert_num_queries(4):
+        perms = tenant_user.tenant_perms
+        assert perms.profile.email
