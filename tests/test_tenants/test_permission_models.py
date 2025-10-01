@@ -102,3 +102,16 @@ def test_tenant_perms_custom_queryset(
     with django_assert_num_queries(4):
         perms = tenant_user.tenant_perms
         assert perms.profile.email
+
+
+def test_user_tenant_permissions_has_timestamp_fields(
+    tenant_user: TenantUser,
+) -> None:
+    """Test that UserTenantPermissions has created_at and modified_at timestamp fields."""
+    user_perms = tenant_user.tenant_perms
+
+    # Verify timestamp fields exist and are set
+    assert hasattr(user_perms, "created_at")
+    assert hasattr(user_perms, "modified_at")
+    assert user_perms.created_at is not None
+    assert user_perms.modified_at is not None
