@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import time
-from typing import Any, Callable, ClassVar, Generic, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Callable, ClassVar
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -34,8 +34,11 @@ tenant_user_created = Signal()
 # An existing user is deleted
 tenant_user_deleted = Signal()
 
-# TypeVar for user profile models
-UserProfileT = TypeVar("UserProfileT", bound="UserProfile")
+if TYPE_CHECKING:
+    from typing import TypeVar
+
+    # TypeVar for user profile models - only for type checkers
+    UserProfileT = TypeVar("UserProfileT", bound="UserProfile")
 
 
 class InactiveError(Exception):
@@ -84,7 +87,7 @@ def schema_required(func: Callable[..., Any]) -> Callable[..., Any]:
     return inner
 
 
-class TenantBase(TenantMixin, Generic[UserProfileT]):
+class TenantBase(TenantMixin):
     """Contains global data and settings for the tenant model."""
 
     slug = models.SlugField(_("Tenant URL Name"), blank=True)
@@ -260,7 +263,7 @@ class TenantBase(TenantMixin, Generic[UserProfileT]):
         abstract = True
 
 
-class UserProfileManager(BaseUserManager[UserProfileT], Generic[UserProfileT]):
+class UserProfileManager(BaseUserManager):
     @transaction.atomic
     def _create_user(
         self,
@@ -271,7 +274,7 @@ class UserProfileManager(BaseUserManager[UserProfileT], Generic[UserProfileT]):
         is_superuser: bool = False,
         is_verified: bool = False,
         **extra_fields,
-    ) -> UserProfileT:
+    ):
         # Do some schema validation to protect against calling create user from
         # inside a tenant. Must create public tenant permissions during user
         # creation. This happens during assign role. This function cannot be
@@ -325,8 +328,7 @@ class UserProfileManager(BaseUserManager[UserProfileT], Generic[UserProfileT]):
 
         tenant_user_created.send(sender=self.__class__, user=profile)
 
-        # Cast the return value - at runtime this IS the correct UserProfileT type
-        return cast("UserProfileT", profile)
+        return profile
 
     def create_user(
         self,
@@ -335,7 +337,7 @@ class UserProfileManager(BaseUserManager[UserProfileT], Generic[UserProfileT]):
         *,
         is_staff: bool = False,
         **extra_fields,
-    ) -> UserProfileT:
+    ):
         if not email:
             raise ValueError("Users must have an email address.")
 
@@ -348,9 +350,7 @@ class UserProfileManager(BaseUserManager[UserProfileT], Generic[UserProfileT]):
             **extra_fields,
         )
 
-    def create_superuser(
-        self, password: str, email: str, **extra_fields
-    ) -> UserProfileT:
+    def create_superuser(self, password: str, email: str, **extra_fields):
         if not email:
             raise ValueError("Users must have an email address.")
 
@@ -364,7 +364,7 @@ class UserProfileManager(BaseUserManager[UserProfileT], Generic[UserProfileT]):
         )
 
     @transaction.atomic
-    def delete_user(self, user_obj: UserProfileT) -> None:
+    def delete_user(self, user_obj) -> None:
         # Check to make sure we don't try to delete the public tenant owner
         # that would be bad....
         public_tenant = get_tenant_model().objects.get(
@@ -413,7 +413,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixinFacade):
     """
 
     USERNAME_FIELD = "email"
-    objects: ClassVar[UserProfileManager[Any]] = UserProfileManager()
+    objects: ClassVar[UserProfileManager] = UserProfileManager()
 
     tenants: models.ManyToManyField[Any, Any] = models.ManyToManyField(
         settings.TENANT_MODEL,

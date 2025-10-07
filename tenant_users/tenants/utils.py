@@ -15,7 +15,7 @@ from django_tenants.utils import (
 
 from tenant_users.tenants.models import ExistsError, SchemaError, TenantBase
 
-AnyTenant = TenantBase[Any]
+AnyTenant = TenantBase
 
 
 def get_current_tenant() -> AnyTenant:
