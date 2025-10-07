@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 from django.db import models
 from django_tenants.models import DomainMixin
 
-from django_test_app.users.models import TenantUser
 from tenant_users.tenants.models import TenantBase, schema_required
 
 _NameFieldLength = 64
@@ -13,8 +12,10 @@ _NameFieldLength = 64
 if TYPE_CHECKING:
     from django.db.models.expressions import Combinable
 
+    from django_test_app.users.models import TenantUser
 
-class Company(TenantBase[TenantUser]):
+
+class Company(TenantBase):
     """Test Tenant object."""
 
     name = models.CharField(max_length=_NameFieldLength)
