@@ -6,7 +6,7 @@ build-backend = "poetry.core.masonry.api"
 [project]
 name = "django-tenant-users"
 description = "A Django app to extend django-tenants to incorporate global multi-tenant users"
-version = "2.1.3"
+version = "2.2.0"
 readme = "README.rst"
 license = { text = "MIT" }
 requires-python = ">=3.9"

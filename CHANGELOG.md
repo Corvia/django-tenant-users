@@ -4,6 +4,8 @@ We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` relea
 
 ## Unreleased
 
+## 2.2.0 (2025-10-06)
+
 ### Features
 
 * Add configurable queryset optimization for tenant permissions via `TENANT_USERS_PERMS_QUERYSET` setting to reduce N+1 queries when accessing related data (profile, groups, etc.)
