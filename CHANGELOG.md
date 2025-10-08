@@ -4,6 +4,11 @@ We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` relea
 
 ## Unreleased
 
+## 2.2.1 (2025-10-07)
+
+## What's Changed
+* Fix mypy internal error with generic type inheritance in [#871](https://github.com/Corvia/django-tenant-users/pull/871)
+
 ## 2.2.0 (2025-10-06)
 
 ### Features
