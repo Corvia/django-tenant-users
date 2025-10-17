@@ -9,10 +9,7 @@ from django_tenants.utils import (
 from django_test_app.users.models import TenantUser
 from tenant_users.constants import TENANT_DELETE_ERROR_MESSAGE
 from tenant_users.permissions.models import UserTenantPermissions
-from tenant_users.tenants.models import (
-    DeleteError,
-    ExistsError,
-)
+from tenant_users.tenants.models import DeleteError, ExistsError
 from tenant_users.tenants.tasks import provision_tenant
 
 
@@ -87,17 +84,17 @@ def test_deleting_a_provision_tenant(tenant_user) -> None:
         public_owner_has_permission = UserTenantPermissions.objects.filter(
             profile=tenant.owner
         ).exists()
-        assert public_owner_has_permission, (
-            "The public owner should retain permission to the provisioned tenant after deletion."
-        )
+        assert (
+            public_owner_has_permission
+        ), "The public owner should retain permission to the provisioned tenant after deletion."
 
         # Verify that the previous owner does not retain permission to the provisioned tenant after deletion
         previous_owner_has_permission = UserTenantPermissions.objects.filter(
             profile=another_user
         ).exists()
-        assert not previous_owner_has_permission, (
-            "The previous owner should not retain permission to the provisioned tenant after deletion."
-        )
+        assert (
+            not previous_owner_has_permission
+        ), "The previous owner should not retain permission to the provisioned tenant after deletion."
 
 
 def test_delete_provisioned_tenant_with_assigned_user_roles(tenant_user):

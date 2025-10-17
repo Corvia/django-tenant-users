@@ -230,6 +230,8 @@ class TenantBase(TenantMixin):
         if self.user_set.filter(pk=user_obj.pk).exists():
             self.remove_user(old_owner)
 
+        self.save()
+
     @schema_required
     @transaction.atomic
     def transfer_ownership(self, new_owner) -> None:
