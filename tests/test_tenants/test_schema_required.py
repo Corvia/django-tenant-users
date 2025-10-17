@@ -36,9 +36,9 @@ def test_schema_required_restores_connection_state(
     result = test_tenant.test_schema_method()
 
     expected_result = f"Called on tenant: {test_tenant.schema_name}"
-    assert result == expected_result, (
-        f"Method did not execute correctly. Expected: {expected_result}, got: {result}"
-    )
+    assert (
+        result == expected_result
+    ), f"Method did not execute correctly. Expected: {expected_result}, got: {result}"
 
     # Verify connection state is fully restored
     assert connection.schema_name == initial_schema_name, (  # type: ignore[attr-defined]
@@ -46,6 +46,6 @@ def test_schema_required_restores_connection_state(
     )
 
     current_tenant = getattr(connection, "tenant", None)
-    assert current_tenant == initial_tenant, (
-        f"Expected: {initial_tenant}, got: {current_tenant}"
-    )
+    assert (
+        current_tenant == initial_tenant
+    ), f"Expected: {initial_tenant}, got: {current_tenant}"

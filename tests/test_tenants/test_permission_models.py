@@ -8,9 +8,9 @@ def test_tenant_user_not_equal_to_owner(
 ) -> None:
     """Test that tenant_user is not equal to the owner."""
     owner = public_tenant.owner
-    assert tenant_user != owner, (
-        "The tenant_user should not be equal to the owner of the tenant because he cannot be removed."
-    )
+    assert (
+        tenant_user != owner
+    ), "The tenant_user should not be equal to the owner of the tenant because he cannot be removed."
 
 
 def test_user_tenant_permissions_basic_properties(tenant_user: TenantUser) -> None:
