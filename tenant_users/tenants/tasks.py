@@ -35,8 +35,9 @@ def provision_tenant(  # noqa: PLR0913
     tenant_type: str | None = None,
     schema_name: str | None = None,
     tenant_extra_data: dict[str, Any] | None = None,
+    domain_extra_data: dict[str, Any] | None = None,
 ):
-    """Creates and initializes a new tenant with specified attributes and default roles.
+    """Creates a new tenant and its domain with specified attributes and default roles.
 
     Args:
         tenant_name (str): The name of the tenant.
@@ -47,6 +48,7 @@ def provision_tenant(  # noqa: PLR0913
         tenant_type (str, optional): Type of the tenant, used with `HAS_MULTI_TYPE_TENANTS = True`.
         schema_name (str, optional): The schema name for the tenant. Defaults to a combination of the slug and a timestamp.
         tenant_extra_data (dict, optional): Additional data for the tenant model.
+        domain_extra_data (dict, optional): Additional data for the domain model.
 
     Returns:
         tuple: A tuple containing:
@@ -60,6 +62,9 @@ def provision_tenant(  # noqa: PLR0913
     """
     if tenant_extra_data is None:
         tenant_extra_data = {}
+
+    if domain_extra_data is None:
+        domain_extra_data = {}
 
     if not owner.is_active:
         raise InactiveError(INACTIVE_USER_ERROR_MESSAGE)
@@ -103,7 +108,7 @@ def provision_tenant(  # noqa: PLR0913
 
         # Create a domain associated with the tenant and mark as primary
         domain = DomainModel.objects.create(
-            domain=tenant_domain, tenant=tenant, is_primary=True
+            domain=tenant_domain, tenant=tenant, is_primary=True, **domain_extra_data
         )
 
         # Add the user to the tenant with provided roles
