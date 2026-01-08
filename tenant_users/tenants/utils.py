@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 from typing import Any
 
 from django.contrib.auth import get_user_model
@@ -42,10 +43,12 @@ def create_public_tenant(  # noqa: PLR0913
     is_superuser: bool = False,
     is_staff: bool = False,
     tenant_extra_data: dict[str, Any] | None = None,
+    domain_extra_data: dict[str, Any] | None = None,
+    owner_extra_data: dict[str, Any] | None = None,
     verbosity=1,
-    **owner_extra,
+    **owner_extra: Any,
 ):
-    """Creates a public tenant and assigns an owner user.
+    """Creates a public tenant, assigns an owner user, and sets up the tenant's domain.
 
     This function sets up a new public tenant in a multi-tenant Django application. It assigns an
     owner user to the tenant, with the option to specify additional user and tenant attributes.
@@ -56,14 +59,32 @@ def create_public_tenant(  # noqa: PLR0913
         is_superuser (bool): If True, the owner has superuser privileges. Defaults to False.
         is_staff (bool): If True, the owner has staff access. Defaults to False.
         tenant_extra_data (dict, optional): Additional data for the tenant model.
+        domain_extra_data (dict, optional): Additional data for the domain model.
+        owner_extra_data (dict, optional): Additional data for the owner user.
         verbosity (int, optional): Verbosity level for saving the tenant. Defaults to 1.
-        **owner_extra: Arbitrary keyword arguments for additional owner user attributes.
+        **owner_extra: Deprecated. Extra keyword arguments are treated as owner fields.
+            Use owner_extra_data instead.
 
     Returns:
         tuple: A tuple containing the tenant object, domain object, and user object.
     """
-    if tenant_extra_data is None:
-        tenant_extra_data = {}
+    extra_data = {
+        "tenant": tenant_extra_data or {},
+        "domain": domain_extra_data or {},
+        "owner": owner_extra_data or {},
+    }
+
+    if owner_extra:
+        warnings.warn(
+            "Passing extra keyword arguments to create_public_tenant() is deprecated. "
+            "Use owner_extra_data={...} instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+        # preserve explicit owner_extra_data values over deprecated kwargs
+        for key, value in owner_extra.items():
+            extra_data["owner"].setdefault(key, value)
 
     UserModel = get_user_model()
     TenantModel = get_tenant_model()
@@ -77,7 +98,7 @@ def create_public_tenant(  # noqa: PLR0913
     profile = UserModel.objects.create(
         email=owner_email,
         is_active=True,
-        **owner_extra,
+        **extra_data["owner"],
     )
 
     # Create the public tenant
@@ -89,7 +110,7 @@ def create_public_tenant(  # noqa: PLR0913
             error_message = f"Please define a '{public_schema_name}' tenant type."
             raise SchemaError(error_message)
 
-        tenant_extra_data.update(
+        extra_data["tenant"].update(
             {get_multi_type_database_field_name(): public_schema_name}
         )
 
@@ -97,7 +118,7 @@ def create_public_tenant(  # noqa: PLR0913
         schema_name=public_schema_name,
         name="Public Tenant",
         owner=profile,
-        **tenant_extra_data,
+        **extra_data["tenant"],
     )
 
     public_tenant.save(verbosity=verbosity)
@@ -107,14 +128,15 @@ def create_public_tenant(  # noqa: PLR0913
         domain=domain_url,
         tenant=public_tenant,
         is_primary=True,
+        **extra_data["domain"],
     )
 
     # Add system user to public tenant (no permissions)
     public_tenant.add_user(profile, is_superuser=is_superuser, is_staff=is_staff)
 
     # Handle setting the password for the user
-    if "password" in owner_extra:
-        profile.set_password(owner_extra["password"])
+    if "password" in extra_data["owner"]:
+        profile.set_password(extra_data["owner"]["password"])
     else:
         profile.set_unusable_password()
     profile.save(update_fields=["password"])

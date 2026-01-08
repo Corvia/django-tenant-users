@@ -9,7 +9,7 @@ from django.db import DatabaseError, connection
 
 from django_test_app.companies.models import Company
 from tenant_users.constants import INACTIVE_USER_ERROR_MESSAGE
-from tenant_users.tenants.models import ExistsError, InactiveError
+from tenant_users.tenants.models import ExistsError, InactiveError, SchemaError
 from tenant_users.tenants.tasks import provision_tenant
 
 if TYPE_CHECKING:
@@ -82,6 +82,37 @@ def test_duplicate_tenant_url(test_tenants, tenant_user) -> None:
         provision_tenant(slug, slug, tenant_user)
 
 
+def test_provision_tenant_domain_extra_data_is_used(tenant_user_admin) -> None:
+    """Ensures domain_extra_data is passed through to domain creation."""
+    slug = "sample-domain-extra"
+    tenant_name = "Sample Tenant"
+
+    tenant, domain = provision_tenant(
+        tenant_name,
+        slug,
+        tenant_user_admin,
+        domain_extra_data={"notes": "hello"},
+    )
+
+    assert domain.tenant == tenant
+    assert domain.domain == f"{slug}.{settings.TENANT_USERS_DOMAIN}"
+    assert domain.notes == "hello"
+
+
+def test_provision_tenant_default_roles_passed_to_add_user(tenant_user_admin) -> None:
+    """Ensures add_user() is called with default role flags."""
+    slug = "sample-default-roles"
+    tenant_name = "Sample Tenant"
+
+    with patch("django_test_app.companies.models.Company.add_user") as add_user_mock:
+        provision_tenant(tenant_name, slug, tenant_user_admin)
+
+    add_user_mock.assert_called_once()
+    args, kwargs = add_user_mock.call_args
+    assert args[0] == tenant_user_admin
+    assert kwargs == {"is_superuser": True, "is_staff": False}
+
+
 def test_provision_tenant_tenant_creation_exception(tenant_user) -> None:
     """Test exception handling during tenant creation.
 
@@ -125,6 +156,23 @@ def test_provision_tenant_domain_creation_exception(tenant_user) -> None:
     assert len(schemas) == len(list_schemas())
 
 
+def test_provision_tenant_domain_extra_data_invalid_is_atomic(tenant_user) -> None:
+    """Ensures atomic rollback when domain_extra_data contains invalid fields."""
+    slug = "bad-domain-extra"
+    schemas = list_schemas()
+
+    with pytest.raises(TypeError):
+        provision_tenant(
+            "Test Tenant",
+            slug,
+            tenant_user,
+            domain_extra_data={"does_not_exist": "boom"},
+        )
+
+    assert not Company.objects.filter(slug=slug).exists()
+    assert len(schemas) == len(list_schemas())
+
+
 def test_provision_tenant_user_add_exception(tenant_user: TenantUser) -> None:
     """Test exception handling when adding a user to a tenant.
 
@@ -132,6 +180,7 @@ def test_provision_tenant_user_add_exception(tenant_user: TenantUser) -> None:
     exception when there's an error adding a user to a tenant.
     """
     slug = "test-tenant"
+    schemas = list_schemas()
 
     with (
         patch(
@@ -144,6 +193,42 @@ def test_provision_tenant_user_add_exception(tenant_user: TenantUser) -> None:
 
     # Ensure user wasn't added to a tenant
     assert tenant_user.tenants.count() == 1
+    # Ensure tenant + schema weren't persisted
+    assert not Company.objects.filter(slug=slug).exists()
+    assert len(schemas) == len(list_schemas())
+
+
+@pytest.mark.usefixtures("_tenant_type_settings")
+def test_provision_tenant_with_multitype_invalid_type_raises_schema_error(
+    tenant_user_admin,
+) -> None:
+    """Ensures SchemaError is raised for invalid tenant_type when multitype enabled."""
+    slug = "multi-invalid"
+
+    with pytest.raises(SchemaError, match="not a valid tenant type"):
+        provision_tenant(
+            "Test Tenant",
+            slug,
+            tenant_user_admin,
+            tenant_type="does-not-exist",
+        )
+
+    assert not Company.objects.filter(slug=slug).exists()
+
+
+@pytest.mark.usefixtures("_tenant_type_settings")
+def test_provision_tenant_with_multitype_sets_type_field(tenant_user_admin) -> None:
+    """Ensures the multi-type database field is populated during tenant creation."""
+    slug = "multi-valid"
+    tenant, _ = provision_tenant(
+        "Test Tenant",
+        slug,
+        tenant_user_admin,
+        tenant_type="type2",
+    )
+
+    # MULTI_TYPE_DATABASE_FIELD is configured as "type" by the fixture
+    assert tenant.type == "type2"
 
 
 def test_provision_tenant_with_tenant_extras(tenant_user) -> None:

@@ -38,4 +38,21 @@ class Company(TenantBase):
 
 
 class Domain(DomainMixin):
-    """This class is required for django_tenants."""
+    """Domain model used by django-tenants, extended for test coverage.
+
+    This test app defines a minimal domain model required by django-tenants
+    (`DomainMixin`), and adds an extra field (`notes`) specifically to exercise
+    the library's tenant provisioning hooks.
+
+    Notes about the `notes` field:
+    - It is *optional* (`blank=True`, default "") so it does not affect normal
+        domain creation.
+    - It provides a concrete, harmless extra attribute that tests can pass via
+        `domain_extra_data` to verify that provisioning functions forward domain
+        fields correctly (see `test_provision_tenant_domain_extra_data_is_used`).
+
+    This helps cover the edge case where a project extends its Domain model with
+    additional fields and expects them to be set at domain creation time.
+    """
+
+    notes = models.CharField(max_length=255, blank=True, default="")
