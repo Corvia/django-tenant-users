@@ -10,7 +10,7 @@ you need to know to get started.
 ***************************
 
 To set up a new tenant in your application, utilize
-:func:`tasks.create_public_tenant()
+:func:`tasks.provision_tenant()
 <tenant_users.tenants.tasks.provision_tenant>`:
 
 .. code:: python
@@ -21,7 +21,13 @@ To set up a new tenant in your application, utilize
    provision_tenant_owner = CustomUserModel.objects.get(email="admin@evilcorp.com")
 
 
-   tenant, domain = provision_tenant("EvilCorp", "evilcorp", provision_tenant_owner)
+   tenant, domain = provision_tenant(
+      "EvilCorp",
+      "evilcorp",
+      provision_tenant_owner,
+      # optionally, pass extra fields for the tenant's Domain model
+      domain_extra_data={"notes": "created by provisioning"},
+   )
 
 Using Multi-Type Tenants
 ========================
@@ -29,7 +35,7 @@ Using Multi-Type Tenants
 If you're leveraging the `Multi-type Tenants feature
 <https://django-tenants.readthedocs.io/en/latest/use.html#multi-types-tenants>`_
 from ``django-tenants``, use the ``tenant_type`` keyword when calling
-the :func:`utils.create_public_tenant()
+the :func:`tasks.provision_tenant()
 <tenant_users.tenants.tasks.provision_tenant>` function:
 
 .. code:: python
@@ -40,7 +46,12 @@ the :func:`utils.create_public_tenant()
    provision_tenant_owner = TenantUser.objects.get(email="admin@evilcorp.com")
 
    tenant, domain = provision_tenant(
-       "EvilCorp", "evilcorp", provision_tenant_owner, tenant_type="tenant_type"
+         "EvilCorp",
+         "evilcorp",
+         provision_tenant_owner,
+         tenant_type="tenant_type",
+         # optionally, pass extra fields for the tenant's Domain model
+         domain_extra_data={"notes": "multitype tenant"},
    )
 
 .. note::
