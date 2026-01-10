@@ -320,8 +320,9 @@ this for you.
 
 .. note::
 
-   ``create_public_tenant`` still accepts extra keyword arguments for owner fields,
-   but this is deprecated. Prefer passing owner fields via ``owner_extra_data``.
+   ``create_public_tenant`` still accepts extra keyword arguments for
+   owner fields, but this is deprecated. Prefer passing owner fields via
+   ``owner_extra_data``.
 
 Or, alternatively, use the management command:
 
