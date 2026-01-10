@@ -301,7 +301,19 @@ this for you.
 
    from tenant_users.tenants.utils import create_public_tenant
 
-   create_public_tenant(domain_url="public.domain.com", owner_email="admin@domain.com")
+   create_public_tenant(
+       domain_url="public.domain.com",
+       owner_email="admin@domain.com",
+       # optionally, pass extra fields for the Domain model
+       domain_extra_data={"notes": "created by installer"},
+       # optionally, pass extra fields for the owner user
+       owner_extra_data={"first_name": "Admin"},
+   )
+
+.. note::
+
+   ``create_public_tenant`` still accepts extra keyword arguments for owner fields,
+   but this is deprecated. Prefer passing owner fields via ``owner_extra_data``.
 
 Or, alternatively, use the management command:
 
