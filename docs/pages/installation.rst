@@ -94,26 +94,34 @@ Using Multi-Type Tenants
 ========================
 
 If you're leveraging the `Multi-type Tenants feature
-<https://django-tenants.readthedocs.io/en/latest/use.html#multi-types-tenants>`_
-.. code-block:: python .. code-block:: python
+<https://django-tenants.readthedocs.io/en/latest/use.html#multi-types-tenants>`_,
+configure ``TENANT_TYPES`` in your ``settings.py``:
+
+.. code:: python
 
    TENANT_TYPES = {
       "public": {
          "APPS": [
-            "django.contrib.auth", "django.contrib.contenttypes",
-            "tenant_users.permissions", "tenant_users.tenants",
-            "companies", "users", # Add other apps as needed ],
-
+            "django.contrib.auth",
+            "django.contrib.contenttypes",
+            "tenant_users.permissions",
+            "tenant_users.tenants",
+            "companies",
+            "users",
+            # Add other apps as needed
+         ],
          "URLCONF": "myproject.urls.public",
-
       },
-
       "type1": {
          "APPS": [
-            "django.contrib.auth", "django.contrib.contenttypes",
-            "tenant_users.permissions", # Add other apps as needed ], },
-
-      # Add other tenant types as needed }
+            "django.contrib.auth",
+            "django.contrib.contenttypes",
+            "tenant_users.permissions",
+            # Add other apps as needed
+         ],
+      },
+      # Add other tenant types as needed
+   }
 
 .. important::
 
@@ -273,7 +281,7 @@ Unauthenticated users are allowed to proceed.
    ]
 
 2. Optionally, customize the error message by setting
-   ``TENANT_USERS_ACCESS_ERROR_MESSAGE`` in your ``settings.py```:
+   ``TENANT_USERS_ACCESS_ERROR_MESSAGE`` in your ``settings.py``:
 
 .. code:: python
 
