@@ -98,7 +98,7 @@ hypothesis = { version = "^6.140.3", extras = ["django", "pytest", "pytz"] }
 doc8 = ">=0.11,<1.2"
 
 # Configuration and Database
-tomlkit = ">=0.13.0,<0.14"
+tomlkit = ">=0.13.0,<0.15"
 python-decouple = "^3.6"
 psycopg2-binary = "^2.9.6"
 
