@@ -4,6 +4,15 @@ We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` relea
 
 ## Unreleased
 
+### Breaking changes
+
+* Require `django-tenants>=4.0,<5.0`. django-tenants 3.14 dropped Django 4.2 and enforces `django>=5.2`, so the two moves cannot be separated.
+* Require `Django>=5.2`. Django 4.2 reached end of extended support on 7 April 2026.
+* Require `Python>=3.10`, the floor for Django 5.2.
+* Supported matrix is now Python 3.10–3.13 against Django 5.2, 6.0 and 6.1.
+
+Projects still on Django 4.2 or Python 3.9 should pin `django-tenant-users<3.0`.
+
 ### Features
 
 * Add `domain_extra_data` support to tenant provisioning utilities (`provision_tenant`, `create_public_tenant`) to pass extra fields to domain creation
