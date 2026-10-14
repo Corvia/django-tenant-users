@@ -9,7 +9,7 @@ description = "A Django app to extend django-tenants to incorporate global multi
 version = "2.2.1"
 readme = "README.rst"
 license = { text = "MIT" }
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 authors = [
   { name = "Corvia Technologies, LLC", email = "support@corvia.tech" },
 ]
@@ -30,9 +30,9 @@ classifiers = [
   
   # Framework
   "Framework :: Django",
-  "Framework :: Django :: 4.2",
-  "Framework :: Django :: 5.1", 
   "Framework :: Django :: 5.2",
+  "Framework :: Django :: 6.0", 
+  "Framework :: Django :: 6.1",
   
   # Audience & License
   "Intended Audience :: Developers",
@@ -42,7 +42,6 @@ classifiers = [
   "Operating System :: OS Independent",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -55,8 +54,8 @@ classifiers = [
   "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: Content Management System",
 ]
 dependencies = [
-  "django>=4.2",
-  "django-tenants>=3.6,<4.0",
+  "django>=5.2",
+  "django-tenants>=4.0,<5.0",
 ]
 
 [project.urls]
@@ -72,7 +71,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 
 [tool.poetry.group.test.dependencies]
 # Type Checking
@@ -123,7 +122,7 @@ max-line-length = 88
 [tool.ruff]
 # Ruff config: https://docs.astral.sh/ruff/settings
 line-length = 88
-target-version = "py39"
+target-version = "py310"
 preview = false
 
 [tool.ruff.format]

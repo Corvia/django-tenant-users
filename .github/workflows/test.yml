@@ -9,17 +9,18 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
-        django-version: ['4.2', '5.1', '5.2']
+        python-version: ['3.10', '3.11', '3.12', '3.13']
+        django-version: ['5.2', '6.0', '6.1']
         exclude:
-          # Exclude Python 3.9 with Django 5.1 and 5.2
-          - python-version: '3.9'
-            django-version: '5.1'
-          - python-version: '3.9'
-            django-version: '5.2'
-          # Exclude Python 3.13 with Django 4.2
-          - python-version: '3.13'
-            django-version: '4.2'
+          # Django 6.0 and 6.1 require Python 3.12+
+          - python-version: '3.10'
+            django-version: '6.0'
+          - python-version: '3.10'
+            django-version: '6.1'
+          - python-version: '3.11'
+            django-version: '6.0'
+          - python-version: '3.11'
+            django-version: '6.1'
 
     env:
       DJANGO_DATABASE_USER: django
@@ -52,7 +53,7 @@ jobs:
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
-          version: 2.1.1
+          version: 2.5.1
           virtualenvs-create: true
           virtualenvs-in-project: true
           installer-parallel: true

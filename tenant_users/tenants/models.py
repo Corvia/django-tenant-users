@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import time
-from typing import TYPE_CHECKING, Any, Callable, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -35,6 +35,7 @@ tenant_user_created = Signal()
 tenant_user_deleted = Signal()
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from typing import TypeVar
 
     # TypeVar for user profile models - only for type checkers
