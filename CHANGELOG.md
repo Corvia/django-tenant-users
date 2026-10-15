@@ -4,6 +4,8 @@ We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` relea
 
 ## Unreleased
 
+## 3.0.0 (2026-10-15)
+
 ### Breaking changes
 
 * Require `django-tenants>=4.0,<5.0`. django-tenants 3.14 dropped Django 4.2 and enforces `django>=5.2`, so the two moves cannot be separated.
