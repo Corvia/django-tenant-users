@@ -82,6 +82,24 @@ class TestTenantAccessMiddleware:
         # Middleware should proceed downstream
         assert response.status_code == HTTPStatus.ACCEPTED
 
+    def test_authenticated_user_without_tenant_on_request(self, tenant_user):
+        """Test middleware allows access when the request carries no tenant.
+
+        With ``SHOW_PUBLIC_IF_NO_TENANT_FOUND``, django-tenants falls back to the
+        public URLconf for an unmatched host and never sets ``request.tenant``.
+        Anonymous users already pass; authenticated users must not get a 500.
+
+        Args:
+            tenant_user (User): The tenant user to be tested.
+        """
+        request = RequestFactory().get("/fake-url/")
+        request.user = tenant_user
+        assert not hasattr(request, "tenant")
+
+        response = self.middleware(request)
+
+        assert response.status_code == HTTPStatus.ACCEPTED
+
     def test_custom_error_message(self, settings, tenant_user):
         """Test middleware raises custom error message from settings.
 

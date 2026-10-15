@@ -53,9 +53,15 @@ class TenantAccessMiddleware:
             request (HttpRequest): The current request object.
 
         Returns:
-            bool: True if the user has access or is unauthenticated, False otherwise.
+            bool: True if the user has access or is unauthenticated, or the request has no tenant attached. False otherwise.
         """
         if not request.user.is_authenticated:
+            return True
+
+        # django-tenants leaves request.tenant unset when it falls back to the
+        # public URLconf for an unmatched host (SHOW_PUBLIC_IF_NO_TENANT_FOUND)
+        tenant = getattr(request, "tenant", None)
+        if tenant is None:
             return True
 
         return request.user.tenants.filter(pk=request.tenant.pk).exists()  # type: ignore[attr-defined]
