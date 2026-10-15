@@ -19,6 +19,10 @@ Projects still on Django 4.2 or Python 3.9 should pin `django-tenant-users<3.0`.
 
 * Add `domain_extra_data` support to tenant provisioning utilities (`provision_tenant`, `create_public_tenant`) to pass extra fields to domain creation
 
+### Fixes
+
+* Fix `delete_tenant()` leaving the previous owner attached to the tenant. The check used a leaked loop variable instead of the owner, so it never fired when the tenant had more than one member. Since `delete_tenant()` is a soft delete and the schema survives, the affected user kept passing `TenantAccessMiddleware`'s membership check and retained access to the deleted tenant. Refs [#888](https://github.com/Corvia/django-tenant-users/issues/888)
+
 ### Deprecations
 
 * Deprecate passing arbitrary `**kwargs` as owner fields to `create_public_tenant`; use `owner_extra_data={...}` instead, with a warning emitted when using the deprecated method (which still works as before for now)
