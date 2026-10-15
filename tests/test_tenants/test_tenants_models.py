@@ -138,6 +138,39 @@ def test_delete_provisioned_tenant_with_assigned_user_roles(tenant_user):
     assert UserTenantPermissions.objects.filter(profile=public_tenant.owner).exists()
 
 
+def test_delete_tenant_detaches_owner_holding_a_role(tenant_user) -> None:
+    """A departing owner who holds a role must still leave a deleted tenant.
+
+    Requires both conditions to exercise the removal path:
+      1. the tenant has more than one member
+      2. the owner holds a group, so transfer_ownership() leaves them attached
+    """
+    tenant, _ = provision_tenant("Sample Tenant", "sample", tenant_user)
+    owner = tenant.owner
+
+    second_user = TenantUser.objects.create_user(email="second@test.com")
+    tenant.add_user(second_user)
+
+    with tenant_context(tenant):
+        group = Group.objects.create(name="retained-role")
+        group.permissions.add(
+            Permission.objects.create(
+                codename="can_test", name="Can Test", content_type_id=1
+            )
+        )
+        owner.tenant_perms.groups.add(group)
+
+    tenant.delete_tenant()
+
+    assert not tenant.user_set.filter(pk=owner.pk).exists(), (
+        "The previous owner is still a member of the deleted tenant"
+    )
+    with tenant_context(tenant):
+        assert not UserTenantPermissions.objects.filter(profile=owner).exists(), (
+            "The previous owner still holds permissions in the deleted tenant."
+        )
+
+
 def test_transfer_ownership_to_existing_user(test_tenants, public_tenant):
     tenant = test_tenants.first()
     assert tenant.owner != public_tenant.owner, "Can't transfer ownership to same owner"
