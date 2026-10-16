@@ -2,6 +2,7 @@ import pytest
 from django.contrib.auth.models import Group, Permission
 from django_tenants.utils import (
     get_public_schema_name,
+    get_tenant_domain_model,
     get_tenant_model,
     tenant_context,
 )
@@ -169,6 +170,39 @@ def test_delete_tenant_detaches_owner_holding_a_role(tenant_user) -> None:
         assert not UserTenantPermissions.objects.filter(profile=owner).exists(), (
             "The previous owner still holds permissions in the deleted tenant."
         )
+
+
+def test_delete_tenant_releases_its_domains(tenant_user) -> None:
+    """Deleting a tenant must free its domains so the URL can be claimed again.
+
+    ``Domain.domain`` is unique across all tenants, so leaving the rows behind
+    means the slug can never be provisioned again.
+    """
+    tenant, domain = provision_tenant("Acme", "acme", tenant_user)
+    original = domain.domain
+
+    # A second tenant guards against the deletion being global rather than
+    # scoped to this tenant's related manager.
+    _, other_domain = provision_tenant(
+        "Bystander", "bystander", tenant_user, schema_name="bystander"
+    )
+
+    tenant.delete_tenant()
+
+    assert not tenant.domains.exists(), (
+        "The tenant's domains were not released on deletion."
+    )
+    assert get_tenant_domain_model().objects.filter(pk=other_domain.pk).exists(), (
+        "Deleting a tenant removed another tenant's domain."
+    )
+    assert not get_tenant_domain_model().objects.filter(domain=original).exists(), (
+        f"{original} is still claimed, so the slug cannot be reused."
+    )
+
+    _, new_domain = provision_tenant(
+        "Acme Reborn", "acme", tenant_user, schema_name="acme_reborn"
+    )
+    assert new_domain.domain == original
 
 
 def test_transfer_ownership_to_existing_user(test_tenants, public_tenant):

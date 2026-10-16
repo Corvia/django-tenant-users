@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import time
+import uuid
 from typing import Any
 
 from django.conf import settings
@@ -81,8 +82,9 @@ def provision_tenant(  # noqa: PLR0913
         # Must be valid postgres schema characters see:
         # https://www.postgresql.org/docs/9.2/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS
         # We generate unique schema names each time so we can keep tenants around
-        # without taking up url/schema namespace.
-        schema_name = f"{tenant_slug}_{time_string}"
+        # without taking up url/schema namespace. The random suffix guarantees uniqueness,
+        # as the timestamp only has second resolution, so re-provisioning a slug within a second of deleting will collide.
+        schema_name = f"{tenant_slug}_{time_string}_{uuid.uuid4().hex[:6]}"
 
     # Validate tenant type if multi-tenants are enabled
     if has_multi_type_tenants():
