@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import time
 from typing import TYPE_CHECKING, Any, ClassVar
 
 from django.conf import settings
@@ -193,10 +192,9 @@ class TenantBase(TenantMixin):
         """Mark tenant for deletion.
 
         We don't actually delete the tenant out of the database, but we
-        associate them with a the public schema user and change their url
-        to reflect their delete datetime and previous owner
-        The caller should verify that the user deleting the tenant owns
-        the tenant.
+        associate them with a the public schema user and delete their domains,
+        which releases the URLs so they can be claimed again.
+        The caller should verify that the user deleting the tenant owns the tenant
         """
         # Prevent public tenant schema from being deleted
         if self.schema_name == get_public_schema_name():
@@ -208,13 +206,9 @@ class TenantBase(TenantMixin):
                 continue
             self.remove_user(user_obj)
 
-        # Seconds since epoch, time() returns a float, so we convert to
-        # an int first to truncate the decimal portion
-        time_string = str(int(time.time()))
-        new_url = f"{time_string}-{self.owner.pk!s}-{self.domain_url}"  # type: ignore[has-type]
-        self.domain_url = new_url
-        # The schema generated each time (even with same url slug) will
-        # be unique so we do not have to worry about a conflict with that
+        # Domain.domain is unique across all tenants, so the rows have to go
+        # otherwise a deleted tenant's URLs stay claimed after deletion.
+        self.domains.all().delete()
 
         # Set the owner to the system user (public schema owner)
         public_tenant = get_tenant_model().objects.get(
