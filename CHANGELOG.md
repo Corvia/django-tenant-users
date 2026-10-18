@@ -4,6 +4,15 @@ We follow [Semantic Versions](https://semver.org/) starting at the `0.4.0` relea
 
 ## Unreleased
 
+## 3.0.1 (2026-10-17)
+
+### Fixes
+
+* Fix `delete_tenant()` leaving the previous owner attached to the tenant. The check used a leaked loop variable instead of the owner, so it never fired when the tenant had more than one member. Since `delete_tenant()` is a soft delete and the schema survives, the affected user kept passing `TenantAccessMiddleware`'s membership check and retained access to the deleted tenant. Refs [#888](https://github.com/Corvia/django-tenant-users/issues/888)
+* Fix `delete_tenant()` leaving the tenant's domains in place, which kept their URLs permanently claimed and unavailable for reuse. Domains are now deleted along with ownership transfer.
+* Fix `provision_tenant()` schema name collisions when re-provisioning the same slug within the same second as a deleted tenant. The generated schema name now includes a random suffix in addition to the timestamp.
+* Fix `TenantAccessMiddleware` denying authenticated users when the request has no tenant attached (e.g. django-tenants falling back to the public URLconf via `SHOW_PUBLIC_IF_NO_TENANT_FOUND` for an unmatched host). These requests are now allowed through instead of being rejected.
+
 ## 3.0.0 (2026-10-15)
 
 ### Breaking changes
@@ -18,10 +27,6 @@ Projects still on Django 4.2 or Python 3.9 should pin `django-tenant-users<3.0`.
 ### Features
 
 * Add `domain_extra_data` support to tenant provisioning utilities (`provision_tenant`, `create_public_tenant`) to pass extra fields to domain creation
-
-### Fixes
-
-* Fix `delete_tenant()` leaving the previous owner attached to the tenant. The check used a leaked loop variable instead of the owner, so it never fired when the tenant had more than one member. Since `delete_tenant()` is a soft delete and the schema survives, the affected user kept passing `TenantAccessMiddleware`'s membership check and retained access to the deleted tenant. Refs [#888](https://github.com/Corvia/django-tenant-users/issues/888)
 
 ### Deprecations
 
